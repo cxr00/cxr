@@ -74,7 +74,7 @@ class Seq:
         elif isinstance(seq, Seq):
             self.seq = seq.seq
         else:
-            raise ValueError(f"Unsupported type {type(val)}")
+            raise ValueError(f"Unsupported type {type(seq)}")
 
     @check_seq
     def __add__(self, o):
@@ -486,17 +486,11 @@ class Tridozenal:
             s_m = len(self.mantissa)
             o_m = len(other.mantissa)
 
-            zero = Seq(0)
-
             # Multiply parts using the FOIL method
-            pt_1 = self.integer * other.integer  #if self.integer != zero and other.integer != zero else zero
-            pt_2 = self.integer.reverse() * other.mantissa  #if self.integer != zero and other.mantissa != zero else zero
-            pt_3 = self.mantissa * other.integer.reverse()  # if self.mantissa != zero and other.integer != zero else zero
-            pt_4 = self.mantissa * other.mantissa  # if self.mantissa != zero and other.mantissa != zero else zero
-            # pt_1 = self.integer * other.integer if self.integer != zero and other.integer != zero else zero
-            # pt_2 = self.integer.reverse() * other.mantissa if self.integer != zero and other.mantissa != zero else zero
-            # pt_3 = self.mantissa * other.integer.reverse() if self.mantissa != zero and other.integer != zero else zero
-            # pt_4 = self.mantissa * other.mantissa if self.mantissa != zero and other.mantissa != zero else zero
+            pt_1 = self.integer * other.integer
+            pt_2 = self.integer.reverse() * other.mantissa
+            pt_3 = self.mantissa * other.integer.reverse()
+            pt_4 = self.mantissa * other.mantissa
 
             # Construct tridozenal representations of parts
             duo_1 = Tridozenal(pt_1, 0, self.base, self.is_negative ^ other.is_negative)
@@ -1110,7 +1104,9 @@ class Tridozenal:
 
         return out
 
-    def round(self, place):
+    def round(self, place=-1):
+        if place == -1:
+            place = round_to
         if self.mantissa[place] >= self.base // 2:
             self.mantissa[place - 1] += 1
 
@@ -1121,6 +1117,12 @@ class Tridozenal:
         output = Tridozenal(self.integer, self.mantissa, self.base, self.is_negative)
         output.round(place)
         return output
+
+    def integer_part(self):
+        return Tridozenal(self.integer, Seq(), self.base, self.is_negative)
+
+    def mantissa_part(self):
+        return Tridozenal(Seq(), self.mantissa, self.base, self.is_negative)
 
     def truncated(self, place):
         return Tridozenal(self.integer, self.mantissa[:place], self.base, self.is_negative)
