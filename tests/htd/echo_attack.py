@@ -1,5 +1,5 @@
 from cxr.htd import Htd
-from tests.htd.character_attack import minimum_implicit_base, minimum_hyperbase, get_potential_characters
+from tests.htd.character_attack import minimum_implicit_base, minimum_hyperbase
 
 from cxr.htd import default_encryption_sep
 
