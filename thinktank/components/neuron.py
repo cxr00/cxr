@@ -1,5 +1,5 @@
-from thinktank.lib.state import StateManager
-from cxr.base36 import Tridozenal as Td
+from cxr.state.state import StateManager
+from cxr.math.base36 import Tridozenal as Td
 
 
 class NeuronPart:

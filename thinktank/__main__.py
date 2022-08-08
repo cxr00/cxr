@@ -1,11 +1,11 @@
 import pygame
 
-from thinktank.lib.state import StateManager, StateManagerReference
+from cxr.state.state import StateManager, StateManagerReference
 
 from thinktank import screen, font, clock, FPS, TICK, ACCUMULATE
 from thinktank.components import NeuronPanel, Brain, Player, Tank, Grants
 
-import cxr.base36
+import cxr.math.base36
 
 
 def main():
@@ -49,12 +49,12 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 change = False
                 if event.key == pygame.K_UP:
-                    if cxr.base36.default_base < 36:
-                        cxr.base36.default_base += 1
+                    if cxr.math.base36.default_base < 36:
+                        cxr.math.base36.default_base += 1
                         change = True
                 elif event.key == pygame.K_DOWN:
-                    if cxr.base36.default_base > 2:
-                        cxr.base36.default_base -= 1
+                    if cxr.math.base36.default_base > 2:
+                        cxr.math.base36.default_base -= 1
                         change = True
                 elif event.key == pygame.K_b:
                     if len(brains) < len(tank.pods):
@@ -82,7 +82,7 @@ def main():
         tank.draw(screen)
         grants.draw(screen, font)
 
-        text = font.render(f"base: {cxr.base36.default_base}", True, (255, 255, 255), "black")
+        text = font.render(f"base: {cxr.math.base36.default_base}", True, (255, 255, 255), "black")
         text_rect = text.get_rect(topleft=(500, 300))
         screen.blit(text, text_rect)
 

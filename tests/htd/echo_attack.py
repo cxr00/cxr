@@ -1,7 +1,7 @@
-from cxr.htd import Htd
+from cxr.math.htd import Htd
 from tests.htd.character_attack import minimum_implicit_base, minimum_hyperbase
 
-from cxr.htd import default_encryption_sep
+from cxr.math.htd import default_encryption_sep
 
 import random
 import math

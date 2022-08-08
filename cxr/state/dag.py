@@ -1,4 +1,4 @@
-from thinktank.lib.qoid import Property, Qoid, Bill
+from cxr.state.qoid import Property, Qoid, Bill
 
 QOID_NODE_INDICATOR = "NODE_CHILD"
 

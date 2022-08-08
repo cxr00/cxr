@@ -1,10 +1,9 @@
-from cxr.base36 import Tridozenal as Td
+from cxr.math.base36 import Tridozenal as Td
 import copy
 import itertools
 import random
 
 from collections.abc import Sequence
-from typing import Union
 
 std_l = 30
 NumTypes = (int, float, Td)

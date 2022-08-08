@@ -8,7 +8,7 @@ An object in qoid.py can be created very quickly, then viewed or saved in its Qo
 Some examples are provided below.
 
 ```python
-from thinktank.lib.qoid import Property, Qoid, Bill
+from cxr.state.qoid import Property, Qoid, Bill
 
 a = Property("tag", "value")
 b = Property("tag2", "value2")
@@ -33,7 +33,7 @@ A Property is a tag-value pair. The tag and value may be changed via the set fun
 or by directly accessing the class variables.
 
 ```python
-from thinktank.lib.qoid import Property
+from cxr.state.qoid import Property
 
 p_a = Property("tag", "value")
 print(p_a)
@@ -55,7 +55,7 @@ Like Properties, Qoids are a tag-value pair. However, instead of a string, the v
 Qoids are printed using a simple ini-like markup language.
 
 ```python
-from thinktank.lib.qoid import Property, Qoid
+from cxr.state.qoid import Property, Qoid
 
 p_a = Property("tag1", "value1")
 p_b = Property("tag2", "value2")
@@ -74,7 +74,7 @@ tag1: value1
 A Bill is a Qoid whose value is a list of Qoids. Bills may be saved to and loaded from `.cxr` files.
 
 ```python
-from thinktank.lib.qoid import Property, Qoid, Bill
+from cxr.state.qoid import Property, Qoid, Bill
 
 p_a = Property("tag1", "value1")
 p_b = Property("tag2", "value2")
@@ -109,7 +109,7 @@ A Register is a Qoid whose value set contains Bills and Registers.
 Registers may be saved to and loaded from folders which end in `.cxr`.
 
 ```python
-from thinktank.lib.qoid import Property, Qoid, Bill, Register
+from cxr.state.qoid import Property, Qoid, Bill, Register
 
 p_a = Property("tag1", "value1")
 p_b = Property("tag2", "value2")

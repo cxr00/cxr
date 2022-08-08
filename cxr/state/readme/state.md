@@ -11,7 +11,7 @@ The data contained in StateManager objects serializes to Qoid. It is highly reco
 Let's start by generating a StateManager object for a player:
 
 ```python
-from thinktank.lib.state import StateManager, StateManagerReference
+from cxr.state.state import StateManager, StateManagerReference
 import pygame
 
 # This is required at the beginning

@@ -17,7 +17,7 @@ Like Td, I had to manually copy snr's Seq arithmetic which works with Tds, so th
 If you have a set of hyperbases `h` and a set of implicit bases `b`, you can encrypt a string with `Htd.encrypt`. This is done by converting each character into an Htd. `h` and `b` do not necessarily need to be the same length.
 
 ```python
-from cxr.htd import Htd
+from cxr.math.htd import Htd
 
 h = [10, 11, 12]
 b = [3, 5]

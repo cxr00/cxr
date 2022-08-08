@@ -1,6 +1,6 @@
-from .base36 import Tridozenal as Td
+from cxr.math.base36 import Tridozenal as Td
 
-from cxr import base36
+from cxr.math import base36
 import copy
 
 

@@ -1,8 +1,7 @@
-from cxr.base36 import Tridozenal as Td
-from cxr.htd import Htd
+from cxr.math.base36 import Tridozenal as Td
+from cxr.math.htd import Htd
 
-from cxr import htd
-from cxr import base36
+from cxr.math import htd, base36
 
 import time
 

@@ -12,7 +12,7 @@ Seq objects may be constructed easily with a list or tuple of integers and float
 If no argument is specified, the null sequence is created.
 
 ```python
-from cxr.snr import Seq
+from cxr.math.snr import Seq
 
 a = Seq()
 a = Seq([1, 2, 1])

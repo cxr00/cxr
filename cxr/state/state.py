@@ -1,5 +1,5 @@
 from .qoid import Property, Qoid, Bill
-from thinktank.lib.dag import Node
+from cxr.state.dag import Node
 
 import random
 import copy

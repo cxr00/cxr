@@ -1,6 +1,6 @@
-from cxr.snr import Seq
-from cxr.base36 import Tridozenal as Td
-import cxr.base36
+from cxr.math.snr import Seq
+from cxr.math.base36 import Tridozenal as Td
+import cxr.math.base36
 import os
 
 """
@@ -92,7 +92,7 @@ def compute_next_cdb_in_base(base):
     Saves the results in the appropriate directory
     """
 
-    cxr.base36.default_base = base
+    cxr.math.base36.default_base = base
 
     os.makedirs(f"{output_dir}\\{base}", exist_ok=True)
 

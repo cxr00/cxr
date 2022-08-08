@@ -20,7 +20,7 @@ Transitive reduction and topological sort were also immensely satisfying to impl
 A DAG begins with a root Node.
 
 ```python
-import dag
+from cxr.state import dag
 
 root = dag.Node("node1")
 

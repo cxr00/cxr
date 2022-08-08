@@ -1,7 +1,7 @@
 import pygame
 
 from thinktank import TICK
-from thinktank.lib.state import StateManager
+from cxr.state.state import StateManager
 
 
 class Pod:

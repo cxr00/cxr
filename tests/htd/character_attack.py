@@ -1,5 +1,5 @@
-from cxr.base36 import Tridozenal as Td
-from cxr.htd import Htd, default_sep, default_encryption_sep
+from cxr.math.base36 import Tridozenal as Td
+from cxr.math.htd import Htd, default_sep, default_encryption_sep
 
 import time
 import random
