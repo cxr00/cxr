@@ -1,6 +1,6 @@
 import pygame
 
-from cxr.state.state import StateManager, StateManagerReference
+from cxr import SM, SMR
 
 from thinktank import screen, font, clock, FPS, TICK, ACCUMULATE
 from thinktank.components import NeuronPanel, Brain, Player, Tank, Grants
@@ -9,19 +9,19 @@ import cxr.math.base36
 
 
 def main():
-    StateManagerReference.initialize("local\\thinktank")
+    SMR.initialize("local\\thinktank")
 
     # UI
-    tank = StateManager.generate("tank", Tank, "tank")
-    neuron_panel = StateManager.generate("neuron_panel", NeuronPanel, "neuron_panel")
+    tank = SM.generate("tank", Tank, "tank")
+    neuron_panel = SM.generate("neuron_panel", NeuronPanel, "neuron_panel")
 
     # Game objects
-    player = StateManager.generate("player", Player, "player")
+    player = SM.generate("player", Player, "player")
     brains = []
     # brain = StateManager.generate("brain", Brain, "brain")
     # brain2 = StateManager.generate("brain", Brain, "brain2")
     # brain3 = StateManager.generate("brain", Brain, "brain3")
-    grants = StateManager.generate("grants", Grants, "grants")
+    grants = SM.generate("grants", Grants, "grants")
 
     # UI connections
     tank.set_neuron_panel(neuron_panel)
@@ -58,7 +58,7 @@ def main():
                         change = True
                 elif event.key == pygame.K_b:
                     if len(brains) < len(tank.pods):
-                        new_brain = StateManager.generate("brain", Brain, f"brain{len(brains)}")
+                        new_brain = SM.generate("brain", Brain, f"brain{len(brains)}")
                         new_brain.set_player(player)
                         brains.append(new_brain)
                         tank.add_brain(new_brain)

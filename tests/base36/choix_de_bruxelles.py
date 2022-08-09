@@ -15,7 +15,7 @@ Note that due to the nature of the operation (doubling/halving) any base which i
 a power of two will trivially yield the positive integers (http://oeis.org/A000027).
 """
 
-output_dir = "cdb"  # output files are of the form {output_dir}\\{base}\\{step}.txt
+output_dir = "cdb"  # output files are of the form {output_dir}\\cdb{base}\\{step}.txt
 threshold = 40  # This is the largest set size that CDBN will attempt to operate on
 
 
@@ -73,12 +73,12 @@ def analyze_cdb(base):
 
     analysis = []
 
-    if not os.path.exists(f"{output_dir}\\{base}"):
-        os.makedirs(f"{output_dir}\\{base}")
+    if not os.path.exists(f"{output_dir}\\cdb{base}"):
+        os.makedirs(f"{output_dir}\\cdb{base}")
 
-    files = os.listdir(f"{output_dir}\\{base}")
+    files = os.listdir(f"{output_dir}\\cdb{base}")
     for file in range(len(files)):
-        with open(f"{output_dir}\\{base}\\{file}.txt", "r") as f:
+        with open(f"{output_dir}\\cdb{base}\\{file}.txt", "r") as f:
             lines = f.readlines()
             analysis.append(len(lines))
 
@@ -94,22 +94,22 @@ def compute_next_cdb_in_base(base):
 
     cxr.math.base36.default_base = base
 
-    os.makedirs(f"{output_dir}\\{base}", exist_ok=True)
+    os.makedirs(f"{output_dir}\\cdb{base}", exist_ok=True)
 
     def open_step(step):
         output = []
-        with open(f"{output_dir}\\{base}\\{step}.txt", "r") as f:
+        with open(f"{output_dir}\\cdb{base}\\{step}.txt", "r") as f:
             lines = f.readlines()
             for line in lines:
                 output.append(Td.get_from_string(line.strip()))
         return output
 
-    files = os.listdir(f"{output_dir}\\{base}")
+    files = os.listdir(f"{output_dir}\\cdb{base}")
     current_step = len(files)
 
     # Set initial step if necessary
     if current_step == 0:
-        with open(f"{output_dir}\\{base}\\0.txt", "w+") as f:
+        with open(f"{output_dir}\\cdb{base}\\0.txt", "w+") as f:
             f.write("1\n")
         current_step += 1
 
@@ -131,8 +131,8 @@ def compute_next_cdb_in_base(base):
         g = set(g).union(s)
         g = list(sorted(g))
 
-        os.makedirs(f"{output_dir}\\{base}", exist_ok=True)
-        with open(f"{output_dir}\\{base}\\{current_step}.txt", "w+") as f:
+        os.makedirs(f"{output_dir}\\cdb{base}", exist_ok=True)
+        with open(f"{output_dir}\\cdb{base}\\{current_step}.txt", "w+") as f:
             for each in g:
                 f.write(str(each) + "\n")
 
@@ -166,7 +166,7 @@ def main():
         if base in [2 ** n for n in range(6)]:
             pass
         else:
-            print(f"base {base}: {analyze_cdb(base)}")
+            print(f"base {base}: Seq({analyze_cdb(base)})")
     print()
 
 
