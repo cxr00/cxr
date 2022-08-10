@@ -144,7 +144,7 @@ class Seq(Sequence):
 
     @check_seq
     def __ge__(self, o):
-        return self.elements >= o.seq
+        return self.elements >= o.elements
 
     def __getitem__(self, i):
         if isinstance(i, int):
@@ -173,7 +173,7 @@ class Seq(Sequence):
 
     @check_seq
     def __gt__(self, o):
-        return self.elements > o.seq
+        return self.elements > o.elements
 
     @check_seq
     def __iadd__(self, o):
@@ -192,14 +192,14 @@ class Seq(Sequence):
 
     @check_seq
     def __le__(self, o):
-        return self.elements <= o.seq
+        return self.elements <= o.elements
 
     def __len__(self):
         return len(self.elements)
 
     @check_seq
     def __lt__(self, o):
-        return self.elements < o.seq
+        return self.elements < o.elements
 
     def __mod__(self, o):
         if isinstance(o, int):
@@ -366,7 +366,7 @@ class Seq(Sequence):
             return 10
 
     def concat(self, other):
-        return Seq(self.elements + other.seq)
+        return Seq(self.elements + other.elements)
 
     def f(self, length=-1, seed: "Seq" = None):
         """

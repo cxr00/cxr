@@ -1,6 +1,7 @@
 from cxr.math.snr import Seq
 from cxr.math.base36 import Tridozenal as Td
 import cxr.math.base36
+
 import os
 
 """
@@ -159,25 +160,35 @@ def main():
     """
     global threshold
 
-    inp = input("Enter the threshold to which you would like to compute: ")
-    threshold = int(inp) if inp else threshold
     the_range = range(2, 37)  # Alter this (to a list even) to change what bases are examined
+    trivial = [2 ** n for n in range(6)]
 
-    continue_computation = True
-    while continue_computation:
-        continue_computation = False
+    while True:
+        sequences = {}
+
         # Iterate over all bases
         for base in the_range:
             # Bases of the form 2**n are trivial, so are skipped
-            if base not in [2 ** n for n in range(6)]:
-                continue_computation = compute_next_cdb_in_base(base) or continue_computation
+            if base not in trivial:
+                compute_next_cdb_in_base(base)
+                sequences[base] = analyze_cdb(base)
         print()
 
-    # Displays the sequences associated with each base
-    for base in the_range:
-        if base not in [2 ** n for n in range(6)]:
-            print(f"{base}: Seq({analyze_cdb(base)}),")  # Easy to copy & paste for scratch work
-    print()
+        threshold = -1
+        # Displays the sequences associated with each base
+        for base in the_range:
+            if base not in trivial:
+                print(f"{base}: Seq({sequences[base]}),")  # Easy to copy & paste for scratch work
+        print()
+
+        with open(f"{output_dir}\\sequences.txt", "w+") as f:
+            for k, v in sequences.items():
+                f.write(f"{k}:{str(v)}\n")
+        print("sequences.txt updated.")
+
+        lst = sorted(list(sequences.values()), key=lambda x: x[-1])
+        threshold = lst[len(lst) // 2][-1]  # Set new threshold in the middle of what's available
+        print(f"New threshold of {threshold} assigned.")
 
 
 if __name__ == "__main__":
