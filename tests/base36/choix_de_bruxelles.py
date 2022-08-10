@@ -13,10 +13,15 @@ will display variants of http://oeis.org/A323289 for each base.
 
 Note that due to the nature of the operation (doubling/halving) any base which is
 a power of two will trivially yield the positive integers (http://oeis.org/A000027).
+Should CDB be extended to tripling/tralving, the powers of three would be trivial.
+Same goes for four-timesing, etc.
 """
 
 output_dir = "cdb"  # output files are of the form {output_dir}\\cdb{base}\\{step}.txt
-threshold = 40  # This is the largest set size that CDBN will attempt to operate on
+
+# This is the largest set size that CDBN will attempt to operate on
+# It can be optionally modified at the beginning of the main function
+threshold = 100
 
 
 def choix_de_bruxelles(d, length, log=False):
@@ -31,33 +36,35 @@ def choix_de_bruxelles(d, length, log=False):
     two = Td(2)
     two_inverse = two.multiplicative_inverse(place=30)
 
-    for index, number in enumerate(d):
+    for index, number in enumerate(d):  # Traversal of numbers loop
         if log:
-            if index and index % 10 == 0:
+            if index and index % 33 == 0:
                 print(f"{index}/{len_d} done")
         s_d = str(number)
-        for l in range(1, length):
-            if len(s_d) < l:
+        for substring_length in range(1, length):  # Length-defining loop
+            if len(s_d) < substring_length:
                 break
-            for i in range(len(s_d) - l + 1):
-                substring = s_d[i:i + l]
+            for i in range(len(s_d) - substring_length + 1):  # Substring-defining loop
+                substring = s_d[i:i + substring_length]
                 if substring[0] != "0":
                     i_ss = Td.get_from_string(substring)
+                    # Conditions to halve selected substring
                     if (
                             i_ss.base % 2 == 1 and sum(i_ss.integer) % 2 == 0  # Base is odd and digit sum is even
                         ) \
                         or \
                         (
                             i_ss.base % 2 == 0 and i_ss.integer[0] % 2 == 0  # Base and first digit of integer are even
-                        ):
+                    ):
                         quotient = i_ss * two_inverse
                         quotient.round()
                         quotient = quotient.integer_part()
-                        to_add = s_d[:i] + str(quotient) + s_d[i+l:]
+                        to_add = s_d[:i] + str(quotient) + s_d[i+substring_length:]
                         td = Td.get_from_string(to_add)
                         if td not in output:
                             output.append(td)
-                    to_add = s_d[:i] + str(i_ss * two) + s_d[i+l:]
+                    # Can always double selected substring
+                    to_add = s_d[:i] + str(i_ss * two) + s_d[i+substring_length:]
                     td = Td.get_from_string(to_add)
                     if td not in output:
                         output.append(td)
@@ -87,7 +94,7 @@ def analyze_cdb(base):
 
 def compute_next_cdb_in_base(base):
     """
-    Perform the next step of Choix do Bruxelles for the given base.
+    Perform the next step of Choix de Bruxelles for the given base.
 
     Saves the results in the appropriate directory
     """
@@ -98,8 +105,8 @@ def compute_next_cdb_in_base(base):
 
     def open_step(step):
         output = []
-        with open(f"{output_dir}\\cdb{base}\\{step}.txt", "r") as f:
-            lines = f.readlines()
+        with open(f"{output_dir}\\cdb{base}\\{step}.txt", "r") as file:
+            lines = file.readlines()
             for line in lines:
                 output.append(Td.get_from_string(line.strip()))
         return output
@@ -117,15 +124,17 @@ def compute_next_cdb_in_base(base):
     g = open_step(current_step - 1)
     s = open_step(current_step - 2) if current_step > 1 else []
 
-    # Get difference, which is the set on which CDBN will be performed
+    # Get difference, which is the set on which CDB will be performed
     s = set(s)
     g = set(g).difference(s)
     g = list(sorted(g))
+    l_g = len(g)
+    print(f"Difference yields set of size {l_g} for base {base}")
 
-    if len(g) <= threshold:
+    if l_g <= threshold:
         # Perform CDBN if consistent with threshold
-        l = max([len(k.integer) for k in g]) + 1
-        g = choix_de_bruxelles(g, l, log=True)
+        max_length = max([len(k.integer) for k in g]) + 1
+        g = choix_de_bruxelles(g, max_length, log=True)
 
         # Recombine with previous step to get full set
         g = set(g).union(s)
@@ -148,25 +157,26 @@ def main():
 
     At the end, prints all potential OEIS sequences
     """
+    global threshold
+
+    inp = input("Enter the threshold to which you would like to compute: ")
+    threshold = int(inp) if inp else threshold
+    the_range = range(2, 37)  # Alter this (to a list even) to change what bases are examined
 
     continue_computation = True
     while continue_computation:
         continue_computation = False
         # Iterate over all bases
-        for base in range(3, 37):
-            # Bases of the form 2**n are trivial
-            if base in [2 ** n for n in range(6)]:
-                pass
-            else:
-                continue_computation = compute_next_cdb_in_base(base)
+        for base in the_range:
+            # Bases of the form 2**n are trivial, so are skipped
+            if base not in [2 ** n for n in range(6)]:
+                continue_computation = compute_next_cdb_in_base(base) or continue_computation
         print()
 
     # Displays the sequences associated with each base
-    for base in range(1, 37):
-        if base in [2 ** n for n in range(6)]:
-            pass
-        else:
-            print(f"base {base}: Seq({analyze_cdb(base)})")
+    for base in the_range:
+        if base not in [2 ** n for n in range(6)]:
+            print(f"{base}: Seq({analyze_cdb(base)}),")  # Easy to copy & paste for scratch work
     print()
 
 
