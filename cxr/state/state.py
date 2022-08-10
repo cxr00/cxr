@@ -2,7 +2,6 @@ from .qoid import Property, Qoid, Bill
 from cxr.state.dag import Node
 
 import random
-import copy
 import os
 
 key_chars = [chr(a) for a in (list(range(48, 58)) + list(range(65, 91)) + list(range(97, 123)))]
@@ -32,14 +31,8 @@ class StateData:
     def __setitem__(self, key, value):
         if key in self._ser:
             self._ser[key] = value
-        elif key in self._nonser:
-            self._nonser[key] = value
         else:
-            try:
-                copy.deepcopy(value)
-                self._ser[key] = value
-            except TypeError:
-                self._nonser[key] = value
+            self._nonser[key] = value
 
     def __str__(self):
         output = {}
