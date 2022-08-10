@@ -372,7 +372,7 @@ class CXRNode(Node):
         """
         if not os.path.isdir(root):
             if not os.path.isfile(root):
-                os.mkdir(root)
+                os.makedirs(root)
             else:
                 raise FileExistsError(f"Cannot initialize to {root}, as it already exists as a file.")
 

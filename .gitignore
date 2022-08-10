@@ -2,3 +2,9 @@
 __pycache__
 
 cdb/
+
+# pyinstaller
+build/
+dist/
+*.spec
+*.exe

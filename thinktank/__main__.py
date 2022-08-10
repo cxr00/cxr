@@ -1,11 +1,12 @@
 import pygame
+from tkinter import messagebox
+import traceback
 
 from cxr import SM, SMR
+import cxr.math.base36
 
 from thinktank import screen, font, clock, FPS, TICK, ACCUMULATE
 from thinktank.components import NeuronPanel, Brain, Player, Tank, Grants
-
-import cxr.math.base36
 
 
 def main():
@@ -98,4 +99,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception:
+        messagebox.showerror("GAME CRASH", traceback.format_exc())
