@@ -77,10 +77,15 @@ def choix_de_bruxelles(d, length, log=False):
                 substring = s_d[i:i + substring_length]
 
                 t = threading.Thread(target=do_one_number(substring), args=(substring,))
-                current_threads.append(t)
-                t.start()
-                if len(current_threads) >= 4:
-                    current_threads[0].join()
+                if len(current_threads) <= 7:
+                    current_threads.append(t)
+                    t.start()
+                else:
+                    current_threads = [t for t in current_threads if t.is_alive()]
+                    current_threads.append(t)
+                    t.start()
+    for thread in current_threads:
+        thread.join()
 
     return output
 
@@ -172,7 +177,7 @@ def main():
     """
     global threshold
 
-    the_range = range(10, 11)  # Alter this (to a list even) to change what bases are examined
+    the_range = range(2, 37)  # Alter this (to a list even) to change what bases are examined
     trivial = [2 ** n for n in range(6)]
 
     while True:
