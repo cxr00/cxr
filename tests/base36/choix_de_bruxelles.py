@@ -3,6 +3,7 @@ from cxr.math.base36 import Tridozenal as Td
 import cxr.math.base36
 
 import os
+import threading
 
 """
 This module explores the Choix de Bruxelles algorithm in bases between
@@ -30,12 +31,39 @@ def choix_de_bruxelles(d, length, log=False):
     The Brussels Choice in arbitrary base
     Set cxr.base36.default_base to set the base this is executed in
     """
+
+    def do_one_number(substring):
+        if substring[0] != "0":
+            i_ss = Td.get_from_string(substring)
+            # Conditions to halve selected substring
+            if (
+                    i_ss.base % 2 == 1 and sum(i_ss.integer) % 2 == 0  # Base is odd and digit sum is even
+                ) \
+                or \
+                (
+                        i_ss.base % 2 == 0 and i_ss.integer[0] % 2 == 0  # Base and first digit of integer are even
+                ):
+                quotient = i_ss * two_inverse
+                quotient.round(place=cxr.base36.round_to - 7)
+                quotient = quotient.integer_part()
+                to_add = s_d[:i] + str(quotient) + s_d[i + substring_length:]
+                td = Td.get_from_string(to_add)
+                # if td not in output:
+                output.add(td)
+            # Can always double selected substring
+            to_add = s_d[:i] + str(i_ss * two) + s_d[i + substring_length:]
+            td = Td.get_from_string(to_add)
+            # if td not in output:
+            output.add(td)
+
     if not isinstance(d, list):
         d = [d]
-    output = [number for number in d]
+    output = set(number for number in d)
     len_d = len(d)
     two = Td(2)
-    two_inverse = two.multiplicative_inverse(place=30)
+    two_inverse = two.multiplicative_inverse()
+
+    current_threads = []
 
     for index, number in enumerate(d):  # Traversal of numbers loop
         if log:
@@ -47,28 +75,12 @@ def choix_de_bruxelles(d, length, log=False):
                 break
             for i in range(len(s_d) - substring_length + 1):  # Substring-defining loop
                 substring = s_d[i:i + substring_length]
-                if substring[0] != "0":
-                    i_ss = Td.get_from_string(substring)
-                    # Conditions to halve selected substring
-                    if (
-                            i_ss.base % 2 == 1 and sum(i_ss.integer) % 2 == 0  # Base is odd and digit sum is even
-                        ) \
-                        or \
-                        (
-                            i_ss.base % 2 == 0 and i_ss.integer[0] % 2 == 0  # Base and first digit of integer are even
-                    ):
-                        quotient = i_ss * two_inverse
-                        quotient.round()
-                        quotient = quotient.integer_part()
-                        to_add = s_d[:i] + str(quotient) + s_d[i+substring_length:]
-                        td = Td.get_from_string(to_add)
-                        if td not in output:
-                            output.append(td)
-                    # Can always double selected substring
-                    to_add = s_d[:i] + str(i_ss * two) + s_d[i+substring_length:]
-                    td = Td.get_from_string(to_add)
-                    if td not in output:
-                        output.append(td)
+
+                t = threading.Thread(target=do_one_number(substring), args=(substring,))
+                current_threads.append(t)
+                t.start()
+                if len(current_threads) >= 4:
+                    current_threads[0].join()
 
     return output
 
@@ -160,7 +172,7 @@ def main():
     """
     global threshold
 
-    the_range = range(2, 37)  # Alter this (to a list even) to change what bases are examined
+    the_range = range(10, 11)  # Alter this (to a list even) to change what bases are examined
     trivial = [2 ** n for n in range(6)]
 
     while True:
