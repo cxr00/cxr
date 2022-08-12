@@ -31,7 +31,7 @@ def check_seq(f):
             return f(self, o)
         elif isinstance(o, Sig):
             return f(self, o.seq)
-        elif isinstance(o, Block) and f.__name__ == "__mul__":
+        elif isinstance(o, Matrix) and f.__name__ == "__mul__":
             return f(self, o)
         else:
             raise ValueError(f"Unsupported type {type(o)}")
@@ -210,7 +210,7 @@ class Seq(Sequence):
         """
         Improved multiplication using the Karatsuba algorithm
         """
-        if isinstance(o, Block):
+        if isinstance(o, Matrix):
             return o * self
         elif isinstance(o, NumTypes):
             return Seq([a * o for a in self])
@@ -254,7 +254,7 @@ class Seq(Sequence):
         """
         Former arithmetic method - used for smaller numbers where Karatsuba is unnecessary
         """
-        if isinstance(o, Block):
+        if isinstance(o, Matrix):
             return o * self
         elif isinstance(o, NumTypes):
             return Seq([a * o for a in self])
@@ -726,9 +726,9 @@ class Sig:
         return Sig(self.seq.trim())
 
 
-class Block:
+class Matrix:
     """
-    The Block class allows for the construction of various
+    The Matrix class allows for the construction of various
     matrices in order to experiment with antidiagonal summation
     """
 
@@ -746,7 +746,7 @@ class Block:
             zero = Td.zero(base)
         else:
             zero = 0
-        return Block([Seq([zero for k in range(l)]) for n in range(l)])
+        return Matrix([Seq([zero for k in range(l)]) for n in range(l)])
 
     @staticmethod
     def g_matrix(s, g, l=-1):
@@ -767,7 +767,7 @@ class Block:
             :return: the transformed matrix
             """
             f_g_p = g_p.f(l)
-            out = Block.blank(l, base=f_g_p.base() if f_g_p.is_td() else -1)
+            out = Matrix.blank(l, base=f_g_p.base() if f_g_p.is_td() else -1)
 
             zero = Td.zero(f_g_p.base()) if f_g_p.is_td() else 0
             for n in range(l):
@@ -801,7 +801,7 @@ class Block:
         """
         if l == -1:
             l = std_l
-        out = Block.blank(l=l, base=base)
+        out = Matrix.blank(l=l, base=base)
         one = Td.one(base) if base != -1 else 1
         for n in range(l):
             out[n][n] = one
@@ -831,7 +831,7 @@ class Block:
             t = len(out[-1].trim()) - 1
             for k in range(t):
                 out.append((out[-1] * d)[:t - k])
-        return Block(out)
+        return Matrix(out)
 
     @staticmethod
     def sen(d: Seq, l=-1):
@@ -846,14 +846,14 @@ class Block:
             l = std_l
         if l == 1:
             if d.is_td():
-                return Block(Seq(Td.one(d.base())))
+                return Matrix(Seq(Td.one(d.base())))
             else:
-                return Block(Seq(1))
+                return Matrix(Seq(1))
 
         if d.is_td():
-            b = Block.blank(l, base=d.base())
+            b = Matrix.blank(l, base=d.base())
         else:
-            b = Block.blank(l)
+            b = Matrix.blank(l)
 
         if d.is_td():
             b[0] = Seq(Td.one(d.base()))
@@ -895,14 +895,14 @@ class Block:
     def __add__(self, other):
         length = max(len(self), len(other))
         width = max(self.width(), other.width())
-        out = Block([Seq([0 for k in range(width)]) for x in range(width)])
+        out = Matrix([Seq([0 for k in range(width)]) for x in range(width)])
         for x in range(length):
             for y in range(width):
                 out[x][y] = self[x][y] + other[x][y]
         return out
 
     def __eq__(self, other):
-        if not isinstance(other, Block):
+        if not isinstance(other, Matrix):
             return False
         if len(self) != len(other):
             return False
@@ -928,7 +928,7 @@ class Block:
             if step < 0:
                 start, stop = stop - 1, start - 1
 
-            return Block([self[k] for k in range(start, stop, step)])
+            return Matrix([self[k] for k in range(start, stop, step)])
 
     def __iter__(self):
         return iter(self.rows)
@@ -938,23 +938,23 @@ class Block:
 
     def __mul__(self, other):
         if isinstance(other, (Seq, int, float)):
-            return Block([other*g for g in self])
+            return Matrix([other * g for g in self])
         elif isinstance(other, Sig):
-            return Block([Seq(Sig(g)*other) for g in self])
-        elif isinstance(other, Block):
+            return Matrix([Seq(Sig(g) * other) for g in self])
+        elif isinstance(other, Matrix):
             width = max(self.width(), other.width())
             length = max(len(self), len(other))
-            out = Block([Seq([0 for k in range(width)]) for n in range(length)])
+            out = Matrix([Seq([0 for k in range(width)]) for n in range(length)])
             for n in range(length):
                 for y in range(width):
                     out[n][y] = sum([self[n][k] * other[k][y] for k in range(len(self[n]))])
             return out.trim()
         else:
-            raise ValueError("Incompatible type; must be int, float, Seq, or Block")
+            raise ValueError("Incompatible type; must be int, float, Seq, or Matrix")
 
     def __pow__(self, power, modulo=None):
         if power == 0:
-            return Block.identity(len(self))
+            return Matrix.identity(len(self))
         out = copy.deepcopy(self)
         for k in range(1, power):
             out = out * self
@@ -971,7 +971,7 @@ class Block:
 
     def __setitem__(self, key: int, value):
         if not isinstance(value, (Seq, Sig)):
-            raise TypeError(f"Block can only be set with Seq or Sig, not {type(value).__name__}")
+            raise TypeError(f"Matrix can only be set with Seq or Sig, not {type(value).__name__}")
         if len(self) > key >= 0:
             self.rows[key] = Seq(value)
         else:
@@ -991,7 +991,7 @@ class Block:
             out = []
             for n in range(len(self)):
                 out.append(self[n] / num)
-            return Block(out)
+            return Matrix(out)
         else:
             raise ValueError("Incompatible type; must be int or Seq")
 
@@ -1035,7 +1035,7 @@ class Block:
         return self.f(a, g).i()
 
     def transpose(self):
-        return Block([Seq([self[k][n] for k in range(self.width())]) for n in range(len(self))])
+        return Matrix([Seq([self[k][n] for k in range(self.width())]) for n in range(len(self))])
 
     def trim(self):
         out = copy.deepcopy(self)
@@ -1048,10 +1048,10 @@ class Block:
 
     def neg(self):
         out = [v.neg() for v in self]
-        return Block(out)
+        return Matrix(out)
 
     def truncate(self, l):
-        out = Block([s[:l] for s in self.rows[:l]])
+        out = Matrix([s[:l] for s in self.rows[:l]])
         return out
 
     def width(self):
@@ -1089,7 +1089,7 @@ class Prism:
         out = []
 
         if not block:
-            block = Block.power(d, l)
+            block = Matrix.power(d, l)
 
         if not coordinates:
             coordinates = []
@@ -1105,14 +1105,14 @@ class Prism:
         return Prism(out)
 
     def __init__(self, structure, l=10):
-        if isinstance(structure, (Block, list)):
+        if isinstance(structure, (Matrix, list)):
             self.val = structure
         elif isinstance(structure, Prism):
             self.val = structure.val
         elif isinstance(structure, Seq):
-            self.val = Block.power(structure, l)
+            self.val = Matrix.power(structure, l)
         else:
-            raise TypeError(f"Prism must be constructed via Block, list, or Prism, not {type(structure).__name__}")
+            raise TypeError(f"Prism must be constructed via Matrix, list, or Prism, not {type(structure).__name__}")
 
     def __getitem__(self, i):
         if isinstance(i, int):
@@ -1149,7 +1149,7 @@ class Prism:
 
         def nested_array(dims, length):
             if dims == 2:
-                return Block.blank(length)
+                return Matrix.blank(length)
             else:
                 output = []
                 for k in range(length):
@@ -1257,7 +1257,7 @@ class Prism:
         self.val = self[::a[0]]
 
         for i, each in enumerate(self):
-            if isinstance(each, Block):
+            if isinstance(each, Matrix):
                 self[i] = each[::a[1]]
             else:
                 self[i] = each.aerate(a[1:])
@@ -1287,4 +1287,4 @@ def random_seq(min=1, max=7, min_digits=2, max_digits=5):
 
 
 def random_block(l=10):
-    return Block(Seq(1), *[random_seq() for _ in range(l)])
+    return Matrix(Seq(1), *[random_seq() for _ in range(l)])
