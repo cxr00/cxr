@@ -2,11 +2,11 @@
 __pycache__
 
 cdb/
+/!local/
+oeis/
 
 # pyinstaller
 build/
 dist/
 *.spec
 *.exe
-
-/!local/
