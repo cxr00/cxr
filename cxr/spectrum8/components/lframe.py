@@ -6,6 +6,8 @@ class Rule:
     default = ((3,), (2, 3))  # Conway's rule
     conway_adj = ((2,), (2, 3))  # Adjusted Conway's rule
     cxr00 = ((2, ), (1, 2, 3))
+    cxr01 = ((2, 3), (1, 3, 4, 5))
+    cxr02 = ((1, 2), (2, 3, 4))
 
 
 class Board:
@@ -80,6 +82,14 @@ class Board:
                 self[y][0] = self[y][-1] = 1
             for x in range(self.width):
                 self[-1][x] = 1
+        elif t == "x":  # Cross
+            size = int(code[1:])
+            for y in range(self.length):
+                for i in range(size):
+                    if self.width > y + i >= 0:
+                        self[y][y+i] = 1
+                    if self.width > y - i - 1 >= -1:
+                        self[self.width - y - i - 1][y] = 1
 
 
 class LFrame:
