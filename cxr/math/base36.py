@@ -431,26 +431,7 @@ class Tridozenal:
         elif isinstance(other, Tridozenal):
             if other.base != self.base:
                 raise ValueError(f"Base mismatch: {self.base} and {other.base}")
-
-            power = [Tridozenal.one(self.base)]
-            current_power = 0
-            other_abs = other.abs()
-            while power[-1] < self.abs():
-                power.append(power[-1] * other_abs)
-                current_power += 1
-
-            if self.is_negative:
-                tmp = self + power[-1]
-            else:
-                tmp = copy.deepcopy(self)
-
-            while tmp >= other_abs:
-                if tmp < power[current_power]:
-                    current_power -= 1
-                else:
-                    tmp -= power[current_power]
-
-            return tmp
+            return self - (self // other) * other
         else:
             raise TypeError(f"Invalid type {type(other).__name__}, must be int or Tridozenal")
 
