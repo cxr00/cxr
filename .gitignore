@@ -3,7 +3,8 @@ __pycache__
 
 cdb/
 /!local/
-oeis/
+static/
+templates/
 
 # pyinstaller
 build/
