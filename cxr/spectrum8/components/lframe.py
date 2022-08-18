@@ -86,10 +86,10 @@ class Board:
             size = int(code[1:])
             for y in range(self.length):
                 for i in range(size):
-                    if self.width > y + i >= 0:
+                    if self.length > y + i >= 0:
                         self[y][y+i] = 1
-                    if self.width > y - i - 1 >= -1:
-                        self[self.width - y - i - 1][y] = 1
+                    if self.length > y - i - 1 >= -1:
+                        self[self.length - y - i - 1][y] = 1
 
 
 class LFrame:
