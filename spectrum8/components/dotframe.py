@@ -13,6 +13,10 @@ class Rule:
     cxr05 = ((3, 4), (2, 4, 5))
     cxr06 = ((2, 4, 5), (1, 2, 3, 4))
     cxr07 = ((2, 3, 4, 5, 6, 7), (2, 3, 4, 5, 6, 7))
+    cxr08 = ((1, 2, 3, 4), (3, 4, 5, 6))
+    cxr10 = ((2,), (1, 2, 3))  # Conway-like
+    cxr11 = ((4,), (2, 3, 4, 5, 6))
+    cxr12 = ((5,), (4, 5))
 
 
 class Board:
@@ -114,21 +118,14 @@ class DotFrame:
     surface = pygame.Surface((dot_size, dot_size))  # Reusable surface
     surface.fill((255, 255, 255))
 
-    def __init__(self, length, width, depth, rule=Rule.default, dot=None, code="r"):
-        self.depth = depth
-        if dot is None:
-            self.dot = [1 for _ in range(self.depth)]
-        elif len(dot) > depth:
-            self.dot = dot[:self.depth]
-        else:
-            self.dot = dot
-            self.depth = len(dot)
+    def __init__(self, length, width, dot, rule=Rule.default, code="r"):
+        self.dot = dot
         self.span = sum(self.dot)
 
         self.length = length
         self.width = width
         self.rule = rule
-        self.boards = [Board(self.length, self.width) for _ in range(self.depth)]
+        self.boards = [Board(self.length, self.width) for _ in range(len(self.dot))]
         self.boards[-1].initialize(code)
 
     def __getitem__(self, item):

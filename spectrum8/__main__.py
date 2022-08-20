@@ -1,5 +1,5 @@
 
-from cxr.spectrum8.components import Rule, DotFrame
+from spectrum8.components import Rule, DotFrame
 import pygame
 import random
 import os
@@ -12,13 +12,12 @@ def main():
     color = [random.randint(0, 255) for _ in range(3)]
     print(color)
     length, width = 100, 100
-    depth = 3
-    rule = Rule.cxr07  # See dotframe.Rule
-    dot = [1, 2, 1]  # Will be dotted with stored Boards via DotFrame
-    code = "f3"  # Starting pattern
+    rule = Rule.cxr10  # See dotframe.Rule
+    dot = [1, 2, 2, 1]  # Will be dotted with stored Boards via DotFrame
+    code = "f7"  # Starting pattern
 
-    frame = DotFrame(length, width, depth, rule=rule, dot=dot, code=code)
-    screen = pygame.display.set_mode((length * DotFrame.dot_size + 10, width * DotFrame.dot_size + 10))
+    frame = DotFrame(length, width, dot, rule=rule, code=code)
+    screen = pygame.display.set_mode((length * DotFrame.dot_size, width * DotFrame.dot_size))
 
     FPS = 10
     clock = pygame.time.Clock()
