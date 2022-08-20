@@ -8,6 +8,11 @@ class Rule:
     cxr00 = ((2, ), (1, 2, 3))
     cxr01 = ((2, 3), (1, 3, 4, 5))
     cxr02 = ((1, 2), (2, 3, 4))
+    cxr03 = ((2, 4, 5, 7), (1, 3, 6, 8))  # Quite chaotic
+    cxr04 = ((4,), (3, 4, 5))
+    cxr05 = ((3, 4), (2, 4, 5))
+    cxr06 = ((2, 4, 5), (1, 2, 3, 4))
+    cxr07 = ((2, 3, 4, 5, 6, 7), (2, 3, 4, 5, 6, 7))
 
 
 class Board:
@@ -75,6 +80,13 @@ class Board:
                 for y in range(*y_range):
                     if x == (-size // 2) or x == (size // 2) or y == (-size // 2) or y == (size // 2):
                         self[self.length // 2 + y][self.width // 2 + x] = 1
+        elif t == "f":  # Filled square
+            size = int(code[1:])
+            x_range = -size // 2, size // 2 + 1
+            y_range = -size // 2, size // 2 + 1
+            for x in range(*x_range):
+                for y in range(*y_range):
+                    self[self.length // 2 + y][self.width // 2 + x] = 1
         elif t == "b":  # Border
             for x in range(self.width):
                 self[0][x] = 1
@@ -88,13 +100,13 @@ class Board:
                 for i in range(size):
                     if self.length > y + i >= 0:
                         self[y][y+i] = 1
-                    if self.length > y - i - 1 >= -1:
+                    if self.length > y - i - 1 >= -2:
                         self[self.length - y - i - 1][y] = 1
 
 
-class LFrame:
+class DotFrame:
     """
-    An LFrame or "LerpFrame" uses basic linear interpolation to present
+    A DotFrame uses a simple dot product to present
     a unique perspective for a cellular automata
     """
 
@@ -102,13 +114,16 @@ class LFrame:
     surface = pygame.Surface((dot_size, dot_size))  # Reusable surface
     surface.fill((255, 255, 255))
 
-    def __init__(self, length, width, depth, rule=Rule.default, lerp=None, code="r"):
+    def __init__(self, length, width, depth, rule=Rule.default, dot=None, code="r"):
         self.depth = depth
-        if lerp is None:
-            self.lerp = [1 for _ in range(self.depth)]
+        if dot is None:
+            self.dot = [1 for _ in range(self.depth)]
+        elif len(dot) > depth:
+            self.dot = dot[:self.depth]
         else:
-            self.lerp = lerp[:self.depth]
-        self.span = sum(self.lerp)
+            self.dot = dot
+            self.depth = len(dot)
+        self.span = sum(self.dot)
 
         self.length = length
         self.width = width
@@ -126,8 +141,8 @@ class LFrame:
         return iter(self.boards)
 
     def draw(self, screen, color):
-        size = LFrame.dot_size
-        surf = LFrame.surface
+        size = DotFrame.dot_size
+        surf = DotFrame.surface
 
         def adj_color(n):
             return color[0] // (self.span - n + 1),\
@@ -147,5 +162,5 @@ class LFrame:
         out = Board(self.length, self.width)
         for x in range(self.width):
             for y in range(self.length):
-                out[y][x] = sum(board[y][x] * self.lerp[k] for k, board in enumerate(self))
+                out[y][x] = sum(board[y][x] * self.dot[k] for k, board in enumerate(self))
         return out
