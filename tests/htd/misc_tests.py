@@ -25,7 +25,8 @@ def init_test():
                 output[int(c)] += 1
         return output
 
-    s = Htd([Td(1), Td(1)], is_negative=True)
+    print(Td(1).base)
+    s = Htd(10, 3, [Td(1), Td(1)], is_negative=True)
 
     print(s)
     print(s + Td(1))
@@ -43,7 +44,7 @@ def init_test():
     print()
 
     print("powers of s")
-    p = Htd(Td(1))
+    p = Htd(10, 3, Td(1))
     for i in range(1, 8):
         p = p * s
         print(p)
@@ -63,8 +64,8 @@ def init_test():
 
 
 def htd_mod_test():
-    t = Htd(Td([1, 6, 3, 1]))
-    g = Htd(Td([1, 1]))
+    t = Htd(10, 3, Td([1, 6, 3, 1]))
+    g = Htd(10, 3, Td([1, 1]))
 
     print(t % g)
 
@@ -100,7 +101,7 @@ def exp_test_2():
 
 
 def convert_test():
-    e = Htd([Td(1), Td(1), Td(1)])
+    e = Htd(10, 3, [Td(1), Td(1), Td(1)])
 
     e = e.convert(hyperbase=6)
 
@@ -112,20 +113,20 @@ def convert_test():
 
 
 def ln_test():
-    e = Htd(Td(2))
+    e = Htd(10, 3, Td(2))
     print(e.ln(log=True))
 
 
 def log_test():
     t = Td(2)
 
-    e = Htd(t)
+    e = Htd(10, 3, t)
 
     print(e.logarithm(base=3))
 
 
 def root_test():
-    t = Htd(Td(2))
+    t = Htd(10, 3, Td(2))
 
     print(t.root(log=True))
 

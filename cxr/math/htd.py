@@ -351,15 +351,10 @@ def convert_td(num, base):
 
 
 class Htd:
-    def __init__(self, integer=None, mantissa=None, hyperbase=-1, implicit_base=-1, is_negative=False):
-        if hyperbase == -1:
-            self.hyperbase = default_hyperbase
-        elif not hyperbase >= 2:
-            raise ValueError(f"Hyperbase must be greater than or equal to 2, not {hyperbase}")
-        else:
-            self.hyperbase = hyperbase
+    def __init__(self, hyperbase, implicit_base, integer=None, mantissa=None, is_negative=False):
+        self.hyperbase = hyperbase
 
-        self.implicit_base = self.hyperbase if implicit_base == -1 else implicit_base
+        self.implicit_base = implicit_base
 
         if not integer:
             self.integer = Seq()
@@ -396,15 +391,6 @@ class Htd:
         else:
             raise ValueError(f"Invalid mantissa type {type(mantissa).__name__}; must be Td, list or Seq")
 
-        if self.implicit_base == -1:
-            self.implicit_base = self.mantissa.base()
-
-        if self.integer.base() == -1:
-            self.integer = Seq(Td.zero(self.implicit_base))
-
-        if self.integer.base() != self.mantissa.base():
-            raise ValueError(f"Base mismatch between integer and mantissa: {self.integer.base()} and {self.mantissa.base()}")
-
         self.implicit_zero = Td.zero(self.implicit_base)
         self.implicit_one = Td.one(self.implicit_base)
 
@@ -419,28 +405,31 @@ class Htd:
     def __add__(self, other):
         if isinstance(other, Td):
             if other < self.implicit_zero:
-                return self + Htd(-other, 0, self.hyperbase, is_negative=True)
+                return self + Htd(self.hyperbase, self.implicit_base, -other, 0, is_negative=True)
             else:
-                return self + Htd(other, 0, self.hyperbase)
+                return self + Htd(self.hyperbase, self.implicit_base, other, 0)
         elif isinstance(other, Htd):
             if self.is_negative:
                 if other.is_negative:
-                    return Htd(self.integer + other.integer, self.mantissa + other.mantissa, self.hyperbase, self.implicit_base,
-                               is_negative=True)
+                    return Htd(self.hyperbase, self.implicit_base, self.integer + other.integer,
+                               self.mantissa + other.mantissa, is_negative=True)
                 else:
                     if self.abs() > other:
-                        return Htd(self.integer - other.integer, self.mantissa - other.mantissa, self.hyperbase, self.implicit_base,
-                                   is_negative=True)
+                        return Htd(self.hyperbase, self.implicit_base, self.integer - other.integer,
+                                   self.mantissa - other.mantissa, is_negative=True)
                     else:
-                        return Htd(other.integer - self.integer, other.mantissa - self.mantissa, self.hyperbase, self.implicit_base,)
+                        return Htd(self.hyperbase, self.implicit_base, other.integer - self.integer,
+                                   other.mantissa - self.mantissa)
             elif other.is_negative:
                 if other.abs() > self:
-                    return Htd(other.integer - self.integer, other.mantissa - self.mantissa, self.hyperbase, self.implicit_base,
-                               is_negative=True)
+                    return Htd(self.hyperbase, self.implicit_base, other.integer - self.integer,
+                               other.mantissa - self.mantissa, is_negative=True)
                 else:
-                    return Htd(self.integer - other.integer, self.mantissa - other.mantissa, self.hyperbase, self.implicit_base)
+                    return Htd(self.hyperbase, self.implicit_base, self.integer - other.integer,
+                               self.mantissa - other.mantissa)
             else:
-                return Htd(self.integer + other.integer, self.mantissa + other.mantissa, self.hyperbase, self.implicit_base)
+                return Htd(self.hyperbase, self.implicit_base, self.integer + other.integer,
+                           self.mantissa + other.mantissa)
         else:
             return NotImplemented
 
@@ -457,7 +446,7 @@ class Htd:
 
     def __floordiv__(self, other):
         if isinstance(other, Td):
-            return self // Htd(other, 0, self.hyperbase, self.implicit_base)
+            return self // Htd(self.hyperbase, self.implicit_base, other, 0)
         elif isinstance(other, Htd):
             if other.hyperbase != self.hyperbase:
                 raise ValueError(f"Base mismatch: {self.hyperbase} and {other.hyperbase}")
@@ -480,7 +469,8 @@ class Htd:
                     tmp -= power
                     output[current_power] += self.implicit_one
 
-            return Htd(Seq(output), 0, tmp.hyperbase, tmp.implicit_base, is_negative=self.is_negative ^ other.is_negative)
+            return Htd(tmp.hyperbase, tmp.implicit_base, Seq(output), 0,
+                       is_negative=self.is_negative ^ other.is_negative)
 
         else:
             return NotImplemented
@@ -549,7 +539,7 @@ class Htd:
 
     def __mod__(self, other):
         if isinstance(other, Td):
-            return self % Htd(other, 0, self.hyperbase, self.implicit_base)
+            return self % Htd(self.hyperbase, self.implicit_base, other, 0)
         elif isinstance(other, Htd):
             if other.hyperbase != self.hyperbase:
                 raise ValueError(f"Base mismatch: {self.hyperbase} and {other.hyperbase}")
@@ -582,24 +572,25 @@ class Htd:
             return Seq([self.implicit_zero for _ in range(desired_length - len(mantissa))]).concat(mantissa)
 
         def split_into_parts(d, mantissa_point, is_negative):
-            return Htd(d.seq[:len(d) - mantissa_point], d.seq[len(d) - mantissa_point:], self.hyperbase,
-                       self.implicit_base, is_negative)
+            return Htd(self.hyperbase, self.implicit_base, d.seq[:len(d) - mantissa_point],
+                       d.seq[len(d) - mantissa_point:], is_negative)
 
         if isinstance(other, Td):
             if other == self.implicit_zero:
-                return Htd(self.implicit_zero, 0, self.hyperbase, self.implicit_base)
+                return Htd(self.hyperbase, self.implicit_base, self.implicit_zero, 0)
             elif other.is_negative:
-                return Htd(self.integer * -other, self.mantissa * -other, self.hyperbase, self.implicit_base,
+                return Htd(self.hyperbase, self.implicit_base, self.integer * -other, self.mantissa * -other,
                            is_negative=not self.is_negative)
             else:
-                return Htd(self.integer * other, self.mantissa * other, self.hyperbase, self.implicit_base, is_negative=self.is_negative)
+                return Htd(self.hyperbase, self.implicit_base, self.integer * other, self.mantissa * other,
+                           is_negative=self.is_negative)
         elif isinstance(other, Htd):
             if self.hyperbase != other.hyperbase:
                 raise ValueError(f"Base mismatch for Htd numbers: {self.hyperbase} and {other.hyperbase}")
 
-            if other == Htd(self.implicit_one, 0, self.hyperbase, self.implicit_base):
+            if other == Htd(self.hyperbase, self.implicit_base, self.implicit_one, 0):
                 return self
-            elif other == Htd(self.implicit_one, 0, self.hyperbase, self.implicit_base, is_negative=True):
+            elif other == Htd(self.hyperbase, self.implicit_base, self.implicit_one, 0, is_negative=True):
                 return self.negative()
 
             # Mantissa lengths
@@ -613,10 +604,10 @@ class Htd:
             pt_4 = self.mantissa * other.mantissa
 
             # Construct tridozenal representations of parts
-            duo_1 = Htd(pt_1, 0, self.hyperbase, self.implicit_base, is_negative=self.is_negative ^ other.is_negative)
+            duo_1 = Htd(self.hyperbase, self.implicit_base, pt_1, 0, is_negative=self.is_negative ^ other.is_negative)
             duo_2 = split_into_parts(pt_2, o_m, self.is_negative ^ other.is_negative)
             duo_3 = split_into_parts(pt_3, s_m, self.is_negative ^ other.is_negative)
-            duo_4 = Htd(0, pad_mantissa(pt_4, s_m + o_m), self.hyperbase, self.implicit_base,
+            duo_4 = Htd(self.hyperbase, self.implicit_base, 0, pad_mantissa(pt_4, s_m + o_m),
                         is_negative=self.is_negative ^ other.is_negative)
 
             # Put it all together
@@ -637,27 +628,12 @@ class Htd:
             elif power == 1:
                 return self
 
-            out = Htd(self.integer, self.mantissa, self.hyperbase, self.implicit_base, is_negative=self.is_negative)
+            out = Htd(self.hyperbase, self.implicit_base, self.integer, self.mantissa, is_negative=self.is_negative)
             for p in range(1, power):
                 out *= self
             return out
         else:
             return NotImplemented
-
-        # elif isinstance(power, Htd):
-        #     if log_power:
-        #         print("Computing Htd power (takes a little while)")
-        #         print("(1/3) Computing natural log of self...")
-        #     ln_self = self.ln(place=max(len(self.mantissa), round_to), log=log_power, perfect=True)
-        #     if log_power:
-        #         print("(2/3) Multiplying natural log by power...")
-        #     prod = ln_self * power
-        #     if log_power:
-        #         print("(3/3) Getting exponential function of product...")
-        #     exp_prod = Htd.exp(self.base, prod, place=max(len(prod.mantissa), round_to), log=log_power, perfect=True)
-        #     if log_power:
-        #         print("Result computed.")
-        #     return exp_prod
 
     def __radd__(self, other):
         return self + other
@@ -698,9 +674,9 @@ class Htd:
     def __sub__(self, other):
         if isinstance(other, Td):
             if other.is_negative:
-                return self + Htd(other, 0, self.hyperbase, self.implicit_base)
+                return self + Htd(self.hyperbase, self.implicit_base, other, 0)
             else:
-                return self - Htd(other, 0, self.hyperbase, self.implicit_base)
+                return self - Htd(self.hyperbase, self.implicit_base, other, 0)
         elif isinstance(other, Htd):
             return self + other.negative()
         else:
@@ -713,15 +689,15 @@ class Htd:
             if other == self.implicit_one:
                 return self
             elif other < self.implicit_zero:
-                return self / Htd(-other, 0, self.hyperbase, self.implicit_base, is_negative=True)
+                return self / Htd(self.hyperbase, self.implicit_base, -other, 0, is_negative=True)
             elif other > self.implicit_zero:
-                return self / Htd(other, 0, self.hyperbase, self.implicit_base)
+                return self / Htd(self.hyperbase, self.implicit_base, other, 0)
         elif isinstance(other, Htd):
-            if other == Htd(self.implicit_one, 0, self.hyperbase, self.implicit_base):
+            if other == Htd(self.hyperbase, self.implicit_base, self.implicit_one, 0):
                 return self
-            elif other == Htd(self.implicit_one, 0, self.hyperbase, self.implicit_base, is_negative=True):
+            elif other == Htd(self.hyperbase, self.implicit_base, self.implicit_one, 0, is_negative=True):
                 return self.negative()
-            elif other.abs() == Htd(self.implicit_zero, 0, self.hyperbase, self.implicit_base):
+            elif other.abs() == Htd(self.hyperbase, self.implicit_base, self.implicit_zero, 0):
                 raise ValueError("Division by zero error")
             else:
                 # The heavy lifting is done by computing the multiplicative inverse
@@ -731,11 +707,7 @@ class Htd:
             return NotImplemented
 
     @staticmethod
-    def get_from_string(s, hyperbase=-1, implicit_base=-1, sep=None, mantissa_pt=None):
-        if hyperbase == -1:
-            hyperbase = default_hyperbase
-        if implicit_base == -1:
-            implicit_base = base36.default_base
+    def get_from_string(s, hyperbase, implicit_base, sep=None, mantissa_pt=None):
         if not sep:
             sep = default_sep
         if not mantissa_pt:
@@ -755,10 +727,10 @@ class Htd:
             int_output = read(s)
             man_output = []
 
-        return Htd(int_output, man_output, hyperbase=hyperbase, implicit_base=implicit_base)
+        return Htd(hyperbase=hyperbase, implicit_base=implicit_base, integer=int_output, mantissa=man_output)
 
     @staticmethod
-    def encode(s, hyperbase=-1, implicit_base=-1, sep=None):
+    def encode(s, hyperbase, implicit_base, sep=None):
         """
         Convert a string into a sequence of Htds
 
@@ -768,21 +740,17 @@ class Htd:
         :param sep: hypernumber separator
         :return: string representation of the sequence of Htds
         """
-        if hyperbase == -1:
-            hyperbase = default_hyperbase
-        if implicit_base == -1:
-            implicit_base = base36.default_base
         if not sep:
             sep = default_encryption_sep
 
-        out = [Htd(Td(ord(e), base=implicit_base), hyperbase=hyperbase, implicit_base=implicit_base) for e in s]
+        out = [Htd(hyperbase=hyperbase, implicit_base=implicit_base, integer=Td(ord(e), base=implicit_base)) for e in s]
 
         out = sep.join([str(e) for e in out])
 
         return out
 
     @staticmethod
-    def decode(s, hyperbase=-1, implicit_base=-1, sep=None):
+    def decode(s, hyperbase, implicit_base, sep=None):
         """
         Decode an encoded Htd string
 
@@ -792,10 +760,6 @@ class Htd:
         :param sep: hypernumber separator
         :return: the decoded string
         """
-        if hyperbase == -1:
-            hyperbase = default_hyperbase
-        if implicit_base == -1:
-            implicit_base = base36.default_base
         if not sep:
             sep = default_encryption_sep
 
@@ -835,7 +799,8 @@ class Htd:
         l0 = len(implicit_bases)
         l1 = len(hyperbases)
 
-        out = [Htd(Td(ord(s[i]), base=implicit_bases[i % l0]), hyperbase=hyperbases[i % l1], implicit_base=implicit_bases[i % l0]) for i in range(len(s))]
+        out = [Htd(hyperbase=hyperbases[i % l1], implicit_base=implicit_bases[i % l0],
+                   integer=Td(ord(s[i]), base=implicit_bases[i % l0])) for i in range(len(s))]
         out = sep.join([str(e) for e in out])
 
         return out
@@ -874,19 +839,15 @@ class Htd:
         return out
 
     @staticmethod
-    def zero(hyperbase=-1, implicit_base=-1):
-        if hyperbase == -1:
-            hyperbase = default_hyperbase
-        return Htd(Td.zero(implicit_base), 0, hyperbase, implicit_base)
+    def zero(hyperbase, implicit_base):
+        return Htd(hyperbase, implicit_base, Td.zero(implicit_base), 0)
 
     @staticmethod
-    def one(hyperbase=-1, implicit_base=-1):
-        if hyperbase == -1:
-            hyperbase = default_hyperbase
-        return Htd(Td.one(implicit_base), 0, hyperbase, implicit_base)
+    def one(hyperbase, implicit_base):
+        return Htd(hyperbase, implicit_base, Td.one(implicit_base), 0)
 
     @staticmethod
-    def exp(hyperbase=-1, implicit_base=-1, power=1, iterations=100, place=-1, log=False, perfect=False):
+    def exp(hyperbase, implicit_base, power=1, iterations=100, place=-1, log=False, perfect=False):
         """
         Get the result of the exponential function e^x
         :param hyperbase: The base of the number
@@ -896,10 +857,6 @@ class Htd:
         :param log: Whether the log messages will be printed
         :param perfect: Whether to iterate until the mantissa is fully computed (can be slow!)
         """
-        if hyperbase == -1:
-            hyperbase = default_hyperbase
-        if implicit_base == -1:
-            implicit_base = base36.default_base
         if place == -1:
             place = round_to
 
@@ -910,16 +867,16 @@ class Htd:
         prev_out = None
 
         if isinstance(power, int):
-            power = Htd(Td(power, 0, implicit_base), 0, hyperbase, implicit_base)
+            power = Htd(hyperbase, implicit_base, Td(power, 0, implicit_base), 0)
         elif isinstance(power, Td):
-            power = Htd(power, 0, hyperbase, implicit_base)
+            power = Htd(hyperbase, implicit_base, power, 0)
         power_of_power = one
 
         n = 1
         while n < iterations or perfect:
             prev_prev_out = prev_out
             prev_out = out
-            factorial *= Htd(Td(n, 0, implicit_base), 0, hyperbase, implicit_base)
+            factorial *= Htd(hyperbase, implicit_base, Td(n, 0, implicit_base), 0)
             power_of_power *= power
             power_of_power.round(place + 2)
             out += power_of_power / factorial
@@ -936,7 +893,7 @@ class Htd:
         return out
 
     @staticmethod
-    def pi(hyperbase=-1, implicit_base=-1, iterations=25, place=-1, log=False, perfect=False):
+    def pi(hyperbase, implicit_base, iterations=25, place=-1, log=False, perfect=False):
         """
         Compute pi in the base of your choice
         :param hyperbase: The base of the number
@@ -945,23 +902,19 @@ class Htd:
         :param log: Whether the log messages will be printed
         :param perfect: Whether to iterate until the mantissa is fully computed (can be slow!)
         """
-        if hyperbase == -1:
-            hyperbase = default_hyperbase
-        if implicit_base == -1:
-            implicit_base = base36.default_base
         if place == -1:
             place = round_to
 
         if log:
             print(f"Computing pi in base {hyperbase} to {place} places")
 
-        one = Htd(Td(1, 0, implicit_base), 0, hyperbase, implicit_base)
-        two = Htd(Td(2, 0, implicit_base), 0, hyperbase, implicit_base)
-        four = Htd(Td(4, 0, implicit_base), 0, hyperbase, implicit_base)
-        five = Htd(Td(5, 0, implicit_base), 0, hyperbase, implicit_base)
-        six = Htd(Td(6, 0, implicit_base), 0, hyperbase, implicit_base)
-        eight = Htd(Td(8, 0, implicit_base), 0, hyperbase, implicit_base)
-        sixteen = Htd(Td(16, 0, implicit_base), 0, hyperbase, implicit_base)
+        one = Htd(hyperbase, implicit_base, Td(1, 0, implicit_base), 0)
+        two = Htd(hyperbase, implicit_base, Td(2, 0, implicit_base), 0)
+        four = Htd(hyperbase, implicit_base, Td(4, 0, implicit_base), 0)
+        five = Htd(hyperbase, implicit_base, Td(5, 0, implicit_base), 0)
+        six = Htd(hyperbase, implicit_base, Td(6, 0, implicit_base), 0)
+        eight = Htd(hyperbase, implicit_base, Td(8, 0, implicit_base), 0)
+        sixteen = Htd(hyperbase, implicit_base, Td(16, 0, implicit_base), 0)
 
         pi = Htd.zero(hyperbase, implicit_base)
 
@@ -971,7 +924,7 @@ class Htd:
 
         k = 0
         while k < iterations or perfect:
-            k_td = Htd(Td(k, 0, implicit_base), 0, hyperbase, implicit_base)
+            k_td = Htd(hyperbase, implicit_base, Td(k, 0, implicit_base), 0)
             eight_times_k_td = eight * k_td
             to_add_1 = one / power_of_sixteen
 
@@ -1002,19 +955,17 @@ class Htd:
         return pi
 
     def abs(self):
-        return Htd(self.integer, self.mantissa, self.hyperbase, self.implicit_base)
+        return Htd(self.hyperbase, self.implicit_base, self.integer, self.mantissa)
 
-    def convert(self, hyperbase=-1):
+    def convert(self, hyperbase):
         """
         Convert a number without a mantissa to another base
         """
-        if hyperbase == -1:
-            hyperbase = default_hyperbase
 
         if not hyperbase >= 2:
             raise ValueError(f"Base must be greater than or equal to 2, not {hyperbase}")
 
-        td0 = Htd(Td(hyperbase, 0, self.implicit_base), 0, self.hyperbase, self.implicit_base)
+        td0 = Htd(self.hyperbase, self.implicit_base, Td(hyperbase, 0, self.implicit_base), 0)
         number = self.abs()
 
         output = []
@@ -1033,14 +984,14 @@ class Htd:
             output.append(_sum)
             number = number // td0
 
-        return Htd(output[::-1], 0, hyperbase, self.implicit_base, is_negative=self.is_negative)
+        return Htd(hyperbase, self.implicit_base, output[::-1], 0, is_negative=self.is_negative)
 
     def divide_by(self, other, place=-1):
         if place == -1:
             place = round_to
 
         if isinstance(other, Td):
-            other = Htd(other.abs(), 0, self.hyperbase,  self.implicit_base, is_negative=other.is_negative)
+            other = Htd(self.hyperbase, self.implicit_base, other.abs(), 0, is_negative=other.is_negative)
             return self.divide_by(other, place)
         elif isinstance(other, Htd):
             out = self * other.multiplicative_inverse(place=place)
@@ -1104,10 +1055,10 @@ class Htd:
         # Setting log to True helps it show that the program isn't hanging, just slow since it computes TWO natural logs
         if isinstance(base, int):
             return self.ln(num_iterations, place, log, perfect).divide_by(
-                Htd(Td(base, 0, self.implicit_base), 0, self.hyperbase, self.implicit_base).ln(num_iterations, place, log, perfect), place=place)
+                Htd(self.hyperbase, self.implicit_base, Td(base, 0, self.implicit_base), 0).ln(num_iterations, place, log, perfect), place=place)
         elif isinstance(base, Td):
             return self.ln(num_iterations, place, log, perfect).divide_by(
-                Htd(base, 0, self.hyperbase, self.implicit_base).ln(num_iterations, place, log, perfect), place=place)
+                Htd(self.hyperbase, self.implicit_base, base, 0).ln(num_iterations, place, log, perfect), place=place)
         elif isinstance(base, Htd):
             return self.ln(num_iterations, place, log, perfect).divide_by(base.ln(num_iterations, place, log, perfect), place=place)
         else:
@@ -1149,38 +1100,30 @@ class Htd:
             if is_greater(adjusted_one, im_combo):
                 # Perform a subtraction from the dividend
                 adjusted_one -= im_combo
-                adjusted_one = Htd(adjusted_one, 0, self.hyperbase, self.implicit_base).integer
+                adjusted_one = Htd(self.hyperbase, self.implicit_base, adjusted_one, 0).integer
                 output[g-1] += 1
             else:
                 # Extend the dividend
                 adjusted_one = Seq(self.implicit_zero).concat(adjusted_one)
                 g += 1
 
-        return Htd(output[:len(self.mantissa)][::-1], output[len(self.mantissa):], self.hyperbase, self.implicit_base,
+        return Htd(self.hyperbase, self.implicit_base, output[:len(self.mantissa)][::-1], output[len(self.mantissa):],
                    self.is_negative)
 
     def negative(self):
-        return Htd(self.integer, self.mantissa, self.hyperbase, self.implicit_base, is_negative=not self.is_negative)
+        return Htd(self.hyperbase, self.implicit_base, self.integer, self.mantissa, is_negative=not self.is_negative)
 
-    def rebase(self, hyperbase=-1):
-        if hyperbase == -1:
-            hyperbase = default_hyperbase
+    def rebase(self, hyperbase):
 
-        return Htd(self.integer, self.mantissa, hyperbase, self.implicit_base, is_negative=self.is_negative)
+        return Htd(hyperbase, self.implicit_base, self.integer, self.mantissa, is_negative=self.is_negative)
 
-    def implicit_rebase(self, implicit_base=-1):
-        if implicit_base == -1:
-            implicit_base = base36.default_base
+    def implicit_rebase(self, implicit_base):
+        return Htd(self.hyperbase, self.implicit_base, [e.rebase(implicit_base) for e in self.integer],
+                   [e.rebase(implicit_base) for e in self.mantissa])
 
-        return Htd([e.rebase(implicit_base) for e in self.integer], [e.rebase(implicit_base) for e in self.mantissa],
-                   self.hyperbase, self.implicit_base)
-
-    def implicit_convert(self, implicit_base=-1):
-        if implicit_base == -1:
-            implicit_base = base36.default_base
-
-        return Htd([e.convert(implicit_base) for e in self.integer], [e.convert(implicit_base) for e in self.mantissa],
-                   self.hyperbase, self.implicit_base,)
+    def implicit_convert(self, implicit_base):
+        return Htd(self.hyperbase, self.implicit_base, [e.convert(implicit_base) for e in self.integer],
+                   [e.convert(implicit_base) for e in self.mantissa])
 
     def __resolve(self):
         """
