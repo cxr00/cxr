@@ -68,12 +68,12 @@ class NeuronPanel(StateManager):
         self.initialize()
 
     def initialize(self):
-        self.add_nonser("neuron", None)
-        self.add_nonser("player", None)
-        self.add_nonser("tooltip", None)
-        self.add_nonser("current_tooltip", None)
+        self.nonser("neuron", None)
+        self.nonser("player", None)
+        self.nonser("tooltip", None)
+        self.nonser("current_tooltip", None)
 
-        self.add_nonser("buttons", [])
+        self.nonser("buttons", [])
 
         self.buttons.append(Button("soma", (160, 400)))
 

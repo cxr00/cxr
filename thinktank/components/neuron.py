@@ -61,23 +61,23 @@ class Neuron(StateManager):
         self["synapse"] = NeuronPart("synapse", self.terminal)
 
     def _initialize_nonser(self):
-        self.add_nonser("soma_cost", Td.zero())
-        self.add_nonser("soma_growth_rate", Td.zero())
-        self.add_nonser("soma_growth_point", Td(1000))
-        self.add_nonser("membrane_cost", Td.zero())
-        self.add_nonser("dendrites_cost", Td.zero())
-        self.add_nonser("hilcock_cost", Td.zero())
-        self.add_nonser("axon_cost", Td.zero())
-        self.add_nonser("terminal_cost", Td.zero())
-        self.add_nonser("ranvier_cost", Td.zero())
-        self.add_nonser("sheath_cost", Td.zero())
-        self.add_nonser("synapse_cost", Td.zero())
-        self.add_nonser("degeneration_reduction", Td.zero())
-        self.add_nonser("regeneration_rate", Td(2) * (1 + self.ranvier.level / Td(10)))
+        self.nonser("soma_cost", Td.zero())
+        self.nonser("soma_growth_rate", Td.zero())
+        self.nonser("soma_growth_point", Td(1000))
+        self.nonser("membrane_cost", Td.zero())
+        self.nonser("dendrites_cost", Td.zero())
+        self.nonser("hilcock_cost", Td.zero())
+        self.nonser("axon_cost", Td.zero())
+        self.nonser("terminal_cost", Td.zero())
+        self.nonser("ranvier_cost", Td.zero())
+        self.nonser("sheath_cost", Td.zero())
+        self.nonser("synapse_cost", Td.zero())
+        self.nonser("degeneration_reduction", Td.zero())
+        self.nonser("regeneration_rate", Td(2) * (1 + self.ranvier.level / Td(10)))
 
-        self.add_nonser("brain_production_rate", Td.zero())
+        self.nonser("brain_production_rate", Td.zero())
 
-        self.add_nonser("player", None)
+        self.nonser("player", None)
 
     def initialize(self):
         self._initialize_ser()

@@ -33,8 +33,8 @@ class Tank(StateManager):
 
     def initialize(self):
 
-        self.add_nonser("pods", [])
-        self.add_nonser("neuron_panel", None)
+        self.nonser("pods", [])
+        self.nonser("neuron_panel", None)
 
         self.pods.append(Pod((100, 200)))
         self.pods.append(Pod((150, 200)))

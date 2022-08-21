@@ -29,10 +29,14 @@ class StateData:
             raise KeyError(f"{self.parent.name}({self.parent.key}) StateData has no element {item}")
 
     def __setitem__(self, key, value):
-        if key in self._ser:
-            self._ser[key] = value
-        else:
+        """
+        By default new keys are serializable. Use SM.add_nonser(key, value) to initialize
+        then SM[key] = value will work as intended.
+        """
+        if key in self._nonser:
             self._nonser[key] = value
+        else:
+            self._ser[key] = value
 
     def __str__(self):
         output = {}
@@ -175,7 +179,7 @@ class StateManager:
         Execute the controller function
         """
         if not self._controller:
-            raise ValueError(f"No controller is specified for {self.name} StateManager {self.key}")
+            raise ValueError(f"No controller is specified for {self.name} StateManager ({self.key})")
         self._controller(event)
 
     def check(self, f):
@@ -184,13 +188,17 @@ class StateManager:
         """
         self._checks.append(f)
 
-    def add_nonser(self, key, value=None):
+    def ser(self, key, value=None):
         """
         Add a nonserializable parameter to the StateData
         """
-        if key in self.data._ser:
-            raise KeyError(f"Cannot add {key} to {self.name}({self.key}) nonserializables, as it is already present in serializable")
-        self.data._nonser[key] = value
+        self.data.ser(key, value)
+
+    def nonser(self, key, value=None):
+        """
+        Add a nonserializable parameter to the StateData
+        """
+        self.data.nonser(key, value)
 
     def qoid(self):
         b = Bill(self.name)
@@ -262,36 +270,6 @@ class StateManager:
             del StateManager._reference[item]
         else:
             raise KeyError(f"Delete failed: Can only delete by string or StateManager, not {(type(item))}")
-
-    @staticmethod
-    def find_by_attribute(attr, value):
-        """
-        Find all StateManagers with attributes matching the given value
-        """
-        output = []
-        for k, v in StateManager._reference.items():
-            if attr == "name":
-                if value == v.name:
-                    output.append(v)
-            elif attr in v.data:
-                if value == v[attr]:
-                    output.append(v)
-        return output
-
-    @staticmethod
-    def find_by_function(attr, f):
-        """
-        Find attributes which return True when evaluated by the given function
-        """
-        output = []
-        for k, v in StateManager._reference.items():
-            if attr == "name":
-                if f(v.name):
-                    output.append(v)
-            elif attr in v.data:
-                if f(attr):
-                    output.append(v)
-        return output
 
     @staticmethod
     def generate_key(length=5):
@@ -549,6 +527,30 @@ class StateManagerReference:
         Get the CXRNode located at the given path
         """
         return StateManagerReference.frame.get(path)
+
+    @staticmethod
+    def find_by_attribute(path, attr, value):
+        """
+        Find all StateManagers with attributes matching the given value
+        """
+        output = []
+        for v in StateManagerReference.get(path):
+            if attr in v.data:
+                if value == v[attr]:
+                    output.append(v)
+        return output
+
+    @staticmethod
+    def find_by_function(path, attr, f):
+        """
+        Find attributes which return True when evaluated by the given function
+        """
+        output = []
+        for v in StateManagerReference.get(path):
+            if attr in v.data:
+                if f(v[attr]):
+                    output.append(v)
+        return output
 
     @staticmethod
     def save(path, *params):

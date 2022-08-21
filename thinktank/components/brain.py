@@ -21,9 +21,9 @@ class Brain(StateManager):
         self["philosophy"] = Td(11) / Td(10)
 
     def _initialize_nonser(self):
-        self.add_nonser("player", None)
-        self.add_nonser("neuron", StateManager.generate("neuron", Neuron, self.key + "_neuron"))
-        self.add_nonser("timer", Td(120))
+        self.nonser("player", None)
+        self.nonser("neuron", StateManager.generate("neuron", Neuron, self.key + "_neuron"))
+        self.nonser("timer", Td(120))
 
     def initialize(self):
         self._initialize_ser()

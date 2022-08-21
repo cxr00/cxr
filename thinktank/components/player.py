@@ -20,9 +20,9 @@ class Player(StateManager):
         self["credit_rate"] = Td(1) / Td(30)
 
     def _initialize_nonser(self):
-        self.add_nonser("average_timer", 0)
-        self.add_nonser("gains", [Td.zero() for _ in range(5)])
-        self.add_nonser("averages", [Td.zero() for _ in range(5)])
+        self.nonser("average_timer", 0)
+        self.nonser("gains", [Td.zero() for _ in range(5)])
+        self.nonser("averages", [Td.zero() for _ in range(5)])
 
     def initialize(self):
         self._initialize_ser()

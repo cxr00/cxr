@@ -1,1 +1,4 @@
-from cxr.state.state import StateManager as SM, StateManagerReference as SMR
+from cxr.state.state import StateManager, StateManagerReference
+
+SM = StateManager
+SMR = StateManagerReference

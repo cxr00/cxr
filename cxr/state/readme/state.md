@@ -6,22 +6,31 @@ StateManagers abstract away the assignment and execution of  **state** functions
 
 The data contained in StateManager objects serializes to Qoid. It is highly recommended that you are familiar with Qoid syntax if you want to make full use of serialization.
 
+### Overview
+
+Classes encapsulated in parens `()` do not need to be interacted with except by contributing developers. However, parenthetical classes are basically feature complete so no further developer interaction should be necessary.
+
+```
+(Qoid -> StateData) -> StateManager -> StateManagerReference <- (CXRNode <- dag.Node)
+```
+
 ### Creating a player controller with StateManager
 
 Let's start by generating a StateManager object for a player:
 
 ```python
-from cxr.state.state import StateManager, StateManagerReference
+from cxr.state.state import StateManager as SM
+from cxr.state.state import StateManagerReference as SMR
 import pygame
 
 # This is required at the beginning
 # Don't worry about what it does for now, just know that it is necessary
-StateManagerReference.initialize()
+SMR.initialize("root")
 
-player = StateManager.generate("player")
+player = SM.generate("player", key="player1")
 ```
 
-We use `generate` with a name parameter to create a StateManager with a unique key and the name player. Each StateManager has a unique key because there is a global reference of all StateManagers that currently exist.
+We use `generate` with a name parameter to create a StateManager with a unique key and the name player. Each StateManager has a unique key because there is a global reference of all StateManagers that currently exist. This key is generated randomly, but you should give it a specific one with `key=value`, especially if you are planning on saving & loading.
 
 We now need to set a controller. To do this, we user the `controller` decorator on a function with a single argument `event`. We configure this controller to respond to the four arrow keys:
 
@@ -44,7 +53,7 @@ def player_controller(event):
         exit(0)
 ```
 
-We use `change_state` to tell the StateManager to change which state will be activated during the game loop. 
+We use `change_state` to tell the StateManager to change which state will be activated during the game loop. In this case, the event is a pygame event, but you can substitute it for anything - a class, a tuple, a dict. The only condition is that the controller (as well as states and checks) must have exactly one argument.
 
 Next, let's create our four state functions and add them to the player using the `add_state` decorator:
 
@@ -85,7 +94,7 @@ def player_check(event):
     pass
 ```
 
-When executing calls, checks are performed *after* the controller function, in the order they were added. In many cases a controller will be enough, but checks are there to help organize your code.
+When executing calls, checks are performed *after* the controller and state functions, in the order they were added. In many cases a controller should be enough, but checks are there to help organize your code.
 
 Now that we have built a player StateManager, we can put it into action. First, we'll write some boilerplate pygame code:
 
@@ -102,11 +111,10 @@ Finally, we can create the core game loop:
 ```python
 while True:
     # Guarantee at least one event
+    pygame.event.post(pygame.event.Event(pygame.USEREVENT))
     events = pygame.event.get()
-    if not events:
-        events = [pygame.event.Event(pygame.USEREVENT)]
     for event in events:
-        for sm in StateManager.all():
+        for sm in SM.all():
             sm(event)
     pygame.display.update()
     pygame.time.wait(17)  # 60 FPS
@@ -115,8 +123,6 @@ while True:
 When run, the console will print up, down, left, or right when you press an arrow key.
 
 We iterate over all the pygame events, then over `StateManager.all()`, which is a list of all created StateManagers (in this case, just our player).  StateManagers can be called like functions, so within the inner loop we call the StateManager with the event as an argument, which then decides what to do according to current state.
-
-It's important to note that as you expand your game with new StateManagers, the event loop will stay quite small, since `StateManager.all` does the heavy lifting.
 
 ### Setting and getting StateData
 
@@ -127,19 +133,22 @@ player["height"] = 72
 print(player["height"])
 ```
 
-Data can also be accessed via `__getattr__`, but CANNOT be set with `__setattr__`:
+Data can also be accessed via `__getattr__`, **but CANNOT be set with** `__setattr__`:
 
 ```python
 print(player.height)
 
-player.height = 20  # Does not work
+player.height = 20  # THIS DOES NOT WORK
 ```
+
+The reason for this is due to the way StateData access is implemented. Unfortunately, attempting to add a `__setattr__` override causes a `RecursionError`.
 
 In general, when assigning values to the StateData, it will automatically determine if the value is serializable or not. However, if you want to specifically add an attribute as nonserializable, use `add_nonser`:
 
 ```python
-player.add_nonser("weight", 167)
+player.nonser("weight", 167)
 ```
+
 
 ### StateManager static methods
 
@@ -151,12 +160,121 @@ In addition to a global reference, StateManager comes equipped with a variety of
 
 `delete` - Delete an SM by reference or key
 
-`find_by_attribute` - Find all SMs which have the given attribute matching the given value
-
-`find_by_function` - Find all SMs where the given attribute returns True when evaluated by a function
-
 `generate_key` - Generate a unique key for an SM. This is automatically called by `generate`
 
 `generate` - Create a new StateManager at the given location
 
 `reset` - Clear the global SM reference
+
+### Custom extensions of StateManager
+
+If your desired StateManager object has its own class, then you can submit the class as a parameter of `StateManager.generate`:
+
+```python
+player = StateManager.generate("player", Player, "player1")
+```
+
+Notice the inclusion of a tertiary argument `"player1"`. This is the *key* assigned to a particular StateManager which is otherwise randomly generated. This allows quick access to the player SM via `StateManager.get("player1")`.
+
+### StateManagerReference
+
+`StateManagerReference` is the utility class for accessing groups of related StateManagers in a file-like way. We start by initializing the SMR at the desired location:
+
+```python
+SMR.initialize("your\\location")
+```
+
+**The initialization via SMR requires use of backslashes for pathing, BUT `SM.generate` requires forward slashes!**
+
+Within that directory you can generate StateManager instances, either directly within that folder or within subfolders that can be quickly defined:
+
+```python
+sm0 = SM.generate("player", Player, "player1")  # Creates file at your\location\player.cxr
+sm1 = SM.generate("enemies/beetle", Beetle, "beetle0")  # Creates file at your\location\enemies\beetle.cxr
+sm2 = SM.generate("enemies/beetle", Beetle, "beetle1")  # Stored in the same place as sm1
+```
+
+Any SM created using `SM.generate` is automatically indexed by SMR. If you had multiple players, for example, you could get them all via `SMR.get("player")`.
+
+```python
+for beetle in SMR.get("enemies/beetle"):  # Iterate over all Beetle instances
+    pass
+```
+
+Besides `initialize` and `get`, there are only two other functions that the average user will need, being `save` and `load`. Both of these methods have **optional parameter saving**, where only the specified tags are updated. The default behavior is to save or load *all* attributes.
+
+```python
+SMR.load("player")  # Loads all attributes of each player within the reference
+SMR.save("enemies/beetle", "hp", "def")  # Saves only hp and def attributes of each Beetle in the reference
+```
+
+The remaining functions are not necessary for normal operation, but you are free to look at their documentation.
+
+It's important to note that as you expand your game with new StateManagers, the event loop will stay quite small, since `StateManager.all` does the heavy lifting. However, realize that this game loop is submitting *all* events to *every* StateManager. It is more likely that you will divide this up to keep the time complexity from reaching `O(n**2)`:
+
+```python
+import pygame.event
+
+for event in events:
+    if event.type == pygame.KEYDOWN:
+        for sm in SMR.get("player"):
+            sm(event)
+    elif event.type == TICK:  # Custom event made with pygame.event.custom_type()
+        for sm in SMR.get("player"):
+            sm(event)
+        for sm in SMR.get("enemies/beetle"):
+            sm(event)
+```
+
+This structure ensures that only the Player instance processes KEYDOWN events, while TICK events are processed by the Player and by all existing Beetles. **IN GENERAL, it is a good idea to define a custom TICK event and use it for all NPC and environmental StateManagers.**
+
+### find_by functions
+
+SMR contains two powerful functions which enable a deeper search at a particular location. They are called `find_by_attribute` and `find_by_function`. I'll illustrate with a simple example; Let's say that you want to check for Beetle instances whose `status_condition` is poison. We can iterate over just those Beetle instances like so:
+
+```python
+for beetle in SMR.find_by_attribute("enemies/beetle", "status_condition", "PSN"):
+    beetle.take_damage(2)
+```
+
+We can take this a step further using `find_by_function`. Instead of simply looking for a matching attribute, we specify a function with lambda syntax and iterate through that:
+
+```python
+for beetle in SMR.find_by_function("enemies/beetle", "status_condition", lambda x: x != "NORMAL"):
+    if beetle.status_condition == "PSN":
+        beetle.take_damage(2)
+        beetle["status_timer"] -= 1
+        if beetle.status_timer <= 0:
+            beetle["status_condition"] = "NORMAL"
+    elif beetle.status_condition == "BRN":
+        beetle.take_damage(3)
+        beetle["attack"] -= 1
+        beetle["status_timer"] -= 1
+        if beetle.status_timer <= 0:
+            beetle["status_condition"] = "NORMAL"
+            beetle["attack"] += 2
+```
+
+We've endowed this loop with more complex behavior; It searches for all instances of abnormal status among beetles and performs actions accordingly. If poisoned, it simply takes damage, but a burn causes damage and decreases attack. In both cases a check is performed on the `status_timer` attribute to determine if its status goes back to normal.
+
+It's up to you to decide where this functionality best fits - personally, I would elect to perform this as a `check` for some environment StateManager.
+
+### Serialization with Qoid
+
+Qoid is a simple markup language optimized for handling primitive types in Python. This means any int, str, tuple, list, and dict is serializable. You also have the option of storing the results of `__repr__` for your own class so they can be reconstructed on the fly.
+
+Qoid syntax is very easy to grasp:
+
+```
+/ The entire file is called a Bill
+/ Comments are indicated with a forward slash
+/ Property -> Qoid -> Bill -> Register (unused)
+
+#Qoid
+Property: Value
+Property: Value
+```
+
+When working with any object in Qoid, using the `inst.get(tag)` function will return the *first* occurrence of the given tag; Use `inst.all_of(tag)` to get every occurrence of a Qoid tag. The same goes for instances of Qoid within a Bill.
+
+Qoid has a folder-like class called a Register, but that class is unused in `cxr.state`.

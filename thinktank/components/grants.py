@@ -21,7 +21,7 @@ class Grants(StateManager):
         self["completed"] = False
         self["start_time"] = time.time()
         self["progress_time"] = 0
-        self.add_nonser("player")
+        self.nonser("player")
 
         @self.controller
         def grants_controller(event):
