@@ -348,7 +348,7 @@ def convert_td(num, base):
 
 class Htd:
     def __init__(self, hyperbase, implicit_base, integer=None, mantissa=None, is_negative=False):
-        self.hyperbase = hyperbase
+        self.base = hyperbase
 
         self.implicit_base = implicit_base
 
@@ -359,7 +359,7 @@ class Htd:
         elif isinstance(integer, Td):
             if integer.base != self.implicit_base:
                 integer = integer.convert(self.implicit_base)
-            self.integer = Seq(convert_td(integer, self.hyperbase))
+            self.integer = Seq(convert_td(integer, self.base))
         elif isinstance(integer, list):
             self.integer = Seq([i.convert(self.implicit_base) for i in integer[::-1]])
         else:
@@ -395,30 +395,30 @@ class Htd:
     def __add__(self, other):
         if isinstance(other, Td):
             if other < self.implicit_zero:
-                return self + Htd(self.hyperbase, self.implicit_base, -other, 0, is_negative=True)
+                return self + Htd(self.base, self.implicit_base, -other, 0, is_negative=True)
             else:
-                return self + Htd(self.hyperbase, self.implicit_base, other, 0)
+                return self + Htd(self.base, self.implicit_base, other, 0)
         elif isinstance(other, Htd):
             if self.is_negative:
                 if other.is_negative:
-                    return Htd(self.hyperbase, self.implicit_base, self.integer + other.integer,
+                    return Htd(self.base, self.implicit_base, self.integer + other.integer,
                                self.mantissa + other.mantissa, is_negative=True)
                 else:
                     if self.abs() > other:
-                        return Htd(self.hyperbase, self.implicit_base, self.integer - other.integer,
+                        return Htd(self.base, self.implicit_base, self.integer - other.integer,
                                    self.mantissa - other.mantissa, is_negative=True)
                     else:
-                        return Htd(self.hyperbase, self.implicit_base, other.integer - self.integer,
+                        return Htd(self.base, self.implicit_base, other.integer - self.integer,
                                    other.mantissa - self.mantissa)
             elif other.is_negative:
                 if other.abs() > self:
-                    return Htd(self.hyperbase, self.implicit_base, other.integer - self.integer,
+                    return Htd(self.base, self.implicit_base, other.integer - self.integer,
                                other.mantissa - self.mantissa, is_negative=True)
                 else:
-                    return Htd(self.hyperbase, self.implicit_base, self.integer - other.integer,
+                    return Htd(self.base, self.implicit_base, self.integer - other.integer,
                                self.mantissa - other.mantissa)
             else:
-                return Htd(self.hyperbase, self.implicit_base, self.integer + other.integer,
+                return Htd(self.base, self.implicit_base, self.integer + other.integer,
                            self.mantissa + other.mantissa)
         else:
             return NotImplemented
@@ -428,7 +428,7 @@ class Htd:
             self.trim()
             return self.integer == other.integer \
                    and self.mantissa == other.mantissa \
-                   and self.hyperbase == other.hyperbase \
+                   and self.base == other.base \
                    and self.implicit_base == other.implicit_base \
                    and self.is_negative == other.is_negative
         else:
@@ -436,14 +436,14 @@ class Htd:
 
     def __floordiv__(self, other):
         if isinstance(other, Td):
-            return self // Htd(self.hyperbase, self.implicit_base, other, 0)
+            return self // Htd(self.base, self.implicit_base, other, 0)
         elif isinstance(other, Htd):
-            if other.hyperbase != self.hyperbase:
-                raise ValueError(f"Base mismatch: {self.hyperbase} and {other.hyperbase}")
+            if other.base != self.base:
+                raise ValueError(f"Base mismatch: {self.base} and {other.base}")
 
             power = other.abs()
             current_power = 0
-            base_td = Td(self.hyperbase, 0, self.implicit_base)
+            base_td = Td(self.base, 0, self.implicit_base)
             while power < self.abs():
                 power *= base_td
                 current_power += 1
@@ -459,7 +459,7 @@ class Htd:
                     tmp -= power
                     output[current_power] += self.implicit_one
 
-            return Htd(tmp.hyperbase, tmp.implicit_base, Seq(output), 0,
+            return Htd(tmp.base, tmp.implicit_base, Seq(output), 0,
                        is_negative=self.is_negative ^ other.is_negative)
 
         else:
@@ -468,8 +468,8 @@ class Htd:
     def __ge__(self, other):
         if not isinstance(other, Htd):
             raise ValueError(f"Cannot compare with {type(other).__name__}, only Tridozenals")
-        if not self.hyperbase == other.hyperbase:
-            raise ValueError(f"Base mismatch for Htd numbers: {self.hyperbase} and {other.hyperbase}")
+        if not self.base == other.base:
+            raise ValueError(f"Base mismatch for Htd numbers: {self.base} and {other.base}")
         if self.is_negative:
             if other.is_negative:
                 return self.negative() <= other.negative()
@@ -494,8 +494,8 @@ class Htd:
     def __gt__(self, other):
         if not isinstance(other, Htd):
             raise ValueError(f"Cannot compare with {type(other).__name__}, only Tridozenals")
-        if not self.hyperbase == other.hyperbase:
-            raise ValueError(f"Base mismatch for Htd numbers: {self.hyperbase} and {other.hyperbase}")
+        if not self.base == other.base:
+            raise ValueError(f"Base mismatch for Htd numbers: {self.base} and {other.base}")
 
         if self.is_negative:
             if other.is_negative:
@@ -519,7 +519,7 @@ class Htd:
             return False
 
     def __hash__(self):
-        return hash((str(self), self.hyperbase))
+        return hash((str(self), self.base))
 
     def __le__(self, other):
         return not self > other
@@ -529,12 +529,12 @@ class Htd:
 
     def __mod__(self, other):
         if isinstance(other, Td):
-            return self % Htd(self.hyperbase, self.implicit_base, other, 0)
+            return self % Htd(self.base, self.implicit_base, other, 0)
         elif isinstance(other, Htd):
-            if other.hyperbase != self.hyperbase:
-                raise ValueError(f"Base mismatch: {self.hyperbase} and {other.hyperbase}")
+            if other.base != self.base:
+                raise ValueError(f"Base mismatch: {self.base} and {other.base}")
 
-            power = [Htd.one(self.hyperbase, self.implicit_base)]
+            power = [Htd.one(self.base, self.implicit_base)]
             other_abs = other.abs()
             current_power = 0
             while power[-1] < self.abs():
@@ -562,25 +562,25 @@ class Htd:
             return Seq([self.implicit_zero for _ in range(desired_length - len(mantissa))]).concat(mantissa)
 
         def split_into_parts(d, mantissa_point, is_negative):
-            return Htd(self.hyperbase, self.implicit_base, d.seq[:len(d) - mantissa_point],
+            return Htd(self.base, self.implicit_base, d.seq[:len(d) - mantissa_point],
                        d.seq[len(d) - mantissa_point:], is_negative)
 
         if isinstance(other, Td):
             if other == self.implicit_zero:
-                return Htd(self.hyperbase, self.implicit_base, self.implicit_zero, 0)
+                return Htd(self.base, self.implicit_base, self.implicit_zero, 0)
             elif other.is_negative:
-                return Htd(self.hyperbase, self.implicit_base, self.integer * -other, self.mantissa * -other,
+                return Htd(self.base, self.implicit_base, self.integer * -other, self.mantissa * -other,
                            is_negative=not self.is_negative)
             else:
-                return Htd(self.hyperbase, self.implicit_base, self.integer * other, self.mantissa * other,
+                return Htd(self.base, self.implicit_base, self.integer * other, self.mantissa * other,
                            is_negative=self.is_negative)
         elif isinstance(other, Htd):
-            if self.hyperbase != other.hyperbase:
-                raise ValueError(f"Base mismatch for Htd numbers: {self.hyperbase} and {other.hyperbase}")
+            if self.base != other.base:
+                raise ValueError(f"Base mismatch for Htd numbers: {self.base} and {other.base}")
 
-            if other == Htd(self.hyperbase, self.implicit_base, self.implicit_one, 0):
+            if other == Htd(self.base, self.implicit_base, self.implicit_one, 0):
                 return self
-            elif other == Htd(self.hyperbase, self.implicit_base, self.implicit_one, 0, is_negative=True):
+            elif other == Htd(self.base, self.implicit_base, self.implicit_one, 0, is_negative=True):
                 return self.negative()
 
             # Mantissa lengths
@@ -594,10 +594,10 @@ class Htd:
             pt_4 = self.mantissa * other.mantissa
 
             # Construct tridozenal representations of parts
-            duo_1 = Htd(self.hyperbase, self.implicit_base, pt_1, 0, is_negative=self.is_negative ^ other.is_negative)
+            duo_1 = Htd(self.base, self.implicit_base, pt_1, 0, is_negative=self.is_negative ^ other.is_negative)
             duo_2 = split_into_parts(pt_2, o_m, self.is_negative ^ other.is_negative)
             duo_3 = split_into_parts(pt_3, s_m, self.is_negative ^ other.is_negative)
-            duo_4 = Htd(self.hyperbase, self.implicit_base, 0, pad_mantissa(pt_4, s_m + o_m),
+            duo_4 = Htd(self.base, self.implicit_base, 0, pad_mantissa(pt_4, s_m + o_m),
                         is_negative=self.is_negative ^ other.is_negative)
 
             # Put it all together
@@ -614,11 +614,11 @@ class Htd:
     def __pow__(self, power, modulo=None):
         if isinstance(power, int):
             if power == 0:
-                return Htd.one(self.hyperbase, self.implicit_base)
+                return Htd.one(self.base, self.implicit_base)
             elif power == 1:
                 return self
 
-            out = Htd(self.hyperbase, self.implicit_base, self.integer, self.mantissa, is_negative=self.is_negative)
+            out = Htd(self.base, self.implicit_base, self.integer, self.mantissa, is_negative=self.is_negative)
             for p in range(1, power):
                 out *= self
             return out
@@ -664,9 +664,9 @@ class Htd:
     def __sub__(self, other):
         if isinstance(other, Td):
             if other.is_negative:
-                return self + Htd(self.hyperbase, self.implicit_base, other, 0)
+                return self + Htd(self.base, self.implicit_base, other, 0)
             else:
-                return self - Htd(self.hyperbase, self.implicit_base, other, 0)
+                return self - Htd(self.base, self.implicit_base, other, 0)
         elif isinstance(other, Htd):
             return self + other.negative()
         else:
@@ -679,15 +679,15 @@ class Htd:
             if other == self.implicit_one:
                 return self
             elif other < self.implicit_zero:
-                return self / Htd(self.hyperbase, self.implicit_base, -other, 0, is_negative=True)
+                return self / Htd(self.base, self.implicit_base, -other, 0, is_negative=True)
             elif other > self.implicit_zero:
-                return self / Htd(self.hyperbase, self.implicit_base, other, 0)
+                return self / Htd(self.base, self.implicit_base, other, 0)
         elif isinstance(other, Htd):
-            if other == Htd(self.hyperbase, self.implicit_base, self.implicit_one, 0):
+            if other == Htd(self.base, self.implicit_base, self.implicit_one, 0):
                 return self
-            elif other == Htd(self.hyperbase, self.implicit_base, self.implicit_one, 0, is_negative=True):
+            elif other == Htd(self.base, self.implicit_base, self.implicit_one, 0, is_negative=True):
                 return self.negative()
-            elif other.abs() == Htd(self.hyperbase, self.implicit_base, self.implicit_zero, 0):
+            elif other.abs() == Htd(self.base, self.implicit_base, self.implicit_zero, 0):
                 raise ValueError("Division by zero error")
             else:
                 # The heavy lifting is done by computing the multiplicative inverse
@@ -945,7 +945,7 @@ class Htd:
         return pi
 
     def abs(self):
-        return Htd(self.hyperbase, self.implicit_base, self.integer, self.mantissa)
+        return Htd(self.base, self.implicit_base, self.integer, self.mantissa)
 
     def convert(self, hyperbase):
         """
@@ -955,12 +955,12 @@ class Htd:
         if not hyperbase >= 2:
             raise ValueError(f"Base must be greater than or equal to 2, not {hyperbase}")
 
-        td0 = Htd(self.hyperbase, self.implicit_base, Td(hyperbase, 0, self.implicit_base), 0)
+        td0 = Htd(self.base, self.implicit_base, Td(hyperbase, 0, self.implicit_base), 0)
         number = self.abs()
 
         output = []
 
-        while number > Htd.zero(self.hyperbase, self.implicit_base):
+        while number > Htd.zero(self.base, self.implicit_base):
             modulo = number % td0
 
             # This line prevents floating point errors
@@ -970,7 +970,7 @@ class Htd:
 
             # The most un-fluent part of Td
             for i, digit in enumerate(modulo.integer):
-                _sum += digit * modulo.hyperbase ** i
+                _sum += digit * modulo.base ** i
             output.append(_sum)
             number = number // td0
 
@@ -981,7 +981,7 @@ class Htd:
             place = round_to
 
         if isinstance(other, Td):
-            other = Htd(self.hyperbase, self.implicit_base, other.abs(), 0, is_negative=other.is_negative)
+            other = Htd(self.base, self.implicit_base, other.abs(), 0, is_negative=other.is_negative)
             return self.divide_by(other, place)
         elif isinstance(other, Htd):
             out = self * other.multiplicative_inverse(place=place)
@@ -999,7 +999,7 @@ class Htd:
         :param log: Whether the log messages will be printed
         :param perfect: Whether to iterate until the mantissa is fully computed (can be slow!)
         """
-        if self == Htd.zero(self.hyperbase, self.implicit_base):
+        if self == Htd.zero(self.base, self.implicit_base):
             raise ValueError("Log of zero is undefined")
         # This algorithm converges quite slowly, hence the default 100 iterations for greater accuracy
         if log:
@@ -1045,10 +1045,10 @@ class Htd:
         # Setting log to True helps it show that the program isn't hanging, just slow since it computes TWO natural logs
         if isinstance(base, int):
             return self.ln(num_iterations, place, log, perfect).divide_by(
-                Htd(self.hyperbase, self.implicit_base, Td(base, 0, self.implicit_base), 0).ln(num_iterations, place, log, perfect), place=place)
+                Htd(self.base, self.implicit_base, Td(base, 0, self.implicit_base), 0).ln(num_iterations, place, log, perfect), place=place)
         elif isinstance(base, Td):
             return self.ln(num_iterations, place, log, perfect).divide_by(
-                Htd(self.hyperbase, self.implicit_base, base, 0).ln(num_iterations, place, log, perfect), place=place)
+                Htd(self.base, self.implicit_base, base, 0).ln(num_iterations, place, log, perfect), place=place)
         elif isinstance(base, Htd):
             return self.ln(num_iterations, place, log, perfect).divide_by(base.ln(num_iterations, place, log, perfect), place=place)
         else:
@@ -1064,7 +1064,7 @@ class Htd:
             else:
                 return a.reverse() >= b.reverse()
 
-        if self.abs() == Htd.one(self.hyperbase, self.implicit_base):
+        if self.abs() == Htd.one(self.base, self.implicit_base):
             return self
 
         if place == -1:
@@ -1090,29 +1090,29 @@ class Htd:
             if is_greater(adjusted_one, im_combo):
                 # Perform a subtraction from the dividend
                 adjusted_one -= im_combo
-                adjusted_one = Htd(self.hyperbase, self.implicit_base, adjusted_one, 0).integer
+                adjusted_one = Htd(self.base, self.implicit_base, adjusted_one, 0).integer
                 output[g-1] += 1
             else:
                 # Extend the dividend
                 adjusted_one = Seq(self.implicit_zero).concat(adjusted_one)
                 g += 1
 
-        return Htd(self.hyperbase, self.implicit_base, output[:len(self.mantissa)][::-1], output[len(self.mantissa):],
+        return Htd(self.base, self.implicit_base, output[:len(self.mantissa)][::-1], output[len(self.mantissa):],
                    self.is_negative)
 
     def negative(self):
-        return Htd(self.hyperbase, self.implicit_base, self.integer, self.mantissa, is_negative=not self.is_negative)
+        return Htd(self.base, self.implicit_base, self.integer, self.mantissa, is_negative=not self.is_negative)
 
     def rebase(self, hyperbase):
 
         return Htd(hyperbase, self.implicit_base, self.integer, self.mantissa, is_negative=self.is_negative)
 
     def implicit_rebase(self, implicit_base):
-        return Htd(self.hyperbase, self.implicit_base, [e.rebase(implicit_base) for e in self.integer],
+        return Htd(self.base, self.implicit_base, [e.rebase(implicit_base) for e in self.integer],
                    [e.rebase(implicit_base) for e in self.mantissa])
 
     def implicit_convert(self, implicit_base):
-        return Htd(self.hyperbase, self.implicit_base, [e.convert(implicit_base) for e in self.integer],
+        return Htd(self.base, self.implicit_base, [e.convert(implicit_base) for e in self.integer],
                    [e.convert(implicit_base) for e in self.mantissa])
 
     def __resolve(self):
@@ -1124,11 +1124,11 @@ class Htd:
             """
             Convert the given pair into a resolved pair
             """
-            output_a = (Td(self.hyperbase, 0, a.base) - (a.negative() % self.hyperbase)) if a.is_negative else a % self.hyperbase
-            output_b = b + a // self.hyperbase + (-1 if a.is_negative else 0)
+            output_a = (Td(self.base, 0, a.base) - (a.negative() % self.base)) if a.is_negative else a % self.base
+            output_b = b + a // self.base + (-1 if a.is_negative else 0)
             return output_a, output_b
 
-        base_td = Td(self.hyperbase, 0, self.implicit_base)
+        base_td = Td(self.base, 0, self.implicit_base)
 
         out_int = self.integer
         out_man = self.mantissa
@@ -1196,7 +1196,7 @@ class Htd:
         """
         # This takes a while even with only 15 iterations
         if not len(self.integer) and not len(self.mantissa):
-            return Htd.zero(self.hyperbase, self.implicit_base)
+            return Htd.zero(self.base, self.implicit_base)
 
         if place == -1:
             place = round_to
@@ -1204,7 +1204,7 @@ class Htd:
         if log:
             print(f"Finding square root of {self} with Newton iteration")
 
-        out = Htd.one(self.hyperbase, self.implicit_base)
+        out = Htd.one(self.base, self.implicit_base)
         prev = None
 
         k = 0
@@ -1236,7 +1236,7 @@ class Htd:
         if place > len(self.mantissa):
             return
 
-        base_td = Td(self.hyperbase, 0, self.implicit_base)
+        base_td = Td(self.base, 0, self.implicit_base)
         two = Td(2, 0, self.implicit_base)
         if self.mantissa[place] >= base_td // two:
             self.mantissa[place - 1] += 1
@@ -1250,6 +1250,6 @@ class Htd:
         self.mantissa = self.mantissa.trim()
 
     def primitive(self):
-        output = sum([self.integer[k].primitive() * self.hyperbase ** k for k in range(len(self.integer))])
-        output += sum([self.mantissa[k].primitive() * self.hyperbase ** (-k - 1) for k in range(len(self.mantissa))])
+        output = sum([self.integer[k].primitive() * self.base ** k for k in range(len(self.integer))])
+        output += sum([self.mantissa[k].primitive() * self.base ** (-k - 1) for k in range(len(self.mantissa))])
         return output
