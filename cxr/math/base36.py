@@ -282,7 +282,7 @@ class Tridozenal:
 
         if isinstance(mantissa, Seq):
             if len(mantissa) == 0:
-                self.mantissa = Seq(0)
+                self.mantissa = Seq()
             else:
                 self.mantissa = mantissa
         elif isinstance(mantissa, (int, list)):
@@ -946,7 +946,7 @@ class Tridozenal:
         while g < (place + len(im_combo)):
 
             # When adjusted_one hits zero, the operation is complete
-            if len(adjusted_one.trim()) == 0:
+            if len(adjusted_one.trim(True)) == 0:
                 break
 
             if is_greater(adjusted_one, im_combo):
@@ -1006,7 +1006,7 @@ class Tridozenal:
                     modified = True
                 out_man[n], out_man[n - 1] = resolve_pair(out_man[n], out_man[n - 1])
 
-            out_man = out_man.trim()
+            out_man = out_man.trim(True)
 
         # Integer resolution
         modified = True
@@ -1096,7 +1096,7 @@ class Tridozenal:
             else:
                 self.mantissa[place - 1] += 1
 
-        self.mantissa = self.mantissa[:place]
+        self.mantissa = self.mantissa[:place].trim(True)
         self.__resolve()
 
     def rounded(self, place):
