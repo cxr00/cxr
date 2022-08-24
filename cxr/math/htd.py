@@ -47,19 +47,15 @@ class Seq:
         """
         if not lst:
             return True
-        t = type(lst[0])
-        the_base = None
-        if t is Td:
-            the_base = lst[0].base
-        else:
-            t = (int, float)
-        for e in lst[1:]:
-            if not isinstance(e, t):
-                print(lst)
-                raise TypeError(f"Type mismatch for Seq: {t} and {type(e)}")
-            if t is Td:
-                if e.base != the_base:
-                    raise ValueError(f"Base mismatch: {e.base} and {the_base}")
+        base = None
+        for t in lst:
+            if not isinstance(t, Td):
+                raise TypeError(f"Detected value of type {t}, must be Tridozenal")
+            else:
+                if base is None:
+                    base = t.base
+                elif base != t.base:
+                    raise ValueError(f"Base mismatch: {base} and {t.base}")
         return True
 
     def __init__(self, *seq):
@@ -365,7 +361,7 @@ class Htd:
                 integer = integer.convert(self.implicit_base)
             self.integer = Seq(convert_td(integer, self.hyperbase))
         elif isinstance(integer, list):
-            self.integer = Seq(integer[::-1])
+            self.integer = Seq([i.convert(self.implicit_base) for i in integer[::-1]])
         else:
             raise ValueError(f"Invalid integer type {type(integer).__name__}; must be Td or Seq")
 
@@ -375,19 +371,13 @@ class Htd:
             if len(mantissa) == 0:
                 self.mantissa = Seq(Td.zero(self.implicit_base))
             else:
-                self.mantissa = mantissa
+                self.mantissa = Seq([m.convert(self.implicit_base) for m in mantissa])
         elif isinstance(mantissa, Td):
             if mantissa.base != self.implicit_base:
                 mantissa = mantissa.convert(self.implicit_base)
             self.mantissa = Seq(mantissa)
         elif isinstance(mantissa, list):
-            out = []
-            for each in mantissa:
-                if each.base != self.implicit_base:
-                    out.append(each.convert(self.implicit_base))
-                else:
-                    out.append(each)
-            self.mantissa = Seq(out)
+            self.mantissa = Seq([m.convert(self.implicit_base) for m in mantissa])
         else:
             raise ValueError(f"Invalid mantissa type {type(mantissa).__name__}; must be Td, list or Seq")
 
