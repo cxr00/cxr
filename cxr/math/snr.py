@@ -918,13 +918,13 @@ class Matrix:
             else:
                 return self.rows[i] if len(self) > i else Seq(Td.zero(self.rows[0].base()) if self.rows[0].is_td() else 0)
         elif isinstance(i, slice):
-            start = i.start if i.start is None else 0
-            stop = i.stop if i.stop is None else len(self)
+            start = i.start if i.start is not None else 0
+            stop = i.stop if i.stop is not None else len(self)
 
             if stop < 0:
                 stop = len(self) + stop
 
-            step = i.step if i.step is None else 1
+            step = i.step if i.step is not None else 1
             if step < 0:
                 start, stop = stop - 1, start - 1
 
