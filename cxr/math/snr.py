@@ -970,10 +970,10 @@ class Matrix:
         return out
 
     def __setitem__(self, key: int, value):
-        if not isinstance(value, (Seq, Sig)):
-            raise TypeError(f"Matrix can only be set with Seq or Sig, not {type(value).__name__}")
-        if len(self) > key >= 0:
+        if isinstance(value, int):
             self.rows[key] = Seq(value)
+        elif len(self) > key >= 0:
+            self.rows[key] = Seq(*value)
         else:
             raise IndexError(f"Key {key} out of bounds")
 
