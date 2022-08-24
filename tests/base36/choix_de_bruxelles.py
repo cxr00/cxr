@@ -31,21 +31,15 @@ def choix_de_bruxelles(d, length, log=False):
     def do_one_number(substring):
         if substring[0] != "0":
             i_ss = Td.get_from_string(substring)
-            # Conditions to halve selected substring
-            if (
-                    i_ss.base % 2 == 1 and sum(i_ss.integer) % 2 == 0  # Base is odd and digit sum is even
-                ) \
-                or \
-                (
-                        i_ss.base % 2 == 0 and i_ss.integer[0] % 2 == 0  # Base and first digit of integer are even
-                ):
+            if i_ss % 2 == Td.zero():  # Silly that I didn't use this functionality in the first place
                 quotient = i_ss * two_inverse
-                quotient.round(place=cxr.base36.round_to - 7)
+                quotient.round(place=0)  # Actually-correct rounding
                 quotient = quotient.integer_part()
                 to_add = s_d[:i] + str(quotient) + s_d[i + substring_length:]
                 td = Td.get_from_string(to_add)
                 if td not in output:
                     output.add(td)
+
             # Can always double selected substring
             to_add = s_d[:i] + str(i_ss * two) + s_d[i + substring_length:]
             td = Td.get_from_string(to_add)
@@ -174,10 +168,10 @@ def main():
     while the_range = [3, 5, 7, 11, 13, 17, 19, 23, 29, 31] computes all viable prime bases
     """
 
-    the_range = range(2, 37)
+    the_range = range(3, 4)
     trivial = [2 ** n for n in range(6)]
 
-    compute = False  # False means show results, True means compute
+    compute = True  # False means show results, True means compute then show results
     inp = "continue"
     while inp.lower() == "continue":
         print(f"Beginning CDB analysis of {the_range}...")
@@ -187,8 +181,7 @@ def main():
         for base in the_range:
             # Bases of the form 2**n are trivial, so are skipped
             if base not in trivial:
-                if compute:
-                    compute_next_cdb_in_base(base)
+                compute_next_cdb_in_base(base)
                 sequences[base] = analyze_cdb(base)
         print()
 
@@ -202,7 +195,7 @@ def main():
             for k, v in sequences.items():
                 f.write(f"{k}:{str(v)}\n")
         print("sequences.txt updated.")
-        inp = input("Cycle complete. Type 'continue' to go again, or simply press ENTER to quit")
+        inp = "continue"
 
 
 if __name__ == "__main__":
