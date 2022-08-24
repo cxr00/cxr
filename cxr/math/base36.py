@@ -105,9 +105,9 @@ class Seq:
         if isinstance(i, int):
             return self.seq[i] if len(self) > i >= 0 else 0
         elif isinstance(i, slice):
-            start = i.start if i.start else 0
-            stop = i.stop if i.stop else len(self)
-            step = i.step if i.step else 1
+            start = i.start if i.start is not None else 0
+            stop = i.stop if i.stop is not None else len(self)
+            step = i.step if i.step is not None else 1
             return Seq([self.seq[k] if len(self) > k >= 0 else 0 for k in range(start, stop, step)])
 
     @check_seq
@@ -225,12 +225,12 @@ class Seq:
     def reverse(self):
         return Seq(self.seq[::-1])
 
-    def trim(self):
+    def trim(self, to_zero=False):
         """
         Removes trailing zeroes from a sequence
         """
         out = copy.deepcopy(self.seq)
-        while len(out) > 0 and out[len(out)-1] == 0:
+        while len(out) > (0 if to_zero else 1) and out[len(out)-1] == 0:
             out.pop(len(out)-1)
             if len(out) == 0:
                 break
@@ -934,7 +934,7 @@ class Tridozenal:
 
         # construct the Seq which will be used for long division
         im_combo = self.integer.trim()
-        if len(self.mantissa.trim()):
+        if len(self.mantissa.trim(True)):
             im_combo = im_combo.reverse().concat(self.mantissa)
             im_combo = im_combo.reverse()
 
@@ -1086,10 +1086,15 @@ class Tridozenal:
         return out
 
     def round(self, place=-1):
-        if place == -1:
+        if place < -1:
+            raise ValueError(f"Place must be greater than or equal to -1, not {place}")
+        elif place == -1:
             place = round_to
-        if self.mantissa[place] >= self.base // 2:
-            self.mantissa[place - 1] += 1
+        if self.mantissa[place] >= self.base / 2:
+            if place == 0:
+                self.integer[0] += 1
+            else:
+                self.mantissa[place - 1] += 1
 
         self.mantissa = self.mantissa[:place]
         self.__resolve()
@@ -1111,7 +1116,7 @@ class Tridozenal:
     def trim(self):
         # remove trailing zeroes for cleaner looking numbers
         self.integer = self.integer.trim()
-        self.mantissa = self.mantissa.trim()
+        self.mantissa = self.mantissa.trim(True)
 
     def primitive(self):
         output = sum([self.integer[k] * self.base ** k for k in range(len(self.integer))])
