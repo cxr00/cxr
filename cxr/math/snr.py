@@ -825,7 +825,7 @@ class Matrix:
         else:
             out = [Seq(1)]
         for k in range(1, l):
-            out.append(out[-1] * d)
+            out.append((out[-1] * d)[:l])
         # Tapering maximizes efficiency of computing f()
         if taper:
             t = len(out[-1].trim()) - 1
