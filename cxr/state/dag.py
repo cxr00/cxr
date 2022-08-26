@@ -1,6 +1,3 @@
-from cxr.state.qoid import Property, Qoid, Bill
-
-QOID_NODE_INDICATOR = "NODE_CHILD"
 
 
 class Node:
@@ -248,83 +245,6 @@ class Node:
                 output.update({o.key: o.data[attr]})
             output.update(o.find_attribute(attr))
         return output
-
-    def qoid(self):
-        """
-        Convert a Node into qoid markup for serialization
-        :return: the converted Bill
-        """
-        b = Bill("Node")
-
-        q = Qoid(self.key)
-
-        for p in self.data:
-            q += Property(p, self.data[p])
-        for node in self:
-            q += Property(QOID_NODE_INDICATOR, node.key)
-        b += q
-
-        for node in self:
-            b += node.qoid()
-
-        return b
-
-    @staticmethod
-    def consolidate(*nodes, tag=None):
-        """
-        Convert multiple Nodes into a single Bill
-        :param nodes: the Nodes to be consolidated
-        :param tag: The optional tag for the output Bill
-        """
-        b = Bill(tag if tag else "Nodes")
-
-        for node in nodes:
-            node_qoid = node.qoid()
-            for q in node_qoid:
-                if q.tag not in b.tags():
-                    b += q
-
-        return b
-
-    @staticmethod
-    def from_qoid(b):
-        return Node._from_qoid(b)
-
-    @staticmethod
-    def _from_qoid(b, subtype=None):
-        """
-        Translate a Bill into a Node or list of Nodes
-
-        Node._from_qoid(node.qoid()) yields node again
-
-        The optional subtype parameter will produce Nodes endowed
-        with whatever Node subclass is submitted
-
-        :param b: The Bill to be translated
-        :param subtype: The subtype of Node which the output should be
-        :return: the root Node or Nodes derived from the Bill
-        """
-        if not subtype:
-            subtype = Node
-        elif subtype not in Node.__subclasses__():
-            raise TypeError(f"Subtype {subtype} is not a subclass of Node")
-        nodes = []
-
-        for q in b:
-            nodes.append(q.tag)
-
-        nodes = {tag: subtype(tag) for tag in nodes}
-
-        for q in b:
-            for p in q:
-                if p.tag == QOID_NODE_INDICATOR:
-                    nodes[q.tag].add(nodes[p.val])
-                else:
-                    nodes[q.tag].data.update({p.tag: p.val})
-
-        output = [quest for quest in nodes.values() if quest.is_root()]
-
-        return output[0] if len(output) == 1 else output
 
     def _check_for_cycle(self, root):
 

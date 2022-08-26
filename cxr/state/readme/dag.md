@@ -11,7 +11,7 @@ Transitive reduction and topological sort were also immensely satisfying to impl
 ### Summary of features
 
 * Shortest and longest path
-* Transitive reduction
+* Topological sort and transitive reduction
 * Internal data
 * `__iadd__` and `__isub__`
 
@@ -56,44 +56,3 @@ Nodes may also be reduced to their __transitive closure__.
 ```python
 root = root.transitive_reduction()
 ```
-
-### Qoid representation
-
-A Node can be converted into a Bill so that it can be saved and loaded.
-
-```python
-b = node.qoid()
-```
-
-Here is a sample Qoid representation of a node which contains a single subnode.
-
-```
-#node_0_key
-attr0: val
-attr1: val
-NODE_CHILD: node_1_key
-
-#node_1_key
-attr2: val
-```
-
-The values of `attr0`, `attr1`, and `attr2` are elements of the respective Node's `data` object. 
-
-Note that the `NODE_CHILD` tag is used to indicate connections to other Nodes. Take care not to use this key in a Node's dataobject
-
-One can easily convert this Qoid back into its Node form:
-
-```python
-node = Node.from_qoid(b)
-```
-
-The output of `Node.from_qoid` depends on how many root Nodes (ones with no parent) are defined in the Qoid. If there is a single root Node, it will return just that; otherwise it will return a list of root Nodes.
-
-If you want to combine multiple Nodes into a single Bill, use `consolidate_into_qoid`:
-
-```python
-b = Node.consolidate(*nodes, tag="Bill Tag")
-```
-
-Note that this ignores duplicates in cases such as where two Nodes point to the same Node and thus both contain that Node in their Qoid representation.
-
