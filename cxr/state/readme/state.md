@@ -1,4 +1,4 @@
-## cxr.state
+# cxr.state
 
 `cxr.state` started as a wrapper class for processing state-based events in pygame, but quickly grew into a general purpose state management module. Despite being the shortest module at the start, it quickly became the most crucial part of `cxr.game` before being generalized. Notably, it led to the deprecation of `cxr.game.room`, in favor of a more generalized implementation.
 
@@ -6,7 +6,7 @@ StateManagers abstract away the assignment and execution of  **state** functions
 
 The data contained in StateManager objects serializes to Qoid. It is highly recommended that you are familiar with Qoid syntax if you want to make full use of serialization.
 
-### Overview
+## Overview
 
 Classes encapsulated in parens `()` do not need to be interacted with except by contributing developers. However, parenthetical classes are basically feature complete so no further developer interaction should be necessary.
 
@@ -16,11 +16,10 @@ Classes encapsulated in parens `()` do not need to be interacted with except by 
 
 ### Creating a player controller with StateManager
 
-Let's start by generating a StateManager object for a player:
+Let's start by generating a StateManager object for a player. StateManager can be directly imported from both `cxr.state` and `cxr` itself as SM:
 
 ```python
-from cxr.state.state import StateManager as SM
-from cxr.state.state import StateManagerReference as SMR
+from cxr SM, SMR
 import pygame
 
 # This is required at the beginning
@@ -149,7 +148,6 @@ In general, when assigning values to the StateData, it will automatically determ
 player.nonser("weight", 167)
 ```
 
-
 ### StateManager static methods
 
 In addition to a global reference, StateManager comes equipped with a variety of static methods to interact with your SMs. It also includes serialization to Qoid. I would highly recommend reading the documentation in `cxr.game.state`. But, for ease of access, here is a summary of what can be done:
@@ -176,7 +174,7 @@ player = StateManager.generate("player", Player, "player1")
 
 Notice the inclusion of a tertiary argument `"player1"`. This is the *key* assigned to a particular StateManager which is otherwise randomly generated. This allows quick access to the player SM via `StateManager.get("player1")`.
 
-### StateManagerReference
+## StateManagerReference
 
 `StateManagerReference` is the utility class for accessing groups of related StateManagers in a file-like way. We start by initializing the SMR at the desired location:
 
