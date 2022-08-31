@@ -20,8 +20,8 @@ round_to = 13
 # Determines whether the log shows during __pow__ when power is Tridozenal
 log_power = True
 
-# Decides the default base for a Tridozenal. I prefer 7.
-default_base = 7
+# Decides the default base for a Tridozenal.
+default_base = 3
 
 
 """
@@ -674,7 +674,6 @@ class Tridozenal:
         out = [str(e.convert(2)) if as_binary_strings else chr(e.primitive()) for e in out]
 
         return out if as_binary_strings else "".join(out)
-
 
     @staticmethod
     def exp(base=-1, power=1, iterations=100, place=-1, log=False, perfect=False):
