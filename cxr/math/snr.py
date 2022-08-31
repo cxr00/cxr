@@ -195,7 +195,7 @@ class Seq(Sequence):
         return self.elements <= o.elements
 
     def __len__(self):
-        return len(self.elements)
+        return len(self.trim().elements)
 
     @check_seq
     def __lt__(self, o):
@@ -552,7 +552,7 @@ class Sig:
         return self.seq <= o.seq
 
     def __len__(self):
-        return len(self.seq)
+        return len(self.trim().seq)
 
     @check_sig
     def __lt__(self, o):
