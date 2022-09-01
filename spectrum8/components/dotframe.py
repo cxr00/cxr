@@ -106,6 +106,19 @@ class Board:
                         self[y][y+i] = 1
                     if self.length > y - i - 1 >= -2:
                         self[self.length - y - i - 1][y] = 1
+        elif t == "-":  # Horizontal line
+            size = int(code[1:])
+            for x in range(self.width):
+                for i in range(size):
+                    self[self.length // 2 - i][x] = 1
+                    self[self.length // 2 + i][x] = 1
+        elif t == "|":  # Vertical line
+            size = int(code[1:])
+            for y in range(self.length):
+                for i in range(size):
+                    self[y][self.width // 2 - i] = 1
+                    self[y][self.width // 2 + i] = 1
+
 
 
 class DotFrame:
