@@ -242,7 +242,7 @@ def convert_int(num, base):
     Converts primitive ints to the given base
 
     Only used in __init__ to escape base 10,
-    hence why it is unfluent.
+    hence why it is disfluent.
     """
     output = []
     if num < 0:
