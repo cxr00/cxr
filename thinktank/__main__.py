@@ -2,7 +2,7 @@ import pygame
 from tkinter import messagebox
 import traceback
 
-from cxr import SM, SMR
+from cxr import SM, SMF, SMR
 import cxr.math.base36
 
 from thinktank import screen, font, clock, FPS, TICK, ACCUMULATE
@@ -12,31 +12,20 @@ from thinktank.components import NeuronPanel, Brain, Player, Tank, Grants
 def main():
     SMR.initialize("local\\thinktank")
 
+    brainmaker = SMF("brain", Brain, randomise=False)  # Inaugural use of StateManagerFactory
+
     # UI
-    tank = SM.generate("tank", Tank, "tank")
-    neuron_panel = SM.generate("neuron_panel", NeuronPanel, "neuron_panel")
+    tank = SM.generate("tank", Tank)
+    neuron_panel = SM.generate("neuron_panel", NeuronPanel)
 
     # Game objects
-    player = SM.generate("player", Player, "player")
+    player = SM.generate("player", Player)
     brains = []
-    # brain = StateManager.generate("brain", Brain, "brain")
-    # brain2 = StateManager.generate("brain", Brain, "brain2")
-    # brain3 = StateManager.generate("brain", Brain, "brain3")
-    grants = SM.generate("grants", Grants, "grants")
+    grants = SM.generate("grants", Grants)
 
     # UI connections
     tank.set_neuron_panel(neuron_panel)
     neuron_panel.set_player(player)
-
-    # Test brains
-    # tank.add_brain(brain)
-    # tank.add_brain(brain2)
-    # tank.add_brain(brain3)
-
-    # Player connections
-    # brain.set_player(player)
-    # brain2.set_player(player)
-    # brain3.set_player(player)
     grants.set_player(player)
 
     run = True
@@ -59,7 +48,8 @@ def main():
                         change = True
                 elif event.key == pygame.K_b:
                     if len(brains) < len(tank.pods):
-                        new_brain = SM.generate("brain", Brain, f"brain{len(brains)}")
+                        new_brain = brainmaker.make()
+                        print(new_brain.key)
                         new_brain.set_player(player)
                         brains.append(new_brain)
                         tank.add_brain(new_brain)
