@@ -174,6 +174,26 @@ player = StateManager.generate("player", Player, "player1")
 
 Notice the inclusion of a tertiary argument `"player1"`. This is the *key* assigned to a particular StateManager which is otherwise randomly generated. This allows quick access to the player SM via `StateManager.get("player1")`.
 
+## StateManagerFactory
+
+If you need to create a lot of a specific type with the same parameters, use a `StateManagerFactory`:
+
+```python
+from cxr import SMF
+
+my_factory = SMF("mytype", MyType, randomise=False)
+
+my_type_instances = []
+for i in range(10):
+    my_type_instances.append(my_factory.make())
+```
+
+This will construct 10 instances of `MyType`, with the names `mytype_0` through `mytype_9`. You can also set randomise to True, which will produce instances with keys such as `mytype_1aYe2`. This is useful for intentional obfuscation where specificity is not important. Note that while there are nearly 57 billion possible random keys, the randomiser will give up after about 77k attempts at creating a unique unused key. If you receive that `StateError`, then you got REALLY unlucky.
+
+## StateErrors
+
+In the event that you attempt to access a SM or data within that does not fit, you will receive a `StateError`. StateErrors are simple custom `KeyError` exceptions which indicate that you have attempted to incorrectly access an attribute of the SM. There is currently no additional functionality to this type of exception.
+
 ## StateManagerReference
 
 `StateManagerReference` is the utility class for accessing groups of related StateManagers in a file-like way. We start by initializing the SMR at the desired location:

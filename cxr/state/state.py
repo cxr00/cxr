@@ -5,6 +5,13 @@ import random
 import os
 
 key_chars = [chr(a) for a in (list(range(48, 58)) + list(range(65, 91)) + list(range(97, 123)))]
+key_length = 6
+
+
+class StateError(KeyError):
+    """
+    An exception which is thrown when a KeyError prevents actions by or concerning StateManagers
+    """
 
 
 class StateData:
@@ -26,7 +33,7 @@ class StateData:
         elif item in self._nonser:
             return self._nonser[item]
         else:
-            raise KeyError(f"{self.parent.name}({self.parent.key}) StateData has no element {item}")
+            raise StateError(f"{self.parent.name}({self.parent.key}) StateData has no element {item}")
 
     def __setitem__(self, key, value):
         """
@@ -82,7 +89,7 @@ class StateManager:
 
     def __init__(self, key, name):
         if key in StateManager._reference:
-            raise KeyError(f"Init failed: StateManager with key {key} already exists in global register")
+            raise StateError(f"Init failed: StateManager with key {key} already exists in global register")
         self.key = key
         self.name = name
         self._current = None
@@ -143,7 +150,7 @@ class StateManager:
                 f(event)
 
             if key in self._states:
-                raise KeyError(f"State add failed: {self.name}({self.key}) StateManager already has a state with key {key}")
+                raise StateError(f"State add failed: {self.name}({self.key}) StateManager already has a state with key {key}")
             else:
                 self._states[key] = inner_wrapper
                 if not self._current:
@@ -154,13 +161,13 @@ class StateManager:
 
     def change_state(self, key):
         if key not in self._states:
-            raise KeyError(f"State change failed: StateManager {self.key} has no state {key}")
+            raise StateError(f"State change failed: StateManager {self.key} has no state {key}")
         self._current = self._states[key]
         self._current_key = key
 
     def get_state(self, key):
         if key not in self._states:
-            raise KeyError(f"Get state failed: StateManager {self.name} ({self.key}) has no state {key}")
+            raise StateError(f"Get state failed: StateManager {self.name} ({self.key}) has no state {key}")
         return self._states[key]
 
     def controller(self, f):
@@ -250,7 +257,7 @@ class StateManager:
         Get the StateManager with the given key
         """
         if key not in StateManager._reference:
-            raise KeyError(f"Get failed: StateManager with key {key} not in global register")
+            raise StateError(f"Get failed: StateManager with key {key} not in global register")
         else:
             return StateManager._reference[key]
 
@@ -264,46 +271,57 @@ class StateManager:
             del StateManager._reference[item.key]
         elif isinstance(item, str):
             if item not in StateManager._reference:
-                raise KeyError(f"Delete failed: StateManager with key {item} not in global register")
+                raise StateError(f"Delete failed: StateManager with key {item} not in global register")
             item = StateManager._reference[item]
             item._cxrnode.remove_reference(item)
             del StateManager._reference[item]
         else:
-            raise KeyError(f"Delete failed: Can only delete by string or StateManager, not {(type(item))}")
+            raise StateError(f"Delete failed: Can only delete by string or StateManager, not {(type(item))}")
 
     @staticmethod
-    def generate_key(length=5):
+    def generate_key():
         """
         Create a unique key for a StateManager object
         """
-        return "".join([random.choice(key_chars) for _ in range(length)])
+        return "".join([random.choice(key_chars) for _ in range(key_length)])
 
     @staticmethod
-    def generate(path, subtype=None, key=None, length=5, fail_at=-1):
+    def generate(path, subtype=None, key=None, randomise=False):
         """
         The primary method for creating StateManager objects
 
         :param path: The StateManagerReference path where the SM will be located
         :param subtype: The subclass of StateManager which is to be generated
         :param key: The unique identifier to give the SM; a random one is generated if none is specified
-        :param length: The length of the auto
-        :param fail_at:
+        :param randomise: Whether or not to use a randomised key (such as for fully-nonserialized or intentionally-obfuscated SMs)
         :return:
         """
         name = path.split("/")[-1]
         if not key:
-            n = 0
-            while True:
-                key = StateManager.generate_key(length)
-                if key not in StateManager._reference:
-                    break
-                else:
-                    n += 1
-                    if n and n % 100 == 0:
-                        print(f"Key generation for {path} has taken {n} iterations...")
-                    if fail_at != -1:
-                        if n == fail_at:
-                            raise ValueError(f"Unable to generate a unique key in {fail_at} iterations.")
+            if randomise:
+                n = 0
+                while True:
+                    key = name + "_" + StateManager.generate_key()
+                    if key not in StateManager._reference:
+                        break
+                    else:
+                        n += 1
+                        if n % 77377 == 0:
+                            err_text = [
+                                "Failed to generate unique key in 77377 iterations.",
+                                "You either have too many or got REALLY unlucky.",
+                                "Make sure you are deleting old unused references!"
+                            ]
+                            raise StateError("\n".join(err_text))
+            else:
+                new_key = name + "_"
+                n = len(StateManagerReference.get_node(path))
+                while True:
+                    key = new_key + str(n)
+                    if key not in StateManager._reference:
+                        break
+                    else:
+                        n += 1
         if subtype:
             output = subtype(key, name)
         else:
@@ -320,6 +338,16 @@ class StateManager:
         StateManager._reference = {}
 
 
+class StateManagerFactory:
+    def __init__(self, path, subtype=None, randomise=False):
+        self.path = path
+        self.subtype = subtype
+        self.randomise = randomise
+
+    def make(self, key=None):
+        return StateManager.generate(self.path, self.subtype, key, self.randomise)
+
+
 class CXRNode(Node):
     """
     CXRNode is a StateManagerReference utility for pathing and file generation
@@ -331,7 +359,10 @@ class CXRNode(Node):
 
     def __init__(self, key, nodes=None, data=None, parent=None):
         super().__init__(key, nodes, data, parent)
-        self._reference = []
+        self._reference = {}
+
+    def __len__(self):
+        return len(self._reference.keys())
 
     def __str__(self):
         """
@@ -365,7 +396,7 @@ class CXRNode(Node):
         :param references: the StateManagers to be referenced
         """
         for reference in references:
-            self._reference.append(reference)
+            self._reference[reference.key] = reference
             reference._cxrnode = self
 
     def remove_reference(self, *references):
@@ -376,7 +407,8 @@ class CXRNode(Node):
         """
         for r in references:
             if r in self._reference:
-                self._reference.pop(self._reference.index(r))
+                del self._reference[r.key]
+                # self._reference.pop(self._reference.index(r))
                 # r._cxrnode = None
 
     def build(self):
