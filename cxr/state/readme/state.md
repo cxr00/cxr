@@ -142,7 +142,7 @@ player.height = 20  # THIS DOES NOT WORK
 
 The reason for this is due to the way StateData access is implemented. Unfortunately, attempting to add a `__setattr__` override causes a `RecursionError`.
 
-In general, when assigning values to the StateData, it will automatically determine if the value is serializable or not. However, if you want to specifically add an attribute as nonserializable, use `add_nonser`:
+In general, when assigning values to the StateData, it will automatically determine if the value is serializable or not. However, if you want to specifically add an attribute as nonserializable, use `nonser`:
 
 ```python
 player.nonser("weight", 167)
