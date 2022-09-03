@@ -1,4 +1,4 @@
-from .qoid import Property, Qoid, Bill
+from cxr.state.qoid import Property, Qoid, Bill
 from cxr.state.dag import Node
 
 import random
@@ -67,8 +67,8 @@ class StateData:
             raise TypeError(f"Cannot set nonserializable attribute in {self.parent.name} ({self.parent.key}): Item with key {attr} is in serializable")
         self._nonser[attr] = value
 
-    def qoid(self, key):
-        q = Qoid(key)
+    def qoid(self):
+        q = Qoid(self.parent.key if self.parent else "StateData")
 
         for k, v in self._ser.items():
             q += Property(k, v)
@@ -96,7 +96,7 @@ class StateManager:
         self._current_key = None
         self._states = {}
         self._controller = None
-        self.data = StateData(self)
+        self._data = StateData(self)
         self._checks = []
         self._cxrnode = None
 
@@ -113,34 +113,34 @@ class StateManager:
         raise TypeError("Cannot deepcopy a StateManager instance")
 
     def __getitem__(self, item):
-        return self.data[item]
+        return self._data[item]
 
     def __getattr__(self, item):
-        return self.data[item]
+        return self._data[item]
 
     def __setitem__(self, key, value):
-        self.data[key] = value
+        self._data[key] = value
 
     def set_attribute(self, attr, value):
         """
         Set an arbitrary attribute
         """
-        self.data[attr] = value
+        self._data[attr] = value
 
     def set_flag(self, flag, initial=False):
         """
         Set a boolean flag
         """
-        self.data[flag] = initial
+        self._data[flag] = initial
 
     def set_counter(self, flag, initial=0):
-        self.data[flag] = initial
+        self._data[flag] = initial
 
     def set_target(self, flag, target, initial=0):
         """
         Set a target tracker
         """
-        self.data[flag] = {"num": initial, "target": target}
+        self._data[flag] = {"num": initial, "target": target}
 
     def add_state(self, key):
 
@@ -199,17 +199,17 @@ class StateManager:
         """
         Add a nonserializable parameter to the StateData
         """
-        self.data.ser(key, value)
+        self._data.ser(key, value)
 
     def nonser(self, key, value=None):
         """
         Add a nonserializable parameter to the StateData
         """
-        self.data.nonser(key, value)
+        self._data.nonser(key, value)
 
     def qoid(self):
         b = Bill(self.name)
-        b += self.data.qoid(self.key)
+        b += self._data.qoid()
         return b
 
     def load(self, *params):
@@ -221,15 +221,15 @@ class StateManager:
             sd = {}
             for p in b[self.key]:
                 sd.update({p.tag: p.val})
-            self.data.update(sd)
+            self._data.update(sd)
 
     def save(self, *params):
         try:
             b = Bill.open(self._cxrnode.path())
             if self.key not in b.tags():
-                b += self.data.qoid(self.key)
+                b += self._data.qoid()
             else:
-                q = self.data.qoid(self.key)
+                q = self._data.qoid()
                 if len(params):
                     for param in params:
                         b[self.key][param] = q[param]
@@ -339,6 +339,9 @@ class StateManager:
 
 
 class StateManagerFactory:
+    """
+    Factory class for constructing StateManagers. Specify path, subtype, and randomise, and optional key in SMF.make()
+    """
     def __init__(self, path, subtype=None, randomise=False):
         self.path = path
         self.subtype = subtype
