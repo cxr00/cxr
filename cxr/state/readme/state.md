@@ -29,7 +29,7 @@ SMR.initialize("root")
 player = SM.generate("player", key="player1")
 ```
 
-We use `generate` with a name parameter to create a StateManager with a unique key and the name player. Each StateManager has a unique key because there is a global reference of all StateManagers that currently exist. This key is generated randomly, but you should give it a specific one with `key=value`, especially if you are planning on saving & loading.
+We use `generate` with a name parameter to create a StateManager with a unique key and the name player. Each StateManager has a unique key because there is a global reference of all StateManagers that currently exist. This key is generated procedurally, but you can give it a specific one with `key=value`, especially if you want a specific name for saving & loading.
 
 We now need to set a controller. To do this, we user the `controller` decorator on a function with a single argument `event`. We configure this controller to respond to the four arrow keys:
 
@@ -82,7 +82,7 @@ def right_state(event):
     print("right")
 ```
 
-Now, depending on whether a specific key is pressed, a different output will be printed. If no key is pressed, then nothing is printed. It should also be noted that the first state that we add becomes the default state, so we started by adding neutral.
+Now, depending on whether a specific key is pressed, a different output will be printed. If no key is pressed, then nothing is printed. It should also be noted that the first state that we add becomes the starting state, so we started by adding neutral.
 
 In addition to a controller, we can add additional checks to StateManagers:
 
@@ -121,7 +121,7 @@ while True:
 
 When run, the console will print up, down, left, or right when you press an arrow key.
 
-We iterate over all the pygame events, then over `StateManager.all()`, which is a list of all created StateManagers (in this case, just our player).  StateManagers can be called like functions, so within the inner loop we call the StateManager with the event as an argument, which then decides what to do according to current state.
+We iterate over all the pygame events, then over `SM.all()`, which is a list of all created StateManagers (in this case, just our player).  StateManagers can be called like functions, so within the inner loop we call the StateManager with the event as an argument, which then decides what to do according to current state.
 
 ### Setting and getting StateData
 
@@ -140,9 +140,9 @@ print(player.height)
 player.height = 20  # THIS DOES NOT WORK
 ```
 
-The reason for this is due to the way StateData access is implemented. Unfortunately, attempting to add a `__setattr__` override causes a `RecursionError`.
+The reason for this is due to the way StateData access is implemented. Unfortunately, attempting to add a `__setattr__` override causes a `RecursionError`. **In general, I use `__getattr__` exclusively over `__getitem__`, though the choice is ultimately up to you.**
 
-In general, when assigning values to the StateData, it will automatically determine if the value is serializable or not. However, if you want to specifically add an attribute as nonserializable, use `nonser`:
+In general, when assigning values to the StateData, it will assume it is serializable. However, if you want to specifically add an attribute as nonserializable, use `nonser`:
 
 ```python
 player.nonser("weight", 167)
@@ -160,9 +160,9 @@ In addition to a global reference, StateManager comes equipped with a variety of
 
 `generate_key` - Generate a unique key for an SM. This is automatically called by `generate`
 
-`generate` - Create a new StateManager at the given location
+`generate` - Create a new StateManager at the given location. If you need to do this several times for a particular subtype, use `StateManagerFactory`
 
-`reset` - Clear the global SM reference
+`reset` - Clear the global SM reference (be careful with this one!)
 
 ### Custom extensions of StateManager
 
@@ -188,21 +188,21 @@ for i in range(10):
     my_type_instances.append(my_factory.make())
 ```
 
-This will construct 10 instances of `MyType`, with the names `mytype_0` through `mytype_9`. You can also set randomise to True, which will produce instances with keys such as `mytype_1aYe2`. This is useful for intentional obfuscation where specificity is not important. Note that while there are nearly 57 billion possible random keys, the randomiser will give up after about 77k attempts at creating a unique unused key. If you receive that `StateError`, then you got REALLY unlucky.
+This will construct 10 instances of `MyType`, with the names `mytype_0` through `mytype_9`. You can also set randomise to True, which will produce instances with keys such as `mytype_1aYe2`. This is useful for intentional obfuscation where specificity is not important (like if you're not saving that type of SM). Note that while there are nearly 57 billion possible random keys, the randomiser will give up after about 77k attempts at creating a unique unused key. If you receive that error, then you got REALLY unlucky.
 
 ## StateErrors
 
-In the event that you attempt to access a SM or data within that does not fit, you will receive a `StateError`. StateErrors are simple custom `KeyError` exceptions which indicate that you have attempted to incorrectly access an attribute of the SM. There is currently no additional functionality to this type of exception.
+In the event that you attempt to access a SM or data within with an inappropriate key, you will receive a `StateError`. StateErrors are simple custom `KeyError` exceptions which indicate that you have attempted to incorrectly access an attribute of the SM or StateData. There is currently no additional functionality to this type of exception.
 
 ## StateManagerReference
 
-`StateManagerReference` is the utility class for accessing groups of related StateManagers in a file-like way. We start by initializing the SMR at the desired location:
+`StateManagerReference` is the utility class for accessing groups of related StateManagers in a file-like way. We must always start by initializing the SMR at the desired location:
 
 ```python
 SMR.initialize("your\\location")
 ```
 
-**The initialization via SMR requires use of backslashes for pathing, BUT `SM.generate` requires forward slashes!**
+**The initialization via SMR uses backslashes for pathing, BUT `SM.generate` requires forward slashes!**
 
 Within that directory you can generate StateManager instances, either directly within that folder or within subfolders that can be quickly defined:
 
@@ -231,8 +231,6 @@ The remaining functions are not necessary for normal operation, but you are free
 It's important to note that as you expand your game with new StateManagers, the event loop will stay quite small, since `StateManager.all` does the heavy lifting. However, realize that this game loop is submitting *all* events to *every* StateManager. It is more likely that you will divide this up to keep the time complexity from reaching `O(n**2)`:
 
 ```python
-import pygame.event
-
 for event in events:
     if event.type == pygame.KEYDOWN:
         for sm in SMR.get("player"):
