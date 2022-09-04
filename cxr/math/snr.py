@@ -195,7 +195,7 @@ class Seq(Sequence):
         return self.elements <= o.elements
 
     def __len__(self):
-        return len(self.trim().elements)
+        return len(self.elements)
 
     @check_seq
     def __lt__(self, o):
@@ -288,8 +288,7 @@ class Seq(Sequence):
         return self.neg() + o
 
     def __setitem__(self, key: int, value: (int, float)):
-        if len(self) > key >= 0:
-            self.elements[key] = value
+        self.elements[key] = value
 
     @check_seq
     def __sub__(self, o):
@@ -552,7 +551,7 @@ class Sig:
         return self.seq <= o.seq
 
     def __len__(self):
-        return len(self.trim().seq)
+        return len(self.seq)
 
     @check_sig
     def __lt__(self, o):
@@ -972,10 +971,8 @@ class Matrix:
     def __setitem__(self, key: int, value):
         if isinstance(value, int):
             self.rows[key] = Seq(value)
-        elif len(self) > key >= 0:
-            self.rows[key] = Seq(*value)
         else:
-            raise IndexError(f"Key {key} out of bounds")
+            self.rows[key] = Seq(*value)
 
     def __sub__(self, other):
         return (self + other.neg()).trim()
@@ -1075,6 +1072,41 @@ def num_dims(d):
 class Prism:
 
     @staticmethod
+    def canonical(ds: list[Seq], l=5, coordinates=None, current=None):
+        """
+        Produces a canonical one-beginning object whose dimensions express the given list of signatures
+
+        :param ds: The signatures to express
+        :param l: The length of each dimension
+        :param coordinates: current location within the structure; do not set manually
+        :param current: the current sub-Prism being used in recursive calculations; do not set manually
+        :return:
+        """
+
+        if len(ds) == 1:
+            return Prism(Matrix.power(ds[0], l))
+
+        output = []
+
+        if current is None:
+            current = Matrix.power(ds[0], l=l)
+            for i in range(len(ds) - 1):
+                current = Prism([current] * l)
+
+        if coordinates is None:
+            coordinates = []
+
+        if len(coordinates) == len(ds) - 1:
+            output = Seq(1)
+            for i, d in enumerate(ds[1:]):
+                output *= d ** coordinates[i]
+            return Prism(output * current)
+        else:
+            for n in range(l):
+                output.append(Prism.canonical(ds, l, coordinates + [n], current[n]))
+        return Prism(output)
+
+    @staticmethod
     def power(d: Seq, dim=4, l=10, coordinates=None, block=None):
         """
         The canonical one-beginning object in higher dimensions
@@ -1105,12 +1137,14 @@ class Prism:
         return Prism(out)
 
     def __init__(self, structure, l=10):
-        if isinstance(structure, (Matrix, list)):
+        if isinstance(structure, Matrix):
+            self.val = [structure]
+        elif isinstance(structure, list):
             self.val = structure
         elif isinstance(structure, Prism):
             self.val = structure.val
         elif isinstance(structure, Seq):
-            self.val = Matrix.power(structure, l)
+            self.val = [Matrix.power(structure, l)]
         else:
             raise TypeError(f"Prism must be constructed via Matrix, list, or Prism, not {type(structure).__name__}")
 
@@ -1174,6 +1208,9 @@ class Prism:
 
     def __setitem__(self, key, value):
         self.val[key] = value
+
+    def __str__(self):
+        return "\n".join([str(i) for i in self])
 
     def f(self, g=None):
         """
@@ -1265,19 +1302,19 @@ class Prism:
         return self
 
 
-def signature_dot_product(d, g):
-    if isinstance(d, Seq):
-        d = [d]
+def signature_dot_product(g, S):
     if isinstance(g, Seq):
         g = [g]
+    if isinstance(S, Seq):
+        S = [S]
 
-    while len(g) < len(d):
-        g.append(Seq(1))
+    while len(S) < len(g):
+        S.append(Seq(1))
 
-    while len(d) < len(g):
-        d.append(Seq(0))
+    while len(g) < len(S):
+        g.append(Seq(0))
 
-    return sum([(d[k].sig() * g[k].sig()) for k in range(len(d))]).seq
+    return sum([(g[k].sig() * S[k].sig()) for k in range(len(g))]).seq
 
 
 def random_seq(min=1, max=7, min_digits=2, max_digits=5):
