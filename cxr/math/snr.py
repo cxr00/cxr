@@ -1087,6 +1087,7 @@ class Prism:
             return Prism(Matrix.power(ds[0], l))
 
         output = []
+        # output2 = 0
 
         if current is None:
             current = Matrix.power(ds[0], l=l)
@@ -1098,13 +1099,23 @@ class Prism:
 
         if len(coordinates) == len(ds) - 1:
             output = Seq(1)
+            # output2 = 0
             for i, d in enumerate(ds[1:]):
+                # tmp_len = 1
+                # for j in range(coordinates[i]+1):
+                #     output2 += (2*tmp_len + 1)
+                #     tmp_len += len(d) - 1
                 output *= d ** coordinates[i]
             return Prism(output * current)
+            # return Prism(output * current), output2
         else:
             for n in range(l):
-                output.append(Prism.canonical(ds, l, coordinates + [n], current[n]))
+                get = Prism.canonical(ds, l, coordinates + [n], current[n])
+                output.append(get)
+                # output.append(get[0])
+                # output2 += get[1]
         return Prism(output)
+        # return Prism(output), output2
 
     @staticmethod
     def power(d: Seq, dim=4, l=10, coordinates=None, block=None):
