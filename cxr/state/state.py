@@ -23,6 +23,7 @@ class StateData:
         self._ser = {}
         self._nonser = {}
         self.parent = parent
+        self._ser_first = True
 
     def __iter__(self):
         return iter([*self._ser.keys(), *self._nonser.keys()])
@@ -37,13 +38,18 @@ class StateData:
 
     def __setitem__(self, key, value):
         """
-        By default new keys are serializable. Use SM.add_nonser(key, value) to initialize
-        then SM[key] = value will work as intended.
+        Checks whether the key exists in either _ser or _nonser, otherwise use default behavior
         """
+
         if key in self._nonser:
             self._nonser[key] = value
-        else:
+        elif key in self._ser:
             self._ser[key] = value
+        else:
+            if self._ser_first:
+                self._ser[key] = value
+            else:
+                self._nonser[key] = value
 
     def __str__(self):
         output = {}
@@ -53,6 +59,12 @@ class StateData:
 
     def __repr__(self):
         return str(self)
+
+    def has_serializables(self):
+        return bool(self._ser)
+
+    def toggle_ser_priority(self, ser_first=True):
+        self._ser_first = ser_first
 
     def items(self):
         return [*self._ser.items(), *self._nonser.items()]
@@ -120,6 +132,12 @@ class StateManager:
 
     def __setitem__(self, key, value):
         self._data[key] = value
+
+    def has_serializables(self):
+        return self._data.has_serializables()
+
+    def toggle_ser_priority(self, ser_first=True):
+        self._data.toggle_ser_priority(ser_first)
 
     def set_attribute(self, attr, value):
         """
@@ -224,22 +242,23 @@ class StateManager:
             self._data.update(sd)
 
     def save(self, *params):
-        try:
-            b = Bill.open(self._cxrnode.path())
-            if self.key not in b.tags():
-                b += self._data.qoid()
-            else:
-                q = self._data.qoid()
-                if len(params):
-                    for param in params:
-                        b[self.key][param] = q[param]
+        if self.has_serializables():
+            try:
+                b = Bill.open(self._cxrnode.path())
+                if self.key not in b.tags():
+                    b += self._data.qoid()
                 else:
-                    b[self.key] = q
-        except FileNotFoundError:
-            b = self.qoid()
-            self._cxrnode.touch()
-            b.path = self._cxrnode.parent.path()
-        b.save(echo=False)
+                    q = self._data.qoid()
+                    if len(params):
+                        for param in params:
+                            b[self.key][param] = q[param]
+                    else:
+                        b[self.key] = q
+            except FileNotFoundError:
+                b = self.qoid()
+                self._cxrnode.touch()
+                b.path = self._cxrnode.parent.path()
+            b.save(echo=False)
 
     def current_state(self):
         return self._current_key
