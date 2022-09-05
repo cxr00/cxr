@@ -236,8 +236,7 @@ print(a)
 
 #### Identity matrix
 
-Matrix.identity() produces the identity matrix. Length can be specified.
-Matrix.identity() is also the zero-th power of any Matrix.
+`Matrix.identity()` produces the identity matrix. Length can be specified. `Matrix.identity()` is also the zero-th power of any Matrix.
 
 ```python
 a = Matrix.identity(5)
@@ -254,7 +253,7 @@ print(a)
 
 #### Power triangles
 
-Matrix.power() takes a Seq and produces a power triangle. For example, the Seq [1, 1]
+`Matrix.power()` takes a Seq and produces a power triangle. For example, the Seq [1, 1]
 produces Pascal's Triangle.
 
 ```python
@@ -272,7 +271,7 @@ print(a)
 
 #### Sen
 
-Matrix.sen() takes a Seq and constructs the initial matrix in section 4.5 of my paper.
+`Matrix.sen()` takes a Seq and constructs the initial matrix in section 4.5 of SNR part 1.
 
 ```python
 a = Matrix.sen(Seq(1, 1), 6)
@@ -299,8 +298,7 @@ print(b)
 
 #### g-matrices
 
-Matrix.g_matrix() takes an initial Matrix and a set of Seq objects to produce a novel
-matrix as outlined by section 4.5 of my paper.
+`Matrix.g_matrix()` takes an initial Matrix and a set of Seq objects to produce a novel matrix as outlined by section 4.5 of SNR part 1.
 ```python
 s = Matrix.power(Seq(1, 1))
 g = [Seq(1), Seq(1)]
@@ -400,7 +398,7 @@ print(b * a)
 The signature function can be performed on Matrix objects via antidiagonal summation.
 
 ```python
-a = Block.power(Seq(1, 1))
+a = Matrix.power(Seq(1, 1))
 
 print(a.f()[:9])
 ```
