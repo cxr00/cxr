@@ -1099,13 +1099,13 @@ class Prism:
 
         if len(coordinates) == len(ds) - 1:
             output = Seq(1)
-            # output2 = 0
             for i, d in enumerate(ds[1:]):
                 # tmp_len = 1
                 # for j in range(coordinates[i]+1):
                 #     output2 += (2*tmp_len + 1)
                 #     tmp_len += len(d) - 1
                 output *= d ** coordinates[i]
+            # output2 += (2*len(output) + 1) * len(current)
             return Prism(output * current)
             # return Prism(output * current), output2
         else:
@@ -1311,6 +1311,15 @@ class Prism:
                 self[i] = each.aerate(a[1:])
 
         return self
+
+    def size(self):
+        output = 1
+        k = self[0]
+        while not isinstance(k, Matrix):
+            output *= len(k)
+            k = k[0]
+        output *= len(k)
+        return output
 
 
 def signature_dot_product(g, S):
