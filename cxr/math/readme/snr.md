@@ -8,15 +8,14 @@ the signature function and SNR
 
 The Seq class is the base class for mathematical manipulations of sequences.
 
-Seq objects may be constructed easily with a list or tuple of integers and floats.
-If no argument is specified, the null sequence is created.
+Seq objects may be constructed easily with an arbitrary number of integer arguments, or with a list or tuple. If no argument is specified, the null sequence is created.`
 
 ```python
 from cxr.math.snr import Seq
 
 a = Seq()
-a = Seq([1, 2, 1])
-a = Seq((2, 3))
+a = Seq(1, 2, 1)
+a = Seq(2, 3)
 ```
 
 ### Mathematical operations
@@ -27,8 +26,8 @@ Sequences may add, subtract, convolve, and deconvolve.
 #### Addition
 
 ```python
-a = Seq([1, 1])
-b = Seq([1, 1, 1])
+a = Seq(1, 1)
+b = Seq(1, 1, 1)
 
 print(a + b)
 ```
@@ -39,8 +38,8 @@ print(a + b)
 #### Subtraction
 
 ```python
-a = Seq([2, 4, 3])
-b = Seq([1, 2, 2, 1])
+a = Seq(2, 4, 3)
+b = Seq(1, 2, 2, 1)
 
 print(a - b)
 ```
@@ -51,8 +50,8 @@ print(a - b)
 #### Convolution
 
 ```python
-a = Seq([1, 1])
-b = Seq([1, 1, 1])
+a = Seq(1, 1)
+b = Seq(1, 1, 1)
 
 print(a * b)
 ```
@@ -63,8 +62,8 @@ print(a * b)
 #### Deconvolution
 
 ```python
-a = Seq([2, 4, 2])
-b = Seq([1, 1])
+a = Seq(2, 4, 2)
+b = Seq(1, 1)
 
 print(a / b)
 ```
@@ -79,7 +78,7 @@ turns a sequence (or "signature") into a recursive sequence. For example, the si
 [1, 1] returns the Fibonacci numbers.
 
 ```python
-a = Seq([1, 1])
+a = Seq(1, 1)
 
 print(a.f())
 ```
@@ -92,7 +91,7 @@ The default length of the signature function is 30. This length may be altered b
 the variable `std_l` in snr.py or by calling the function with a length argument.
 
 ```python
-a = Seq([2, 1])
+a = Seq(2, 1)
 std_l = 5
 
 print(a.f())
@@ -108,7 +107,7 @@ print(a.f(7))
 If a sequence begins with 1, then the inverse signature function can be performed to convert
 the sequence into its signature. If the sequence does not begin with 1, then a ValueError is raised.
 ```python
-a = Seq([1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89])
+a = Seq(1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89)
 
 print(a.i())
 ```
@@ -119,13 +118,13 @@ print(a.i())
 ## Sig
 
 The Sig class builds on the arithmetic of Seq to construct the Signature Left Near-Ring.
-Sig objects may be constructed with a list, tuple, Seq, or empty input.
+Sig objects may be constructed with a list, tuple, Seq, arbitrary number of integers/floats, or empty input.
 ```python
-a = Seq([1, 1])
+a = Seq(1, 1)
 
 b = Sig()
 b = Sig(3)
-b = Sig([1, 2, 1])
+b = Sig(1, 2, 1)
 b = Sig(a)
 ```
 
@@ -135,8 +134,8 @@ Sig objects can perform signature addition and subtraction, and signature convol
 
 #### Signature addition
 ```python
-a = Sig([1, 1])
-b = Sig([1, 1])
+a = Sig(1, 1)
+b = Sig(1, 1)
 
 print(a + b)
 ```
@@ -146,8 +145,8 @@ print(a + b)
 
 #### Signature subtraction
 ```python
-a = Sig([2, 1, -2, -1])
-b = Sig([1, 1])
+a = Sig(2, 1, -2, -1)
+b = Sig(1, 1)
 
 print(a - b)
 ```
@@ -161,8 +160,8 @@ Signature convolution utilizes the signature function to perform a unique multip
 Note that signature convolution is not commutative!
 
 ```python
-a = Sig([1, 1])
-b = Sig([1, 1, 1])
+a = Sig(1, 1)
+b = Sig(1, 1, 1)
 
 print(a * b)
 print(b * a)
@@ -180,8 +179,8 @@ The `__floordiv__` builtin specifies left deconvolution, which produces a left o
 signature convolution.
 
 ```python
-a = Sig([1, 2, 3, 4, 3, 1])
-b = Sig([1, 1, 1])
+a = Sig(1, 2, 3, 4, 3, 1)
+b = Sig(1, 1, 1)
 
 print(a // b)
 ```
@@ -195,8 +194,8 @@ The `__truediv__` builtin specifies right deconvolution, which produces a right 
 for signature convolution. Right deconvolution is right distributive.
 
 ```python
-a = Sig([1, 2, 3, 4, 3, 1])
-b = Sig([1, 1])
+a = Sig(1, 2, 3, 4, 3, 1)
+b = Sig(1, 1)
 
 print(a / b)
 ```
@@ -209,21 +208,21 @@ print(a / b)
 Sig objects may perform the signature and inverse signature function
 the same way Seq objects can.
 
-## Block
+## Matrix
 
-The Block class exists to perform interesting signature-related operations on
+The Matrix class exists to perform interesting signature-related operations on
 matrices.
 
-### Special Blocks
+### Special Matrices
 
-The Block class comes equipped with several static methods that generate interesting blocks.
+The Matrix class comes equipped with several static methods that generate interesting matrices.
 
-#### Blank block
+#### Blank matrix
 
-Block.blank() is a square matrix which contains only zeroes.
+Matrix.blank() is a square matrix which contains only zeroes.
 
 ```python
-a = Block.blank(5)
+a = Matrix.blank(5)
 
 print(a)
 ```
@@ -237,11 +236,11 @@ print(a)
 
 #### Identity matrix
 
-Block.identity() produces the identity matrix. Length can be specified.
-Block.identity() is also the zero-th power of any Block.
+Matrix.identity() produces the identity matrix. Length can be specified.
+Matrix.identity() is also the zero-th power of any Matrix.
 
 ```python
-a = Block.identity(5)
+a = Matrix.identity(5)
 
 print(a)
 ```
@@ -255,11 +254,11 @@ print(a)
 
 #### Power triangles
 
-Block.power() takes a Seq and produces a power triangle. For example, the Seq [1, 1]
+Matrix.power() takes a Seq and produces a power triangle. For example, the Seq [1, 1]
 produces Pascal's Triangle.
 
 ```python
-a = Block.power(Seq([1, 1]), l=5)
+a = Matrix.power(Seq(1, 1), l=5)
 
 print(a)
 ```
@@ -273,11 +272,11 @@ print(a)
 
 #### Sen
 
-Block.sen() takes a Seq and constructs the initial matrix in section 4.5 of my paper.
+Matrix.sen() takes a Seq and constructs the initial matrix in section 4.5 of my paper.
 
 ```python
-a = Block.sen(Seq([1, 1]), 6)
-b = Block.sen(Seq([2, 1]), 6)
+a = Matrix.sen(Seq(1, 1), 6)
+b = Matrix.sen(Seq(2, 1), 6)
 
 print(a)
 print(b)
@@ -300,12 +299,12 @@ print(b)
 
 #### g-matrices
 
-Block.g_matrix() takes an initial Block and a set of Seq objects to produce a novel
+Matrix.g_matrix() takes an initial Matrix and a set of Seq objects to produce a novel
 matrix as outlined by section 4.5 of my paper.
 ```python
-s = Block.power(Seq([1, 1]))
+s = Matrix.power(Seq(1, 1))
 g = [Seq(1), Seq(1)]
-a = Block.g_matrix(s, g)
+a = Matrix.g_matrix(s, g)
 
 print(a[:6])
 ```
@@ -320,12 +319,12 @@ print(a[:6])
 
 ### Mathematical operations
 
-Block objects can be added, subtracted, and multiplied.
+Matrix objects can be added, subtracted, and multiplied.
 
 #### Addition
 ```python
-a = Block.power(Seq([1, 1]), 6)
-b = Block.power(Seq([1, 0, 1]), 6)
+a = Matrix.power(Seq(1, 1), 6)
+b = Matrix.power(Seq(1, 0, 1), 6)
 
 print(a + b)
 ```
@@ -340,8 +339,8 @@ print(a + b)
 
 #### Subtraction
 ```python
-a = Block.power(Seq([1, 1, 1]), 6)
-b = Block.power(Seq([1, 1]), 6)
+a = Matrix.power(Seq(1, 1, 1), 6)
+b = Matrix.power(Seq(1, 1), 6)
 
 print(a - b)
 ```
@@ -356,12 +355,10 @@ print(a - b)
 
 #### Multiplication
 
-Multiplication of Block objects is slightly different from traditional matrix multiplication,
-allowing for multiplication of Blocks with different dimensions. This operation
-is not commutative.
+Multiplication of Matrix objects is slightly different from traditional matrix multiplication, allowing for multiplication of Matrices with different dimensions. This operation is not commutative.
 ```python
-a = Block.power(Seq([1, 1]))
-b = Block.power(Seq([2, 1, 1]))
+a = Matrix.power(Seq(1, 1))
+b = Matrix.power(Seq(2, 1, 1))
 
 print(a * b)
 print(b * a)
@@ -382,11 +379,11 @@ print(b * a)
 843, 2645, 3630, 2650, 1015, 161
 ```
 
-A Block may also be multiplied by a Seq object.
+A Matrix may also be multiplied by a Seq object.
 
 ```python
-a = Seq([1, 1])
-b = Block.power(Seq([1, 1]))
+a = Seq(1, 1)
+b = Matrix.power(Seq(1, 1))
 
 print(b * a)
 ```
@@ -400,10 +397,10 @@ print(b * a)
 
 ### The signature and inverse signature function
 
-The signature function can be performed on Block objects via antidiagonal summation.
+The signature function can be performed on Matrix objects via antidiagonal summation.
 
 ```python
-a = Block.power(Seq([1, 1]))
+a = Block.power(Seq(1, 1))
 
 print(a.f()[:9])
 ```
@@ -411,10 +408,10 @@ print(a.f()[:9])
 1, 1, 2, 3, 5, 8, 13, 21, 34
 ```
 
-When Block.i() function is called, it first performs Block.f(), followed by
+When Matrix.i() function is called, it first performs Matrix.f(), followed by
 the inverse signature function.
 ```python
-a = Block.power(Seq([1, 1]))
+a = Matrix.power(Seq(1, 1))
 
 print(a.i())
 ```
