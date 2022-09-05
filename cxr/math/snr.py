@@ -778,15 +778,13 @@ class Matrix:
 
             return out
 
-        s_prev = s
-        s_next = None
+        s_next = s
 
         if l == -1:
             l = std_l
 
         for g_p in g:
-            s_next = generate_next_matrix(s_prev, g_p)
-            s_prev = s_next
+            s_next = generate_next_matrix(s_next, g_p)
 
         return s_next
 
