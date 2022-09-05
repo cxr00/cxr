@@ -418,3 +418,27 @@ print(a.i())
 ```
 1, 1
 ```
+
+# Prism
+
+The Prism class generalizes the Matrix class to an arbitrary number of dimensions. While it has multiplicative arithmetical functionality, it exists predominantly to allow verification of the *signature dot product*.
+
+There are two primary *canonical* Prism functions, `Prism.power` and `Prism.canonical`. They produce very expensive objects which take a while to compute.
+
+```python
+
+a = Prism.power(Seq(1, 1), dim=4, l=8)
+b = Prism.canonical([Seq(1, 1), Seq(1, 2, 1), Seq(3, 1)], l=8)
+
+c = a * b
+```
+
+Prisms also have access to the signature function and its inverse, and can submit a set of sequences to produce a signature convolutional result.
+
+![Prismatic antidiagonal summation](./prismatic%20antidiagonal%20summation.png)
+
+This is shortened by the `signature_dot_product(T: list, S: list)` function. It can be imported directly from `cxr` as `SDP`.
+
+![The Signature Dot Product](./signature%20dot%20product.png)
+
+If you only care about the resultant signature, you can avoid use of Prism entirely with SDP; however, if you find yourself curious about a specific type of self-constructed Prism for example, then the class is there for you to experiment with! You can read about higher-dimensional canonical objects in [SNR part 2](https://complexor.files.wordpress.com/2022/08/the-signature-function-and-higher-dimensional-objects.pdf).
