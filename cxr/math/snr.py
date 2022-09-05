@@ -1183,7 +1183,7 @@ class Prism:
 
     def __mul__(self, other):
         """
-        Takes two objects and constructs their prismatic product
+        Takes two Prisms and constructs their prismatic product
         """
 
         def get(d, coordinates):
@@ -1288,29 +1288,29 @@ class Prism:
     def i(self, g=None):
         return self.f(g=g).i()
 
-    def aerate(self, a):
-        """
-        The aeration function of a prism
-
-        Note that this only behaves consistently for power objects
-
-        :param a: the list of aeration coefficients
-        """
-        dims = num_dims(self)
-        if not isinstance(a, list):
-            raise TypeError(f"Can only sieve with list")
-        elif len(a) < dims - 1:
-            a = a + [1 for _ in range(dims - 2)]
-
-        self.val = self[::a[0]]
-
-        for i, each in enumerate(self):
-            if isinstance(each, Matrix):
-                self[i] = each[::a[1]]
-            else:
-                self[i] = each.aerate(a[1:])
-
-        return self
+    # def aerate(self, a):
+    #     """
+    #     The aeration function of a prism
+    #
+    #     Note that this only behaves consistently for power objects
+    #
+    #     :param a: the list of aeration coefficients
+    #     """
+    #     dims = num_dims(self)
+    #     if not isinstance(a, list):
+    #         raise TypeError(f"Can only sieve with list")
+    #     elif len(a) < dims - 1:
+    #         a = a + [1 for _ in range(dims - 2)]
+    #
+    #     self.val = self[::a[0]]
+    #
+    #     for i, each in enumerate(self):
+    #         if isinstance(each, Matrix):
+    #             self[i] = each[::a[1]]
+    #         else:
+    #             self[i] = each.aerate(a[1:])
+    #
+    #     return self
 
     def size(self):
         output = 1
