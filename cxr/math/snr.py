@@ -563,7 +563,7 @@ class Sig:
         is_td = self.is_td()
         if is_td:
             base = self.base()
-            out = Seq(Td.zero(base))
+            out = Seq(o[0])
             g = Seq(Td.one(base))
         else:
             out = Seq(o[0])
