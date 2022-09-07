@@ -566,13 +566,13 @@ class Sig:
             out = Seq(Td.zero(base))
             g = Seq(Td.one(base))
         else:
-            out = Seq(0)
+            out = Seq(o[0])
             g = Seq(1)
         a = self.seq
         aw = a * x
-        for k in range(len(o)):
-            out += g * o[k]
+        for k in range(1, len(o)):
             g *= aw
+            out += g * o[k]
         out *= a
         return Sig(out)
 
