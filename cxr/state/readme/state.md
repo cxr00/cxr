@@ -148,6 +148,8 @@ In general, when assigning values to the StateData, it will assume it is seriali
 player.nonser("weight", 167)
 ```
 
+You can also use `SM.toggle_ser_priority()` to switch between ser-first and nonser-first behavior.
+
 ### StateManager static methods
 
 In addition to a global reference, StateManager comes equipped with a variety of static methods to interact with your SMs. It also includes serialization to Qoid. I would highly recommend reading the documentation in `cxr.game.state`. But, for ease of access, here is a summary of what can be done:

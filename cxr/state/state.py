@@ -63,8 +63,8 @@ class StateData:
     def has_serializables(self):
         return bool(self._ser)
 
-    def toggle_ser_priority(self, ser_first=True):
-        self._ser_first = ser_first
+    def toggle_ser_priority(self, ser_first=None):
+        self._ser_first = ser_first if ser_first is not None else not self._ser_first
 
     def items(self):
         return [*self._ser.items(), *self._nonser.items()]
@@ -136,7 +136,7 @@ class StateManager:
     def has_serializables(self):
         return self._data.has_serializables()
 
-    def toggle_ser_priority(self, ser_first=True):
+    def toggle_ser_priority(self, ser_first=None):
         self._data.toggle_ser_priority(ser_first)
 
     def set_attribute(self, attr, value):
