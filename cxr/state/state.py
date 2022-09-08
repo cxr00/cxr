@@ -305,7 +305,7 @@ class StateManager:
         return "".join([random.choice(key_chars) for _ in range(key_length)])
 
     @staticmethod
-    def generate(path, subtype=None, key=None, randomise=False):
+    def generate(path, subtype=None, key=None, randomise=False, **kwargs):
         """
         The primary method for creating StateManager objects
 
@@ -342,7 +342,7 @@ class StateManager:
                     else:
                         n += 1
         if subtype:
-            output = subtype(key, name)
+            output = subtype(key, name, **kwargs)
         else:
             output = StateManager(key, name)
         cxrnode = StateManagerReference.get_node(path)
