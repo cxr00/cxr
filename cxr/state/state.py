@@ -546,9 +546,17 @@ class StateManagerReference:
     @staticmethod
     def get(path):
         """
-        Retrieve a reference based on the given path
+        Retrieve a reference's values based on the given path
+        """
+        return StateManagerReference.frame.get(path)._reference.values()
+
+    @staticmethod
+    def get_dict(path):
+        """
+        Retrieve a reference dict based on the given path
         """
         return StateManagerReference.frame.get(path)._reference
+
 
     @staticmethod
     def get_all(path):
@@ -559,7 +567,7 @@ class StateManagerReference:
         output = node._reference
         for subnode in node:
             output += StateManagerReference.get_all(str(subnode))
-        return output
+        return output.values()
 
     @staticmethod
     def get_filepath(path):
