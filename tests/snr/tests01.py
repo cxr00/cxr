@@ -82,6 +82,16 @@ def generalized_motzkin_numbers(M_factor=1):
     print(time.time() - t)
 
 
+def A356891(length):
+    """
+    The Borrow from Tomorrow sequence
+    """
+    output = [1] * length
+    for n in range(2, length):
+        output[n] += output[n-3] if n % 2 else output[n-1] * output[n-2]
+    return output
+
+
 def main():
     test_4_5_identities()
 
