@@ -62,6 +62,26 @@ def prismatic_convolution_vs_sdp():
     print(time.time() - t)
 
 
+def generalized_motzkin_numbers(M_factor=1):
+    """
+
+    :param M_factor: value of 1 produces A001006
+    """
+    a = Seq(*[1 for _ in range(M_factor + 2)])
+
+    t = time.time()
+    for i in range(M_factor + 2, 15):
+        n = 0
+        for k in range(i - M_factor):
+            if i - k - 1 < 0:
+                break
+            else:
+                n += a[k] * a[i - k - 1]
+        a.append(n)
+    print(a)
+    print(time.time() - t)
+
+
 def main():
     test_4_5_identities()
 
