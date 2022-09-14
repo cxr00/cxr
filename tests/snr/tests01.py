@@ -140,6 +140,14 @@ def A356891(length):
     return output
 
 
+def einstein_test():
+    """
+    Mild experiment after remembering Einstein notation
+    """
+    a = Matrix([Seq(1, 1).f(length=7)])
+    b = Matrix.power(Seq(1), l=7)
+    print(a * b)
+
 def main():
     mnr_identities()
     test_4_5_identities()
