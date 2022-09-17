@@ -647,14 +647,7 @@ class Tridozenal:
             return "".join(["0" for _ in range(to_add)]) + p
 
         out = [Tridozenal(ord(e), base=base) for e in s]
-
-        size = 1
-        b_p = base
-        while b_p < 2**bits:
-            b_p *= base
-            size += 1
-
-        out = [pad(str(e), size) for e in out]
+        out = [pad(str(e), bits) for e in out]
 
         return "".join(out)
 
