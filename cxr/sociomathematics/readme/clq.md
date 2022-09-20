@@ -1,6 +1,6 @@
 # clq.py: Socioarithmetic over Sociomathematical Strings
 
-Below is a summary of known properties of socioarithmetic.
+Below is a summary of known properties of socioarithmetic. It consists of four related but *nonmutual* operations, ie these operations are not compatible with notions such as inverse, distributivity, or even bijection (not even when limiting the set to involutions!).
 
 ## Sociomathematical strings and normal form <a name="normal"></a>
 
@@ -12,7 +12,7 @@ A sociomathematical string (henceforth "string") represents an injective map fro
 Through use of `instance.compile()` you can convert a string into its **normal form**. A normal form consists of an assessment (either `__`, `L-`, `L+`, `W-`, or `W+`) followed by pairs of associations. The left element of a pair is the *role designation* (eg 0 for colloquialist, 4 for contrarian) while the right element is the *function designation* (eg which role the member is *functioning as*).
 
 ```python
-from clq import Clq  # Can also be imported as C
+from cxr import Clq  # Can optionally
 
 a = Clq("103254d")
 print(a.compile("L+"))  # L+100132235445
@@ -33,11 +33,11 @@ a = Clq("02143d")
 print(a + a)  # 01234d
 
 a = Clq("-12-45d")
-b = Clq("1032d")
+b = "1032d"  # Strings are automatically converted to Clq instances during inclusion
 print(a + b)  # 103245d
 
 a = Clq("102349d")
-b = Clq("0246d")
+b = "0246d"
 print(a + b)  # UndefinedError
 ```
 
@@ -62,7 +62,7 @@ When restricted to the set of length-n involutions, inclusion loses undefinitude
 
 ## Reduction <a name="reduction"></a>
 
-Reduction is sociomathematical subtraction. It is a left-unital magma whose identity is the sociomathematical zero. In code it is described by `Clq.__arith__(a, b, False)`. While it serves to "undo" the process of inclusion in some regards, it also *reduces* strings by eliminating members which are "in place", meaning it maps a role to itself as a function.
+Reduction is sociomathematical subtraction. It is a left-unital magmoid whose identity is the sociomathematical zero. In code it is described by `Clq.__arith__(a, b, False)`. While it serves to "undo" the process of inclusion in some regards, it also *reduces* strings by eliminating members which are "in place", meaning it maps a role to itself as a function.
 
 ```python
 a = Clq("013254d")
@@ -70,11 +70,11 @@ b = Clq("0132p")
 print(a - b)  # --2354d
 
 a = Clq("1023d")
-b = Clq("102p")
-print(ab)  # 01-3d
+b = "102p"  # Reduction works like inclusion vis-a-vis string interactions
+print(a - b)  # 01-3d
 
 a = Clq("1234p")
-b = Clq("213p")
+b = "213p"
 print(a - b)  # UndefinedError
 ```
 
@@ -89,12 +89,50 @@ a - E = Z
 """
 
 a = Clq("01234d")
-print(a - Clq("0p"))           # -1234d
-print(a - Clq("01p"))          # --234d
-print(a - Clq("012p"))         # ---34d
-print(a - Clq("0123p"))        # ----4d
-print(a - Clq("01234d"))       # -d
-print(a - Clq("0123456789d"))  # -d
+print(a - 0)              # -1234d
+print(a - "01p"))         # --234d
+print(a - "012p"))        # ---34d
+print(a - "0123p"))       # ----4d
+print(a - "01234d"))      # -d
+print(a - "0123456789d")  # -d
 ```
 
 Over the set of length-n involutions, reduction loses undefinitude and becomes a **left-unital magma**.
+
+# Isolation <a name="isolation"></a>
+
+Isolation is sociomathematical convolution. It is a monoid with identities E_n depending on length. In code it is described by `Clq.__metic__(a, b, True)`. The multiplicand is used in the following way:
+
+* For each role-function pair RF in the right operand, find the role-function pair RF2 whose function is equal to the role of RF;
+* Change RF2's function to the function of RF (R -> F);
+* For each role-function pair in the left operand, if its function is not associated with the function of a pair in the right operand, it is *removed* from the string
+
+```python
+
+a = Clq("0213d")
+b = "-1-3d"
+print(a * b)  # --13d
+
+a = Clq("--78--2d")
+b = 2  # Shorthand for --2d
+print(a * b)  # ------2d
+```
+
+# Rejection <a name="rejection"></a>
+
+Rejection is sociomathematical deconvolution. It is a left-unital magmoid whose identity is `Z`. In code it is described by `Clq.__metic__(a, b, False)`. The divisor is used in the following way:
+
+* For each role-function pair RF in the divisor, find the role-function pair RF2 whose function is equal to the role of RF;
+* Remove RF2 from the string;
+* Find the string RF3 whose function matches the function of RF, and change that function to the role of RF (F -> R)
+
+```python
+a = Clq("0231d")     # __00311223
+print(a / "-2d")     # 013d / __001123
+
+a = Clq("1402d")     # __20013214
+print(a / "24d")     # -1-0d / __3011
+
+a = Clq("-1-3-56d")  # __11335566
+print(a / "-5-6d")   # -----13d / __5163
+```
