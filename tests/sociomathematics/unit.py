@@ -191,28 +191,59 @@ def readme_tests():
 
 def convo_test():
     print("### DE/CONVOLUTION TEST ###")
+
+    a = Clq("0213d")
+    print(a * "-1-3d")
+    print()
+
     a = Clq("0231d")
     print("a", a.compile())
     b = a / "-2d"
-    print("b", b.compile())
+    print(b, b.compile())
     print()
 
     a = Clq("1402d")
     print("a", a.compile())
     b = a / "24d"
-    print("b", b.compile())
+    print(b, b.compile())
     print()
 
     a = Clq("-1-3-56d")
     print(a.compile())
     b = a / "-5-6d"
-    print(b.compile())
+    print(b, b.compile())
     print()
 
     a = Clq("8564-1d")
     print(a.compile())
     b = a / "-8--6d"
-    print(b.compile())
+    print(b, b.compile())
+    print()
+
+
+def potential_ringlike_test():
+    print("### RINGLIKE TEST ###")
+    a = Clq("1032547698d")
+    b = Clq("120d")
+    # c = Clq("230154d")
+    c = Clq("201453p")
+    print(a * (b + c))
+    print(a * b + a * c)
+    print()
+    print(a * b)
+    print((b * a).convert())
+    print(b + c, c + b)
+    print("assoc", (a * b) * c, a * (b * c))
+    E = Clq("0123456789d")
+    print("w/ E", a * E, E * a)
+    E = Clq("-d")
+    print("w/ E", a * E, E * a)
+    print()
+
+    try:
+        print((a*b) / a)
+    except UndefinedError:
+        print(f"{a} * {b} / {a} is undefined.")
 
 
 if __name__ == "__main__":
@@ -221,3 +252,4 @@ if __name__ == "__main__":
     integrity_test()
     readme_tests()
     convo_test()
+    potential_ringlike_test()
