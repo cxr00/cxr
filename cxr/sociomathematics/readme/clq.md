@@ -1,0 +1,100 @@
+# clq.py: Socioarithmetic over Sociomathematical Strings
+
+Below is a summary of known properties of socioarithmetic.
+
+## Sociomathematical strings and normal form <a name="normal"></a>
+
+A sociomathematical string (henceforth "string") represents an injective map from the set {0,1,2,3,4,5,6,7,8,9} to itself. All strings are **bimodal** in that they have both *permutative* and *descriptive* forms.
+
+* The permutative form maps the element role to the index function (eg `023p` maps 0 -> 0, 2 -> 1, and 3 -> 2)
+* The descriptive form maps the index role to the element function (eg `023d` maps 0 -> 0, 1 -> 2, and 2 -> 3)
+
+Through use of `instance.compile()` you can convert a string into its **normal form**. A normal form consists of an assessment (either `__`, `L-`, `L+`, `W-`, or `W+`) followed by pairs of associations. The left element of a pair is the *role designation* (eg 0 for colloquialist, 4 for contrarian) while the right element is the *function designation* (eg which role the member is *functioning as*).
+
+```python
+from clq import Clq  # Can also be imported as C
+
+a = Clq("103254d")
+print(a.compile("L+"))  # L+100132235445
+```
+
+Normal forms can be decompiled back into strings using `Clq.decompile(st)`.
+
+## Magmoids
+
+A **magmoid** is a magma without the property of closure under the given operation. Thus it is merely a set with a binary operation. An operation performed on two elements of the set may be *undefined*; this property is called **undefinitude**. The operations we will be viewing are magmoids until their sets are restricted.
+
+## Inclusion <a name="inclusion"></a>
+
+Inclusion is sociomathematical addition. It is an associative unital magmoid with identity `Z = -d = -p` and in code is described by `Clq.__arith__(a, b, True)`. It is called *inclusion* because, in the event that a particular role maps to a function not within a string, it is *included* in the output.
+
+```python
+a = Clq("02143d")
+print(a + a)  # 01234d
+
+a = Clq("-12-45d")
+b = Clq("1032d")
+print(a + b)  # 103245d
+
+a = Clq("102349d")
+b = Clq("0246d")
+print(a + b)  # UndefinedError
+```
+
+The identity is referred to as the **sociomathematical zero**. However, for any length-n string, there are *up to n* elements which are nilpotent:
+
+```
+-  # Global identity Z
+
+# Local identities E_n for n = 1 through 10
+0
+01
+012
+0123
+012345
+0123456
+01234567
+012345678
+0123456789
+```
+
+When restricted to the set of length-n involutions, inclusion loses undefinitude and becomes a **monoid**.
+
+## Reduction <a name="reduction"></a>
+
+Reduction is sociomathematical subtraction. It is a left-unital magma whose identity is the sociomathematical zero. In code it is described by `Clq.__arith__(a, b, False)`. While it serves to "undo" the process of inclusion in some regards, it also *reduces* strings by eliminating members which are "in place", meaning it maps a role to itself as a function.
+
+```python
+a = Clq("013254d")
+b = Clq("0132p")
+print(a - b)  # --2354d
+
+a = Clq("1023d")
+b = Clq("102p")
+print(ab)  # 01-3d
+
+a = Clq("1234p")
+b = Clq("213p")
+print(a - b)  # UndefinedError
+```
+
+An important feature of reduction is that **reduction by any identity is nullifying**.
+
+```python
+"""
+Some properties of global & local identities via reduction:
+a - a = E
+a - Z = a
+a - E = Z
+"""
+
+a = Clq("01234d")
+print(a - Clq("0p"))           # -1234d
+print(a - Clq("01p"))          # --234d
+print(a - Clq("012p"))         # ---34d
+print(a - Clq("0123p"))        # ----4d
+print(a - Clq("01234d"))       # -d
+print(a - Clq("0123456789d"))  # -d
+```
+
+Over the set of length-n involutions, reduction loses undefinitude and becomes a **left-unital magma**.
