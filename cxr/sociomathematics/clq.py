@@ -121,8 +121,12 @@ class Clq:
                 if convo:
                     output[i+1] = bc[output[i+1]]  # Make (convo)
                 else:
-                    j = 3 + funcs.index(output[i+1]) * 2  # Find (deconvo)
-                    k = 2 + funcs.index(bc[output[i+1]]) * 2
+                    try:
+                        # Find (deconvo)
+                        k = 2 + funcs.index(bc[output[i+1]]) * 2
+                        j = 3 + funcs.index(output[i+1]) * 2
+                    except ValueError as exc:
+                        raise UndefinedError(f"The solution to {a} / {b} is undefined; {exc}")
                     output[k] = output[k+1] = "-"  # Reject (deconvo)
                     output[j] = bc[output[i+1]]  # Make (deconvo)
             else:
