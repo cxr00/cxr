@@ -14,7 +14,6 @@
     1. [A practical example](#example)
     2. [Which is which?](#which)
 7. [The Historian](#historian)
-   1. [Reifications](#reifications)
 8. [Abbreviations](#abbreviations)
 
 ## Motivation <a name="motivation"></a>
