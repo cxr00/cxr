@@ -65,6 +65,7 @@ One important term which needs to be expanded for purposes of this discussion is
 * decolloquial: possessing counternormative, decrystallising features
 * anticolloquial: possessing features which directly oppose the process of colloquialisation *of a particular system*; it is however colloquial in some system
 * colloquialist: a sociomathematician who interacts and engages with society for purposes of research and experimentation, functioning as a participant-observer for a sociomathematical team
+* terminal anticolloquiality ("TA"): the nature of being irretrievably removed from a society, to the extent that communication becomes incredibly difficult or impossible; for example, children with autism often suffer from terminal anticolloquiality, as do "cranks" in mathematics.
 
 ## Sociomathematicians <a name="sociomathematicians"></a>
 
