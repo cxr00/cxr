@@ -127,8 +127,7 @@ class Clq:
                         j = 3 + funcs.index(output[i+1]) * 2
                     except ValueError as exc:
                         raise UndefinedError(f"The solution to {a} / {b} is undefined; {exc}")
-                    output[k] = output[k+1] = "-"  # Reject (deconvo)
-                    output[j] = bc[output[i+1]]  # Make (deconvo)
+                    output[k], output[k+1], output[j] = "-", "-", bc[output[i+1]] # Reject & Make (deconvo)
             else:
                 if convo:
                     output[i+1] = output[i] = "-"  # Isolate (convo)
