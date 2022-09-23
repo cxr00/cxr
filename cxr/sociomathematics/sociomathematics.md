@@ -1,20 +1,20 @@
+The following is the current colloquialisation of Complexor's sociomathematics. It is an evolving document, and as such only its most recent version should be considered by aspiring colloquialists.
+
 # Sociomathematics
 
 1. [Motivation](#motivation)
 2. [A substantive definition](#substance)
-3. [Indicators](#indicators)
+3. [Colloquiality](#colloquiality)
+4. [Sociomathematicians](#sociomathematicians)
+    1. [Terminal Anticolloquiality](#terminal-anticolloquiality)
+    2. [Colloquialists](#colloquialists)
+    3. [Secondary team](#team)
+    4. [De/recolloquialisation](#colloquialisation)
+    5. [Noncolloquiality](#noncolloquiality)
+5. [The Historian](#historian)
+6. [Abbreviations](#abbreviations)
+7. [Indicators](#indicators)
    1. [Reifications](#reifications)
-4. [Colloquiality](#colloquiality)
-5. [Sociomathematicians](#sociomathematicians)
-    1. [Colloquialists](#colloquialists)
-    2. [Secondary team](#team)
-    3. [De/recolloquialisation](#colloquialisation)
-    4. [Noncolloquiality](#noncolloquiality)
-6. [Permutative and descriptive strings](#strings)
-    1. [A practical example](#example)
-    2. [Which is which?](#which)
-7. [The Historian](#historian)
-8. [Abbreviations](#abbreviations)
 
 ## Motivation <a name="motivation"></a>
 
@@ -34,20 +34,6 @@ Numbers occupy an important space in human languages. As outlined in Quantitativ
 
 This is where a huge problem starts: We don't know how to read number words, especially ones that are that big. We divide numbers into *implicitly base one-thousand* digits[^3], then struggle to determine whether a number is in the quadrillions or quintillions. Our modes of analysis revolve around considering them quantities, and so we at least *try* to. But because numbers vary so wildly in connotation, it is safe to assume that *every individual attaches a distinct emotional representation to their interpretation of any decontextualised number*.
 
-## Indicators and Indications <a name="indicators"></a>
-
-An indicator is any action or event which occurs in the context of society. Stopping to tie your shoes, turning around to look at a noise, a car driving by as you sit in the grass; all of these are indicators.
-
-Indicators have a specific, seemingly-predetermined consequence for every individual which observes it, and no two perceptions of an indicator are the same. After all, each individual perceives them in the context of their material, social, and spiritual conditions, not to mention the interpreting brains occupy completely different physical space.
-
-Indicators can be perceived in two ways, sometimes both simultaneously: They can be perceived by an individual which is capable of sensing its physical symptoms, such as seeing a flashing light or smelling food that is cooking; or they can be perceived by a collective which is attached to the indicating party when no other observer is present, such as through a CCTV camera or by a content-generating algorithm.
-
-An indication is *an indicator given expressly to communicate intent to interact as a collective form*. Indications are a powerful colloquialative force whose expression sets the stage for *extant reification* of institutions and the crystallisation and recrystallisation of norms, *including sociomathematical ones*.
-
-### Reifications <a name="reifications"></a>
-
-A reification is the primary output of a sociomathematical team. It reinforces the institutions which it is present within when related indicators are executed by the colloquialist.
-
 ## Colloquiality <a name="colloquiality"></a>
 
 One important term which needs to be expanded for purposes of this discussion is *colloquial*. For purposes of analysis, here is a set of extended words which provide greater flexibility to the notion of *colloquiality*:
@@ -64,21 +50,30 @@ One important term which needs to be expanded for purposes of this discussion is
 * decolloquial: possessing counternormative, decrystallising features
 * anticolloquial: possessing features which directly oppose the process of colloquialisation *of a particular system*; it is however colloquial in some system
 * colloquialist: a sociomathematician who interacts and engages with society for purposes of research and experimentation, functioning as a participant-observer for a sociomathematical team
-* terminal anticolloquiality ("TA"): the nature of being irretrievably removed from a society, to the extent that communication becomes incredibly difficult or impossible; for example, children with autism often suffer from terminal anticolloquiality, as do "cranks" in mathematics.
 
 ## Sociomathematicians <a name="sociomathematicians"></a>
 
-While it is possible to observe subsets of society without interacting with them, it is impossible to perform any kind of metanalysis or experimentation without some form of participant-observership. It is imperative that such a PO and its supporting team are all sociomathematicians due to the ever-present nature of quantity within written languages, numerical and other.
+While it is possible to observe subsets of society without interacting with them, it is impossible to perform any kind of metanalysis or experimentation without some form of participant-observership. It is imperative that such a PO and its supporting team are all sociomathematicians due to the ever-present nature of quantity within written languages, numerical and other. *In most cases, the ability to vary interpretation of quantitative language is vital to the ability of the team to meet the moment.*
+
+### Terminal anticolloquiality <a name="terminal-anticolloquiality"></a>
+
+The ongoing project of Complexor's sociomathematics is to establish a framework for constructing teams of social engineers who can address problems of *terminal anticolloquiality*.
+
+"Anticolloquiality" is the state of existing outside of a particular social group. This can be caused due to language barriers, disability such as mental illness, presence within a certain niche, or as a consequence of actions taken within that group. For example, someone who spends a lot of time on TikTok might be experience anticolloquiality compared to a Boomer, while still being colloquial to other TikTokers. And someone who frequently says racist or transphobic things will often find themselves estranged from progressive spaces where their actions are known.
+
+*Terminal* anticolloquiality, however, is more serious: "TA" occurs when an individual *fails to avoid anticolloquiality in any social group they attempt to participate in*. While it may occur at different rates, individuals experiencing TA inevitably become estranged or unwelcome within the social groups they exist within, *no matter how briefly they are within them*.
+
+By nature, the terminally-anticolloquial suffer from being irretrievably removed from a society, to the extent that communication becomes incredibly difficult or impossible. This can lead to self-destructive behavior such as ennui, anomie, and even suicidality.
 
 ### Colloquialists <a name="colloquialists"></a>
 
-The root scientist within a sociomathematical team is the colloquialist. In short, the role of the colloquialist is to be present within some social group and "grok vibes". This is a purely analytical perspective, one which usually does the following:
+In order to address TA, a team of social engineers must be constructed, led by the **colloquialist**. The colloquialist is the root scientist within a sociomathematical team. In short, the social role of the colloquialist is to be present within some social group and "grok vibes". In order to study and address TA, the colloquialist in place must perform the following:
 
 * Interpret incoming indicators in terms of their colloquiality
 * Determine the necessary indicator to meet the moment
 * Execute
 
-As a scientist, colloquialists are prone to self-experimentation in terms of seeking and delivering indicators; this has the potential to alter the course of analysis by the ultary teams. Colloquialists are also responsible for outlining and describing the roles which ultary teammates serve.
+As a scientist, colloquialists must initiate self-experimentation in terms of seeking and delivering indicators within the context of the subject; this has the potential to alter the course of analysis by the ultary teams. Colloquialists are also responsible for outlining and describing the roles which ultary teammates serve.
 
 In order to perform metanalysis, the colloquialist can multithread as an entire secondary team. However, this must be done in solitude to prevent indicators from influencing either metanalysis or ultary actions. Due to the nature of uncertainty, the actions of a colloquialist cannot be viewed as coordinated in any regard, *even in cases of extended instant reification*[^4].
 
@@ -93,18 +88,18 @@ In support of a colloquialist, there are various roles who ask certain types of 
 * 3 - Interventionist - What needs to change?
 * 4 - Contrarian - What are we wrong about?
 
-### De/recolloquialisation <a name="colloquialisation"></a>
+### De/recolloquialisation team <a name="colloquialisation"></a>
 
-Decolloquialisation is the process of reducing a colloquialist from their role back to normalcy. It is an *interrogative* process through which consensus about the nature of their nature is reestablished and reification occurs in spite of previous colloquiality.
+Because of the risk of TA to the colloquialist, there are two roles which serve to counter the necessary anticolloquiality which arises from self-experimentation. Decolloquialisation is the process of reducing a colloquialist from their role back to normalcy. It is an *interrogative* and *therapeutic* process through which consensus about the nature of their nature is reestablished and reification occurs in spite of previous anticolloquiality.
 
 * 5 - Interrogator - What else do we need to know?
 * 6 - Therapist - How can newfound knowledge help?
 
 Interrogators engage in *active decolloquialisation*, whereas Therapists engage in *active recolloquialisation*.
 
-### Noncolloquiality <a name="noncolloquiality"></a>
+### Noncolloquiality team <a name="noncolloquiality"></a>
 
-Entities which persist outside of, in spite of, or which are the determiners rather than the determinants of colloquiality in a given sphere, are termed *noncolloquial*. For example, the algorithm which governs what you see on TikTok is *colloquialising* while it is itself noncolloquial.
+Entities which persist outside of, in spite of, or which are the determiners rather than the determinants of colloquiality in a given sphere, are termed *noncolloquial*. For example, the algorithm which governs what you see on TikTok is *colloquialising* while it is itself noncolloquial. Those who function in these roles attempt to sit outside of the colloquialative processes in which the rest of the team is usually engaged.
 
 * 7 - Dreamer - Reimagine and recontextualise
 * 8 - Interpreter - Evaluate from an alternative colloquial perspective
@@ -112,6 +107,10 @@ Entities which persist outside of, in spite of, or which are the determiners rat
 ## The Historian <a name="historian"></a>
 
 Designated as 9, Historians are the other imperative member of a sociomathematical team besides colloquialist. Like the colloquialist, they may and often do fill any role at any given time for purposes of achieving their primary goal: synthesis of the themes of the team's indications into a **reification**.
+
+## Socioarithmetic <a name="socioarithmetic"></a>
+
+Sociomathematical teams are altered by performing mathematical operations outlined by `clq.py`. Teams can be transformed via *inclusion*, *reduction*, *isolation*, and *rejection*. See [clq.md](./readme/clq.md) for a description of the technical process. **Socioarithmetic and sociomathematical strings also serve to describe individuals afflicted with dissociative disorders such as DID and OSDD, regardless of colloquiality.**
 
 ## Abbreviations <a name="abbreviations"></a>
 
@@ -126,7 +125,22 @@ Designated as 9, Historians are the other imperative member of a sociomathematic
 * 8 - Interpreter - inp
 * 9 - Historian - hist
 
-* clq -> an: role -> function
+
+## Indicators and Indications <a name="indicators"></a>
+
+An indicator is any action or event which occurs in the context of society. Stopping to tie your shoes, turning around to look at a noise, a car driving by as you sit in the grass; all of these are indicators.
+
+Indicators have a specific, seemingly-predetermined consequence for every individual which observes it, and no two perceptions of an indicator are the same. After all, each individual perceives them in the context of their material, social, and spiritual conditions, not to mention the interpreting brains occupy completely different physical space.
+
+Indicators can be perceived in two ways, sometimes both simultaneously: They can be perceived by an individual which is capable of sensing its physical symptoms, such as seeing a flashing light or smelling food that is cooking; or they can be perceived by a mechanism which is attached to the indicating party when no other observer is present, such as through a CCTV camera or by a content-generating algorithm.
+
+An indication is *an indicator given expressly to communicate intent to interact as a collective form*. Indications are a powerful colloquialative force whose expression sets the stage for *extant reification* of institutions and the crystallisation and recrystallisation of norms, *including sociomathematical ones*.
+
+### Reifications <a name="reifications"></a>
+
+A reification is the primary output of a sociomathematical team. It reinforces the institutions which it is present within when related indicators are executed by the colloquialist.
+
+___
 
 [^1]: Read more on [Quantitative Derealisation](https://complexor.files.wordpress.com/2022/08/qd.pdf).
 
