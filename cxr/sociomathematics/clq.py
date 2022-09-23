@@ -146,7 +146,7 @@ class Clq:
         if all([st == "-" for st in s]):
             output = "-d"
         else:
-            output = ["-"] * (max([int(st) for st in s[::2] if st.isnumeric()]) + 1)
+            output = ["-"] * (max([int(st) for st in s[::2] if st.isnumeric()] + [0]) + 1)
             for n in range(0, len(s) - 1, 2):
                 if s[n].isnumeric():
                     output[int(s[n])] = s[n+1]
