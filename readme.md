@@ -2,6 +2,8 @@
 
 Hello! This repo contains all the important stuff from past and current projects which I really care about.
 
+`cxr` has no external dependencies. Go nuts.
+
 * `cxr` - my core library
 * `tests` - you get the idea
 
