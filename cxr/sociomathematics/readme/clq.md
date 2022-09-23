@@ -1,6 +1,6 @@
 # clq.py: Socioarithmetic over Sociomathematical Strings
 
-Below is a summary of known properties of socioarithmetic. It consists of four related but *nonmutual* operations, ie these operations are not compatible with notions such as inverse, distributivity, or even bijection (not even when limiting the set to involutions!).
+Below is a summary of known properties of socioarithmetic. It consists of four related but *nonmutual* operations, ie these operations are compatible but not through canonical notions such as inverse, distributivity, or even bijection (not even when limiting the set to involutions!).
 
 ## Sociomathematical strings and normal form <a name="normal"></a>
 
@@ -22,7 +22,7 @@ Normal forms can be decompiled back into strings using `Clq.decompile(st)`.
 
 ## Magmoids
 
-A **magmoid** is a magma without the property of closure under the given operation. Thus it is merely a set with a binary operation. An operation performed on two elements of the set may be *undefined*; this property is called **undefinitude**. The operations we will be viewing are magmoids until their sets are restricted.
+A **magmoid** is a magma without the property of closure under the given operation. Thus it is merely a set with a binary operation. An operation performed on two elements of the set may be *undefined*; this property is called **undefinitude**. The operations we will be viewing are all magmoids.
 
 ## Inclusion <a name="inclusion"></a>
 
@@ -142,25 +142,23 @@ print(a / "-5-6d")   # -----13d: __5163
 Below is a logical, math-esque summary of each operation. This serves as the primitive, non-code form of each operation which demonstrates how these operations can be considered each others' inverses.
 
 ```
-# Inclusion
+# Inclusion: A U magmoid
 If exists s.t. F = R'
 then set F = F'
 else add (R', F')
 
-# Rejection
+# Rejection: L-U magmoid
 If exists s.t. F = F'
 then remove (R, F)
-else set F = R'
+then set F = R'
 
-# Isolation
+# Isolation: monoid
 for each R'
 keep where F = R'
-find s.t. F = R'
 then set F = F'
 
-# Reduction
+# Reduction: L-U magmoid
 for each R'
 remove where F = R'
-find s.t. F = F'
-then set F = R'
+then set F' = R'
 ```
