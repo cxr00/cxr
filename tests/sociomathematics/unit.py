@@ -193,7 +193,9 @@ def convo_test():
     print("### DE/CONVOLUTION TEST ###")
 
     a = Clq("0213d")
-    print(a * "-1-3d")
+    b = a * "-1-3d"
+    print(a, a.compile())
+    print(b, b.compile())
     print()
 
     a = Clq("0231d")

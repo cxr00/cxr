@@ -74,9 +74,9 @@ class Clq:
     @staticmethod
     def __arith__(a, b, plus):
         """
-        See socioarithmetic.md for details on inclusion and reduction
+        See socioarithmetic.md for details on inclusion and rejection
 
-        :param plus: whether inclusion (True) or reduction (False) is performed
+        :param plus: whether inclusion (True) or rejection (False) is performed
         """
 
         sc = a.compile()
@@ -94,9 +94,9 @@ class Clq:
                 if not plus and tmp == output[i+1]:
                     output[i] = output[i+1] = "-"
 
-        odds = output[2::2]
-        evens = output[3::2]
         if plus:
+            odds = output[2::2]
+            evens = output[3::2]
             for k, v in oc.items():
                 if k not in odds and v not in evens:
                     output += [k, v]
@@ -127,7 +127,7 @@ class Clq:
                         j = 3 + funcs.index(output[i+1]) * 2
                     except ValueError as exc:
                         raise UndefinedError(f"The solution to {a} / {b} is undefined; {exc}")
-                    output[k], output[k+1], output[j] = "-", "-", bc[output[i+1]] # Reject & Make (deconvo)
+                    output[k], output[k+1], output[j] = "-", "-", bc[output[i+1]] # Reduce & Make (deconvo)
             else:
                 if convo:
                     output[i+1] = output[i] = "-"  # Isolate (convo)
@@ -164,7 +164,7 @@ class Clq:
         return Clq.__arith__(self, other, True)
 
     def __sub__(self, other):
-        # Also called "reduction"
+        # Also called "rejection"
         if isinstance(other, str):
             return Clq.__arith__(self, Clq(other), False)
         elif isinstance(other, int):
@@ -180,6 +180,7 @@ class Clq:
         return self - other
 
     def __mul__(self, other):
+        # Also called "isolation"
         if isinstance(other, str):
             return Clq.__metic__(self, Clq(other), True)
         elif isinstance(other, int):
@@ -189,6 +190,7 @@ class Clq:
         return Clq.__metic__(self, other, True)
 
     def __truediv__(self, other):
+        # Also called "reduction"
         if isinstance(other, str):
             return Clq.__metic__(self, Clq(other), False)
         elif isinstance(other, int):

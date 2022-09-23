@@ -60,9 +60,9 @@ The identity is referred to as the **sociomathematical zero**. However, for any 
 
 When restricted to the set of length-n involutions, inclusion loses undefinitude and becomes a **monoid**.
 
-## Reduction <a name="reduction"></a>
+## Rejection <a name="rejection"></a>
 
-Reduction is sociomathematical subtraction. It is a left-unital magmoid whose identity is the sociomathematical zero. In code it is described by `Clq.__arith__(a, b, False)`. While it serves to "undo" the process of inclusion in some regards, it also *reduces* strings by eliminating members which are "in place", meaning it maps a role to itself as a function.
+Rejection is sociomathematical subtraction. It is a left-unital magmoid whose identity is the sociomathematical zero. In code it is described by `Clq.__arith__(a, b, False)`. While it serves to "undo" the process of inclusion in some regards, it also *reduces* strings by eliminating members which are "in place", meaning it maps a role to itself as a function.
 
 ```python
 a = Clq("013254d")
@@ -70,7 +70,7 @@ b = Clq("0132p")
 print(a - b)  # --2354d
 
 a = Clq("1023d")
-b = "102p"  # Reduction works like inclusion vis-a-vis string interactions
+b = "102p"  # Rejection works like inclusion vis-a-vis string interactions
 print(a - b)  # 01-3d
 
 a = Clq("1234p")
@@ -78,7 +78,7 @@ b = "213p"
 print(a - b)  # UndefinedError
 ```
 
-An important feature of reduction is that **reduction by any identity is nullifying**.
+An important feature of rejection is that **rejection by any identity is nullifying**.
 
 ```python
 """
@@ -104,7 +104,7 @@ Over the set of length-n involutions, reduction loses undefinitude and becomes a
 Isolation is sociomathematical convolution. It is a monoid with identities E_n depending on length. In code it is described by `Clq.__metic__(a, b, True)`. The multiplicand is used in the following way:
 
 * For each role-function pair RF in the right operand, find the role-function pair RF2 whose function is equal to the role of RF;
-* Change RF2's function to the function of RF (R -> F);
+* Change RF2's function to the function of RF;
 * For each role-function pair in the left operand, if its function is not associated with the function of a pair in the right operand, it is *removed* from the string
 
 ```python
@@ -118,9 +118,9 @@ b = 2  # Shorthand for --2d
 print(a * b)  # ------2d
 ```
 
-# Rejection <a name="rejection"></a>
+# Reduction <a name="reduction"></a>
 
-Rejection is sociomathematical deconvolution. It is a left-unital magmoid whose identity is `Z`. In code it is described by `Clq.__metic__(a, b, False)`. The divisor is used in the following way:
+Reduction is sociomathematical deconvolution. It is a left-unital magmoid whose identity is `Z`. In code it is described by `Clq.__metic__(a, b, False)`. The divisor is used in the following way:
 
 * For each role-function pair RF in the divisor, find the role-function pair RF2 whose function is equal to the role of RF;
 * Remove RF2 from the string;
@@ -128,11 +128,39 @@ Rejection is sociomathematical deconvolution. It is a left-unital magmoid whose 
 
 ```python
 a = Clq("0231d")     # __00311223
-print(a / "-2d")     # 013d / __001123
+print(a / "-2d")     # 013d: __001123
 
 a = Clq("1402d")     # __20013214
-print(a / "24d")     # -1-0d / __3011
+print(a / "24d")     # -1-0d: __3011
 
 a = Clq("-1-3-56d")  # __11335566
-print(a / "-5-6d")   # -----13d / __5163
+print(a / "-5-6d")   # -----13d: __5163
+```
+
+# Pseudo-math
+
+Below is a logical, math-esque summary of each operation. This serves as the primitive, non-code form of each operation which demonstrates how these operations can be considered each others' inverses.
+
+```
+# Inclusion
+If exists s.t. F = R'
+then set F = F'
+else add (R', F')
+
+# Rejection
+If exists s.t. F = F'
+then remove (R, F)
+else set F = R'
+
+# Isolation
+for each R'
+keep where F = R'
+find s.t. F = R'
+then set F = F'
+
+# Reduction
+for each R'
+remove where F = R'
+find s.t. F = F'
+then set F = R'
 ```
