@@ -89,10 +89,13 @@ class Clq:
         output = list(sc)
         for i in range(2, len(sc), 2):
             if output[i+1] in oc:
-                tmp = output[i+1]
-                output[i+1] = oc[output[i+1]]
-                if not plus and tmp == output[i+1]:
-                    output[i] = output[i+1] = "-"
+                if not plus and output[i] == oc[output[i+1]]:
+                    if output[i] == output[i+1]:
+                        output[i] = output[i+1] = "-"
+                    else:
+                        output[i+1] = output[i]
+                else:
+                    output[i+1] = oc[output[i+1]]
 
         if plus:
             odds = output[2::2]

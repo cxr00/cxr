@@ -58,11 +58,11 @@ The identity is referred to as the **sociomathematical zero**. However, for any 
 0123456789
 ```
 
-When restricted to the set of length-n involutions, inclusion loses undefinitude and becomes a **monoid**.
+When restricted to the set of length-n involutions, inclusion loses undefinitude but remains a magmoid.
 
 ## Rejection <a name="rejection"></a>
 
-Rejection is sociomathematical subtraction. It is a left-unital magmoid whose identity is the sociomathematical zero. In code it is described by `Clq.__arith__(a, b, False)`. While it serves to "undo" the process of inclusion in some regards, it also *reduces* strings by eliminating members which are "in place", meaning it maps a role to itself as a function.
+Rejection is sociomathematical subtraction. It is a left-unital magmoid whose identity is the sociomathematical zero. In code it is described by `Clq.__arith__(a, b, False)`. While it serves to "undo" the process of inclusion in some regards, it also eliminates members which are "in place".
 
 ```python
 a = Clq("013254d")
@@ -78,26 +78,7 @@ b = "213p"
 print(a - b)  # UndefinedError
 ```
 
-An important feature of rejection is that **rejection by any identity is nullifying**.
-
-```python
-"""
-Some properties of global & local identities via reduction:
-a - a = E
-a - Z = a
-a - E = Z
-"""
-
-a = Clq("01234d")
-print(a - 0)              # -1234d
-print(a - "01p"))         # --234d
-print(a - "012p"))        # ---34d
-print(a - "0123p"))       # ----4d
-print(a - "01234d"))      # -d
-print(a - "0123456789d")  # -d
-```
-
-Over the set of length-n involutions, reduction loses undefinitude and becomes a **left-unital magma**.
+Over the set of length-n involutions, rejection loses undefinitude but remains a magmoid.
 
 # Isolation <a name="isolation"></a>
 
@@ -135,30 +116,4 @@ print(a / "24d")     # -1-0d: __3011
 
 a = Clq("-1-3-56d")  # __11335566
 print(a / "-5-6d")   # -----13d: __5163
-```
-
-# Pseudo-math
-
-Below is a logical, math-esque summary of each operation. This serves as the primitive, non-code form of each operation which demonstrates how these operations can be considered each others' inverses.
-
-```
-# Inclusion: A U magmoid
-If exists s.t. F = R'
-then set F = F'
-else add (R', F')
-
-# Rejection: L-U magmoid
-If exists s.t. F = F'
-then remove (R, F)
-then set F = R'
-
-# Isolation: monoid
-for each R'
-keep where F = R'
-then set F = F'
-
-# Reduction: L-U magmoid
-for each R'
-remove where F = R'
-then set F' = R'
 ```
