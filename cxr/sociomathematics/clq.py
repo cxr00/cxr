@@ -82,26 +82,23 @@ class Clq:
         sc = a.compile()
         oc = b.compile()
 
-        oc = {
+        remap = {
             (t0 if plus else t1): (t1 if plus else t0) for t0, t1 in zip(oc[2::2], oc[3::2])
         }
 
         output = list(sc)
         for i in range(2, len(sc), 2):
-            if output[i+1] in oc:
-                if not plus and output[i] == oc[output[i+1]]:
-                    if output[i] == output[i+1]:
-                        output[i] = output[i+1] = "-"
-                    else:
-                        output[i+1] = output[i]
+            if output[i+1] in remap: # check - incl: f = r', rej: f = f'
+                if not plus and output[i] == remap[output[i+1]]:  # check - rej: r = r'
+                    output[i] = output[i+1] = "-" # remove - rej
                 else:
-                    output[i+1] = oc[output[i+1]]
+                    output[i+1] = remap[output[i+1]]  # set - incl: f = f', rej: f = r'
 
         if plus:
             odds = output[2::2]
             evens = output[3::2]
-            for k, v in oc.items():
-                if k not in odds and v not in evens:
+            for k, v in remap.items():
+                if k not in odds and v not in evens:  # add - incl
                     output += [k, v]
         try:
             return Clq.decompile("".join(output))

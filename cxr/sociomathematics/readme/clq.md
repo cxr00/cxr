@@ -62,20 +62,20 @@ When restricted to the set of length-n involutions, inclusion loses undefinitude
 
 ## Rejection <a name="rejection"></a>
 
-Rejection is sociomathematical subtraction. It is a left-unital magmoid whose identity is the sociomathematical zero. In code it is described by `Clq.__arith__(a, b, False)`. While it serves to "undo" the process of inclusion in some regards, it also eliminates members which are "in place".
+Rejection is sociomathematical subtraction. It is a left-unital magmoid whose identity is the sociomathematical zero. In code it is described by `Clq.__arith__(a, b, False)`. While it serves to "undo" the process of inclusion in some regards, it also eliminates members which are "in place" relative to the subtrahend.
 
 ```python
 a = Clq("013254d")
 b = Clq("0132p")
-print(a - b)  # --2354d
+print(a - b)  # ----54d
 
 a = Clq("1023d")
 b = "102p"  # Rejection works like inclusion vis-a-vis string interactions
-print(a - b)  # 01-3d
+print(a - b)  # 10-3d
 
 a = Clq("1234p")
 b = "213p"
-print(a - b)  # UndefinedError
+print(a - b)  # -214p
 ```
 
 Over the set of length-n involutions, rejection loses undefinitude but remains a magmoid.
