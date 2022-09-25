@@ -213,7 +213,7 @@ class Clq:
     def __repr__(self):
         # Yes, this isn't how it's typically used but it's otherwise useless
         output = "".join([self.string, self.mode])
-        output += "\n  ".join(self.analysis)
+        output += "\n* ".join(self.analysis)
         output += "\n"
         return output
 
