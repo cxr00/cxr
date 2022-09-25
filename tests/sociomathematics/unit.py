@@ -244,8 +244,8 @@ def potential_ringlike_test():
 
     try:
         print((a*b) / a)
-    except UndefinedError:
-        print(f"{a} * {b} / {a} is undefined.")
+    except UndefinedError as exc:
+        print(f"{exc}")
 
 
 if __name__ == "__main__":

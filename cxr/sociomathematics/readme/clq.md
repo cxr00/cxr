@@ -84,9 +84,9 @@ Over the set of length-n involutions, rejection loses undefinitude but remains a
 
 Isolation is sociomathematical convolution. It is a monoid with identities E_n depending on length. In code it is described by `Clq.__metic__(a, b, True)`. The multiplicand is used in the following way:
 
-* For each role-function pair RF in the right operand, find the role-function pair RF2 whose function is equal to the role of RF;
-* Change RF2's function to the function of RF;
-* For each role-function pair in the left operand, if its function is not associated with the function of a pair in the right operand, it is *removed* from the string
+* For each role-function pair RF in the right operand, find the role-function pair RF2 whose role is equal to the function of RF;
+* Change RF's function to the function of RF2;
+* If no RF2 exists for a given RF, then that RF is removed from the string
 
 ```python
 
@@ -103,9 +103,9 @@ print(a * b)  # ------2d
 
 Reduction is sociomathematical deconvolution. It is a left-unital magmoid whose identity is `Z`. In code it is described by `Clq.__metic__(a, b, False)`. The divisor is used in the following way:
 
-* For each role-function pair RF in the divisor, find the role-function pair RF2 whose function is equal to the role of RF;
-* Remove RF2 from the string;
-* Find the string RF3 whose function matches the function of RF, and change that function to the role of RF (F -> R)
+* For each role-function pair RF in the divisor, find the role-function pair RF2 whose function is equal to the function of RF;
+* Remove RF from the string;
+* Find the pair RF3 whose function matches the function of RF, and change it to the role of RF2
 
 ```python
 a = Clq("0231d")     # __00311223

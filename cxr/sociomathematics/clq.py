@@ -117,20 +117,18 @@ class Clq:
         output = list(ac)
         funcs = output[3::2]
         for i in range(2, len(ac), 2):
-            if output[i+1] in bc:  # Find (convo)
+            if output[i+1] in bc:  # check - iso: f = r', red: f = f'
                 if convo:
-                    output[i+1] = bc[output[i+1]]  # Make (convo)
+                    output[i+1] = bc[output[i+1]]  # set - iso: f = f'
                 else:
                     try:
-                        # Find (deconvo)
-                        k = 2 + funcs.index(bc[output[i+1]]) * 2
-                        j = 3 + funcs.index(output[i+1]) * 2
+                        k = 2 + funcs.index(bc[output[i+1]]) * 2  # find r'f'
                     except ValueError as exc:
-                        raise UndefinedError(f"The solution to {a} / {b} is undefined; {exc}")
-                    output[k], output[k+1], output[j] = "-", "-", bc[output[i+1]] # Reduce & Make (deconvo)
+                        raise UndefinedError(f"The solution to {a} / {b} is undefined; cannot reduce {output[i+1]} to {bc[output[i+1]]}")
+                    output[k], output[k+1], output[i+1] = "-", "-", bc[output[i+1]] # red - remove: r'f'; set: f = r'
             else:
                 if convo:
-                    output[i+1] = output[i] = "-"  # Isolate (convo)
+                    output[i+1] = output[i] = "-"  # remove - iso
 
         try:
             return Clq.decompile("".join(output))
