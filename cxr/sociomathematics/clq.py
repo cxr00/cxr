@@ -48,7 +48,7 @@ class Clq:
     """
     Flexible representations of sociomathematical teams via bimodal imbued strings
     """
-    def __init__(self, string, abbrev=True):
+    def __init__(self, string, abbrev=False):
         if len(string) < 2:
             raise InvalidStringError(f"Invalid sociomathematical string {string}; must have at least one role designation and a mode.")
         if len(string) > 11:
@@ -66,6 +66,9 @@ class Clq:
         self.mode = string[-1]
         if self.mode not in ("p", "d"):
             raise InvalidStringError(f"Invalid mode {self.mode}; must be 'p' or 'd'.")
+
+        while len(self.string) > 1 and self.string[-1] == "-":  # Trim
+            self.string = self.string[:-1]
 
         self.analysis = None
         self.to_compile = None
