@@ -1030,7 +1030,8 @@ class Matrix:
         return self.f(a, g).i()
 
     def transpose(self):
-        return Matrix([Seq([self[k][n] for k in range(self.width())]) for n in range(len(self))])
+        l = max([len(self)] + [len(row) for row in self])
+        return Matrix([Seq([self[k][n] for k in range(len(self))]) for n in range(l)])
 
     def trim(self):
         out = copy.deepcopy(self)
