@@ -2,6 +2,12 @@
 
 Below is a summary of known properties of socioarithmetic. It consists of four related but *nonmutual* operations, ie these operations are compatible but not through canonical notions such as inverse, distributivity, or even bijection (not even when limiting the set to involutions!).
 
+# Limitations
+
+The primary limitation of socioarithmetic is that **it cannot change the role of an input, only its function**. This means you must introduce new roles via inclusion, and then sculpt them via other operations.
+
+While a team with all roles in place is ideal, it is not always logistically optimal. The purpose of socioarithmetic is not merely to negotiate roles into place, but to theorise working from a clear disadvantage in order to evaluate prospects.
+
 ## Sociomathematical strings and normal form <a name="normal"></a>
 
 A sociomathematical string (henceforth "string") represents an injective map from the set {0,1,2,3,4,5,6,7,8,9} to itself. All strings are **bimodal** in that they have both *permutative* and *descriptive* forms.
@@ -80,7 +86,7 @@ print(a - b)  # -214p
 
 Over the set of length-n involutions, rejection loses undefinitude but remains a magmoid.
 
-# Isolation <a name="isolation"></a>
+## Isolation <a name="isolation"></a>
 
 Isolation is sociomathematical convolution. It is a monoid with identities E_n depending on length. In code it is described by `Clq.__metic__(a, b, True)`. The multiplicand is used in the following way:
 
@@ -99,7 +105,7 @@ b = 2  # Shorthand for --2d
 print(a * b)  # ------2d
 ```
 
-# Reduction <a name="reduction"></a>
+## Reduction <a name="reduction"></a>
 
 Reduction is sociomathematical deconvolution. It is a left-unital magmoid whose identity is `Z`. In code it is described by `Clq.__metic__(a, b, False)`. The divisor is used in the following way:
 
@@ -118,7 +124,7 @@ a = Clq("-1-3-56d")  # __11335566
 print(a / "-5-6d")   # -----13d: __5163
 ```
 
-# Pseudocoded pseudomath
+## Pseudo
 
 Below is a pseudomathematical summary of each operation. It is written this way to draw attention to the similarities between each algorithm in a way which is easier to remember programmatically.
 
