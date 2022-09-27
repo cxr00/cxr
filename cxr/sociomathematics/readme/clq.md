@@ -123,9 +123,3 @@ print(a / "24d")     # -1-0d: __3011
 a = Clq("-1-3-56d")  # __11335566
 print(a / "-5-6d")   # -----13d: __5163
 ```
-
-## Pseudo
-
-Below is a pseudomathematical summary of each operation. It is written this way to draw attention to the similarities between each algorithm in a way which is easier to remember programmatically.
-
-![Pseudomath describing socioarithmetic](./pseudomath.jpg)
