@@ -147,6 +147,14 @@ class Clq:
         if all([st == "-" for st in s]):
             output = "-d"
         else:
+            string_roles, string_funcs = s[::2], s[1::2]
+            number_of_roles = sorted([(e, string_roles.count(e)) for e in string_roles], key=lambda x: x[1])
+            number_of_functions = sorted([(e, string_funcs.count(e)) for e in string_funcs], key=lambda x: x[1])
+            if number_of_roles[-1][1] > 1:
+                raise InvalidStringError(f"Invalid string {''.join(s)}; contains multiple {roles[number_of_roles[-1][0]]} ({number_of_roles[-1][0]}) roles")
+            if number_of_functions[-1][1] > 1:
+                raise InvalidStringError(f"Invalid string {''.join(s)}; contains multiple {roles[number_of_functions[-1][0]]} ({number_of_functions[-1][0]}) functions")
+
             output = ["-"] * (max([int(st) for st in s[::2] if st.isnumeric()] + [0]) + 1)
             for n in range(0, len(s) - 1, 2):
                 if s[n].isnumeric():
