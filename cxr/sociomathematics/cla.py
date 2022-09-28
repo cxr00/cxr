@@ -1,6 +1,10 @@
-# Command line arithmetic performed via left-associativity
-from cxr.sociomathematics.clq import Clq, UndefinedError, InvalidStringError
+"""
+Command line arithmetic performed with left-associativity
 
+This process eliminates the need to use Jupyter Notebooks for lengthier arithmetic
+"""
+
+from cxr.sociomathematics.clq import Clq, UndefinedError, InvalidStringError
 
 
 def div_up(s, mode):
@@ -89,10 +93,29 @@ def run():
     mode = "d"
     inp = input(f"{mode} >>> ")
     while inp:
-        if inp in ("p", "d"):
+        if inp in ("p", "d", "v", "c"):
             mode = inp
         else:
-            div_up(inp, mode)
+            try:
+                if mode == "v":
+                    if inp.startswith("__"):
+                        print()
+                        print(repr(Clq.decompile(inp)))
+                        print()
+                    else:
+                        print()
+                        print(repr(Clq(inp)))
+                        print()
+                elif mode == "c":
+                    print()
+                    print(Clq(inp).compile())
+                    print()
+                else:
+                    div_up(inp, mode)
+            except InvalidStringError as exc:
+                print()
+                print(exc)
+                print()
         inp = input(f"{mode} >>> ")
 
 
