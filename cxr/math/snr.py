@@ -732,7 +732,7 @@ class Matrix:
     """
 
     @staticmethod
-    def blank(l=-1, base=-1):
+    def blank(l=-1, w=-1, base=-1):
         """
         Generates a matrix consisting entirely of zeroes
 
@@ -741,6 +741,8 @@ class Matrix:
         """
         if l == -1:
             l = std_l
+        if w == -1:
+            w = std_l
         if base != -1:
             zero = Td.zero(base)
         else:
@@ -748,7 +750,7 @@ class Matrix:
         return Matrix([Seq([zero for k in range(l)]) for n in range(l)])
 
     @staticmethod
-    def g_matrix(s, g, l=-1):
+    def g_matrix(s, g, l=-1, w=-1):
         """
         The matrix S_d^p is defined in section 4.5 of SNR
 
@@ -766,7 +768,7 @@ class Matrix:
             :return: the transformed matrix
             """
             f_g_p = g_p.f(l)
-            out = Matrix.blank(l, base=f_g_p.base() if f_g_p.is_td() else -1)
+            out = Matrix.blank(l, w, base=f_g_p.base() if f_g_p.is_td() else -1)
 
             zero = Td.zero(f_g_p.base()) if f_g_p.is_td() else 0
             for n in range(l):
@@ -782,6 +784,8 @@ class Matrix:
 
         if l == -1:
             l = std_l
+        if w == -1:
+            w = std_l
 
         for g_p in g:
             s_next = generate_next_matrix(s_next, g_p)
@@ -798,14 +802,14 @@ class Matrix:
         """
         if l == -1:
             l = std_l
-        out = Matrix.blank(l=l, base=base)
+        out = Matrix.blank(l=l, w=l, base=base)
         one = Td.one(base) if base != -1 else 1
         for n in range(l):
             out[n][n] = one
         return out
 
     @staticmethod
-    def power(d, l=-1, taper=False):
+    def power(d, l=-1, w=-1, taper=False):
         """
         The power triangle d^n_y
 
@@ -817,12 +821,14 @@ class Matrix:
         d = Seq(d)
         if l == -1:
             l = std_l
+        if w == -1:
+            w = l * (len(d) - 1) + 1
         if d.is_td():
             out = [Seq(Td.one(d.base()))]
         else:
             out = [Seq(1)]
         for k in range(1, l):
-            out.append((out[-1] * d)[:l])
+            out.append((out[-1] * d)[:w])
         # Tapering maximizes efficiency of computing f()
         if taper:
             t = len(out[-1].trim()) - 1
@@ -831,7 +837,7 @@ class Matrix:
         return Matrix(out)
 
     @staticmethod
-    def sen(d: Seq, l=-1):
+    def sen(d: Seq, l=-1, w=-1):
         """
         The initial triangular matrix in 4.5
 
@@ -841,6 +847,8 @@ class Matrix:
         """
         if l == -1:
             l = std_l
+        if w == -1:
+            w = std_l
         if l == 1:
             if d.is_td():
                 return Matrix(Seq(Td.one(d.base())))
