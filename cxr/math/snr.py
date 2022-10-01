@@ -868,7 +868,7 @@ class Matrix:
         b[1] = Seq(d[0] - 1)
 
         for n in range(2, l):
-            b[n] = d[:n:-1]
+            b[n] = d[:n:-1][:w]
         return b
 
     def __init__(self, *rows):
