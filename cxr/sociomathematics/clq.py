@@ -125,10 +125,10 @@ class Clq:
                     output[i+1] = bc[output[i+1]]  # set - iso: f = f'
                 else:
                     try:
-                        k = 2 + funcs.index(bc[output[i+1]]) * 2  # find r'f'
+                        k = 2 + funcs.index(bc[output[i+1]]) * 2  # find r'f''
                     except ValueError as exc:
                         raise UndefinedError(f"The solution to {a} / {b} is undefined; cannot reduce {output[i+1]} to {bc[output[i+1]]}")
-                    output[k], output[k+1], output[i+1] = "-", "-", bc[output[i+1]] # red - remove: r'f'; set: f = r'
+                    output[k], output[k+1], output[i+1] = "-", "-", bc[output[i+1]] # red - remove: r'f''; set: f = r'
             else:
                 if convo:
                     output[i+1] = output[i] = "-"  # remove - iso
