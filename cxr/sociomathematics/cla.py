@@ -7,6 +7,17 @@ This process eliminates the need to use Jupyter Notebooks for lengthier arithmet
 from cxr.sociomathematics.clq import Clq, UndefinedError, InvalidStringError
 
 
+def show_help():
+    print()
+    print("Type in equations (eg 10d + 4p, __2013 - -01d)")
+    print("h/help: view this message")
+    print("d: descriptive mode")
+    print("p: permutative mode")
+    print("v: view mode: see full report of a particular string")
+    print("c: complation mode: see compilation of a particular string")
+    print()
+
+
 def div_up(s, mode):
     l = list(s)
     clqs = []
@@ -36,10 +47,12 @@ def div_up(s, mode):
                     spool.append(ls)
                     state = 1
             elif state == 1:  # Seeking end of string
-                if assessment is not None and ls in ("_"):
+                if assessment is not None and ls == "_":
                     assessment = assessment + ls
                 elif ls == " ":
-                    assessment = assessment or "__"
+                    if assessment is None:
+                        raise ValueError(f"Cannot determine operand type, as spool {''.join(spool)} contains no mode or assessment")
+                    assessment = "__"
                     clqs.append(Clq.decompile(assessment + "".join(spool)))
                     spool = None
                     assessment = ""
@@ -47,7 +60,9 @@ def div_up(s, mode):
                 elif ls.isnumeric() or ls == "-":
                     spool.append(ls)
                 elif is_op(ls):
-                    assessment = assessment or "__"
+                    if assessment is None:
+                        raise ValueError(f"Cannot determine operand type, as spool {''.join(spool)} contains no mode or assessment")
+                    assessment = "__"
                     clqs.append(Clq.decompile(assessment + "".join(spool)))
                     spool = None
                     assessment = None
@@ -67,7 +82,9 @@ def div_up(s, mode):
                     spool.append(ls)
                     state = 1
     except InvalidStringError as exc:
-        print(exc)
+        print()
+        print(type(exc).__name__, "-", exc)
+        print()
         return
 
     try:
@@ -95,6 +112,8 @@ def run():
     while inp:
         if inp in ("p", "d", "v", "c"):
             mode = inp
+        elif inp in ("h", "help"):
+            show_help()
         else:
             try:
                 if mode == "v":
@@ -114,7 +133,11 @@ def run():
                     div_up(inp, mode)
             except InvalidStringError as exc:
                 print()
-                print(exc)
+                print(type(exc).__name__, "-", exc)
+                print()
+            except ValueError as exc:
+                print()
+                print(type(exc).__name__, "-", exc)
                 print()
         inp = input(f"{mode} >>> ")
 
