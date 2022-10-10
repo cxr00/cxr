@@ -120,17 +120,17 @@ class Clq:
         output = list(ac)
         funcs = output[2::2]
         for i in range(1, len(ac), 2):
-            if output[i+1] in bc:  # check - iso: f = r', red: f = f'
+            if ac[i+1] in bc:  # check - iso: f = r', red: f = f'
                 if convo:
                     output[i+1] = bc[output[i+1]]  # set - iso: f = f'
                 else:
                     try:
-                        k = 1 + funcs.index(bc[output[i+1]]) * 2  # find r'f''
+                        k = 1 + funcs.index(bc[ac[i+1]]) * 2  # find r'f''
                     except ValueError as exc:
                         raise UndefinedError(f"The solution to {a} / {b} is undefined; cannot reduce {output[i+1]} to {bc[output[i+1]]}")
                     output[k], output[k+1] = "-", "-" # red - remove: r'f''
-                    if i + 1 not in (k, k+1):
-                        output[i+1] = bc[output[i+1]]  # red - set: f = r'
+                    if output[i] != "-":  # Only assign to roles that haven't been removed
+                        output[i+1] = bc[ac[i+1]]  # red - set: f = r'
             else:
                 if convo:
                     output[i+1] = output[i] = "-"  # remove - iso
