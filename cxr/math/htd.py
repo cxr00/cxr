@@ -285,12 +285,7 @@ class Seq:
         out = list(self.seq)
         while len(out) > (0 if to_zero else 1):
             current_seq = out[-1]
-            if isinstance(current_seq, Td):
-                if current_seq.abs() == Td.zero(current_seq.base):
-                    out.pop(-1)
-                else:
-                    break
-            elif current_seq == 0:
+            if current_seq.abs() == Td.zero(current_seq.base):
                 out.pop(-1)
             else:
                 break

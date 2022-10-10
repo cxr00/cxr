@@ -228,10 +228,8 @@ class Seq:
         Removes trailing zeroes from a sequence
         """
         out = list(self.seq)
-        while len(out) > (0 if to_zero else 1) and out[len(out)-1] == 0:
-            out.pop(len(out)-1)
-            if len(out) == 0:
-                break
+        while len(out) > (0 if to_zero else 1) and out[-1] == 0:
+            out.pop(-1)
         return Seq(out)
 
 
