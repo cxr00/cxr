@@ -78,7 +78,7 @@ class Seq:
                     self.seq.append(v)
 
         elif isinstance(seq, Seq):
-            self.seq = copy.deepcopy(seq.seq)
+            self.seq = list(seq.seq)
         else:
             raise ValueError(f"Unsupported type {type(seq).__name__}")
 
@@ -210,8 +210,8 @@ class Seq:
             raise TypeError(f"Can only divide by Td or Htd")
 
         # Remove leading zeroes, which is basically factoring out x
-        temp_self = copy.deepcopy(self)
-        temp_o = copy.deepcopy(o)
+        temp_self = Seq(self)
+        temp_o = Seq(o)
         while len(temp_o) > 0 and len(temp_self) > 0:
             if temp_self[0] == temp_o[0] == 0:
                 temp_self.pop(0)
@@ -282,7 +282,7 @@ class Seq:
         """
         Removes trailing zeroes from a sequence
         """
-        out = copy.deepcopy(self.seq)
+        out = list(self.seq)
         while len(out) > (0 if to_zero else 1):
             current_seq = out[-1]
             if isinstance(current_seq, Td):
