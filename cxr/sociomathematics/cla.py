@@ -84,7 +84,6 @@ def div_up(s, mode):
         return
 
     try:
-        print([str(clq) for clq in clqs])
         output = clqs.pop(0)
         while clqs:
             op = ops.pop(0)
