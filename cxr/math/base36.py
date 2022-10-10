@@ -1,5 +1,3 @@
-import copy
-
 """
 An implementation of arbitrary base arithmetic up to base 36.
 
@@ -229,7 +227,7 @@ class Seq:
         """
         Removes trailing zeroes from a sequence
         """
-        out = copy.deepcopy(self.seq)
+        out = list(self.seq)
         while len(out) > (0 if to_zero else 1) and out[len(out)-1] == 0:
             out.pop(len(out)-1)
             if len(out) == 0:
