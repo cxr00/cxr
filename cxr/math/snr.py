@@ -367,16 +367,16 @@ class Seq(Sequence):
     def concat(self, other):
         return Seq(self.elements + other.elements)
 
-    def f(self, length=-1, seed: "Seq" = None):
+    def f(self, l=-1, seed: "Seq" = None):
         """
         The recursive signature function
 
-        :param length: the length of the sequence
+        :param l: the length of the sequence
         :param seed: an alternate beginning to the sequence
         :return: the sequence F_d
         """
-        if length == -1:
-            length = std_l
+        if l == -1:
+            l = std_l
         if seed:
             r = Seq(seed)
         else:
@@ -385,7 +385,7 @@ class Seq(Sequence):
             else:
                 r = Seq(1)
         l_r = len(r)
-        for x in range(l_r, length):
+        for x in range(l_r, l):
             if self.is_td():
                 n = Td.zero(self.base())
             else:
@@ -638,7 +638,7 @@ class Sig:
         :param l: the length of the sequence
         :return: the signature F_d
         """
-        return self.seq.f(length=l if l != -1 else std_l, seed=seed).sig()
+        return self.seq.f(l=l if l != -1 else std_l, seed=seed).sig()
 
     def first_nonzero(self):
         """
