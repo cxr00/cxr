@@ -1,5 +1,4 @@
 from cxr.math.base36 import Tridozenal as Td
-import copy
 import itertools
 import random
 
@@ -117,9 +116,9 @@ class Seq(Sequence):
                     self.elements.append(v)
 
         elif isinstance(elements, Seq):
-            self.elements = copy.deepcopy(elements.elements)
+            self.elements = list(elements.elements)
         elif isinstance(elements, Sig):
-            self.elements = copy.deepcopy(elements.seq.elements)
+            self.elements = list(elements.seq.elements)
         else:
             raise ValueError(f"Unsupported type {type(elements).__name__}")
 
@@ -302,8 +301,8 @@ class Seq(Sequence):
             o = Seq(o)
 
         # Remove leading zeroes, which is basically factoring out x
-        temp_self = copy.deepcopy(self)
-        temp_o = copy.deepcopy(o)
+        temp_self = Seq(list(self.elements))
+        temp_o = Seq(list(o.elements))
         while len(temp_o) > 0 and len(temp_self) > 0:
             if temp_self[0] == temp_o[0] == 0:
                 temp_self.pop(0)
@@ -443,7 +442,7 @@ class Seq(Sequence):
 
         :param to_zero: Whether to reduce the sequence to at most length 1 (False) or length 0 (True)
         """
-        out = copy.deepcopy(self.elements)
+        out = list(self.elements)
         while len(out) > (0 if to_zero else 1):
             current_val = out[-1]
             if isinstance(current_val, Td):
@@ -486,9 +485,9 @@ class Sig:
         elif isinstance(seq, list):
             self.seq = Seq(seq)
         elif isinstance(seq, Seq):
-            self.seq = copy.deepcopy(seq)
+            self.seq = Seq(list(seq.elements))
         elif isinstance(seq, Sig):
-            self.seq = copy.deepcopy(seq.seq)
+            self.seq = Seq(list(seq.seq.elements))
         else:
             raise ValueError(f"Unsupported type {type(seq)}")
 
@@ -960,7 +959,7 @@ class Matrix:
     def __pow__(self, power, modulo=None):
         if power == 0:
             return Matrix.identity(len(self))
-        out = copy.deepcopy(self)
+        out = self[:]
         for k in range(1, power):
             out = out * self
         return out
@@ -984,13 +983,7 @@ class Matrix:
         return (self + other.neg()).trim()
 
     def __truediv__(self, num):
-        if isinstance(num, int):
-            out = copy.deepcopy(self)
-            for n in range(len(out)):
-                for k in range(out.width()):
-                    out[n][k] = out[n][k] / num
-            return out
-        elif isinstance(num, Seq):
+        if isinstance(num, (int, Seq)):
             out = []
             for n in range(len(self)):
                 out.append(self[n] / num)
@@ -1042,7 +1035,7 @@ class Matrix:
         return Matrix([Seq([self[k][n] for k in range(len(self))]) for n in range(l)])
 
     def trim(self):
-        out = copy.deepcopy(self)
+        out = self
         while len(out) > 0:
             if len(out[-1].trim(to_zero=True)) == 0:
                 out = out[:-1]
