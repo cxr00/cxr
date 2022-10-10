@@ -76,8 +76,8 @@ b = Clq("0132p")
 print(a - b)  # ----54d
 
 a = Clq("1023d")
-b = "102p"  # Rejection works like inclusion vis-a-vis string interactions
-print(a - b)  # 10-3d
+b = "102p"
+print(a - b)  # ---3d
 
 a = Clq("1234p")
 b = "213p"
