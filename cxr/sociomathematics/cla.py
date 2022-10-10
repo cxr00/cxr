@@ -23,7 +23,7 @@ def div_up(s, mode):
     clqs = []
     ops = []
     spool = None
-    assessment = None
+    normal_form_marker = None
     state = 2
 
     def is_op(c):
@@ -36,7 +36,7 @@ def div_up(s, mode):
         for ls in l + [" "]:
             if state == 0:  # Seeking operation, normal form, or standard form
                 if ls == "_":
-                    assessment = ls
+                    normal_form_marker = ls
                     state = 1
                     spool = list()
                 elif is_op(ls):
@@ -47,25 +47,21 @@ def div_up(s, mode):
                     spool.append(ls)
                     state = 1
             elif state == 1:  # Seeking end of string
-                if assessment is not None and ls == "_":
-                    assessment = assessment + ls
-                elif ls == " ":
-                    if assessment is None:
+                if ls == " ":
+                    if normal_form_marker is None:
                         raise ValueError(f"Cannot determine operand type, as spool {''.join(spool)} contains no mode or assessment")
-                    assessment = "__"
-                    clqs.append(Clq.decompile(assessment + "".join(spool)))
+                    clqs.append(Clq.decompile(normal_form_marker + "".join(spool)))
                     spool = None
-                    assessment = ""
+                    normal_form_marker = None
                     state = 0
                 elif ls.isnumeric() or ls == "-":
                     spool.append(ls)
                 elif is_op(ls):
-                    if assessment is None:
+                    if normal_form_marker is None:
                         raise ValueError(f"Cannot determine operand type, as spool {''.join(spool)} contains no mode or assessment")
-                    assessment = "__"
-                    clqs.append(Clq.decompile(assessment + "".join(spool)))
+                    clqs.append(Clq.decompile(normal_form_marker + "".join(spool)))
                     spool = None
-                    assessment = None
+                    normal_form_marker = None
                     ops.append(ls)
                     state = 0
                 elif is_mode(ls):
@@ -74,7 +70,7 @@ def div_up(s, mode):
                     state = 0
             elif state == 2:  # have op
                 if ls == "_":
-                    assessment = ls
+                    normal_form_marker = ls
                     state = 1
                     spool = list()
                 elif ls.isnumeric() or ls == "-":
@@ -88,6 +84,7 @@ def div_up(s, mode):
         return
 
     try:
+        print([str(clq) for clq in clqs])
         output = clqs.pop(0)
         while clqs:
             op = ops.pop(0)
@@ -103,7 +100,7 @@ def div_up(s, mode):
         print()
     except UndefinedError as exc:
         print()
-        print(exc)
+        print(type(exc).__name__, "-", exc)
         print()
 
 def run():
@@ -117,7 +114,7 @@ def run():
         else:
             try:
                 if mode == "v":
-                    if inp.startswith("__"):
+                    if inp.startswith("_"):
                         print()
                         print(repr(Clq.decompile(inp)))
                         print()

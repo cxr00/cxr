@@ -86,11 +86,11 @@ class Clq:
         oc = b.compile()
 
         remap = {
-            (t0 if plus else t1): (t1 if plus else t0) for t0, t1 in zip(oc[2::2], oc[3::2])
+            (t0 if plus else t1): (t1 if plus else t0) for t0, t1 in zip(oc[1::2], oc[2::2])
         }
 
         output = list(sc)
-        for i in range(2, len(sc), 2):
+        for i in range(1, len(sc), 2):
             if output[i+1] in remap: # check - incl: f = r', rej: f = f'
                 if not plus and output[i] == remap[output[i+1]]:  # check - rej: r = r'
                     output[i] = output[i+1] = "-" # remove - rej
@@ -98,8 +98,8 @@ class Clq:
                     output[i+1] = remap[output[i+1]]  # set - incl: f = f', rej: f = r'
 
         if plus:
-            odds = output[2::2]
-            evens = output[3::2]
+            odds = output[1::2]
+            evens = output[2::2]
             for k, v in remap.items():
                 if k not in odds and v not in evens:  # add - incl
                     output += [k, v]
@@ -114,21 +114,23 @@ class Clq:
         bc = b.compile()
 
         bc = {
-            (t0 if convo else t1): (t1 if convo else t0) for t0, t1 in zip(bc[2::2], bc[3::2])
+            (t0 if convo else t1): (t1 if convo else t0) for t0, t1 in zip(bc[1::2], bc[2::2])
         }
 
         output = list(ac)
-        funcs = output[3::2]
-        for i in range(2, len(ac), 2):
+        funcs = output[2::2]
+        for i in range(1, len(ac), 2):
             if output[i+1] in bc:  # check - iso: f = r', red: f = f'
                 if convo:
                     output[i+1] = bc[output[i+1]]  # set - iso: f = f'
                 else:
                     try:
-                        k = 2 + funcs.index(bc[output[i+1]]) * 2  # find r'f''
+                        k = 1 + funcs.index(bc[output[i+1]]) * 2  # find r'f''
                     except ValueError as exc:
                         raise UndefinedError(f"The solution to {a} / {b} is undefined; cannot reduce {output[i+1]} to {bc[output[i+1]]}")
-                    output[k], output[k+1], output[i+1] = "-", "-", bc[output[i+1]] # red - remove: r'f''; set: f = r'
+                    output[k], output[k+1] = "-", "-" # red - remove: r'f''
+                    if i + 1 not in (k, k+1):
+                        output[i+1] = bc[output[i+1]]  # red - set: f = r'
             else:
                 if convo:
                     output[i+1] = output[i] = "-"  # remove - iso
@@ -143,7 +145,7 @@ class Clq:
         """
         Decompile a sociomathematical string from normal form
         """
-        s = s[2:]
+        s = s[1:]
         if all([st == "-" for st in s]):
             output = "-d"
         else:
@@ -253,13 +255,13 @@ class Clq:
                 self.analysis.append(role)
             n = int(n) + 1
 
-    def compile(self, assessment=None):
+    def compile(self):
         """
         Compile a sociomathematical string into normal form
         """
-        if assessment is not None and assessment not in ("L-", "L+", "W-", "W+"):
-            raise ValueError(f"Invalid assessment {assessment}; must be L or W, - or +")
-        return (assessment or "__") + "".join(["".join(s) for s in sorted(self.to_compile, key=lambda x: x[1])])
+        # if assessment is not None and assessment not in ("L-", "L+", "W-", "W+"):
+        #     raise ValueError(f"Invalid assessment {assessment}; must be L or W, - or +")
+        return "_" + "".join(["".join(s) for s in sorted(self.to_compile, key=lambda x: x[1])])
 
     def convert(self):
         """

@@ -15,13 +15,13 @@ A sociomathematical string (henceforth "string") represents an injective map fro
 * The permutative form maps the element role to the index function (eg `023p` maps 0 -> 0, 2 -> 1, and 3 -> 2)
 * The descriptive form maps the index role to the element function (eg `023d` maps 0 -> 0, 1 -> 2, and 2 -> 3)
 
-Through use of `instance.compile()` you can convert a string into its **normal form**. A normal form consists of an assessment (either `__`, `L-`, `L+`, `W-`, or `W+`) followed by pairs of associations. The left element of a pair is the *role designation* (eg 0 for colloquialist, 4 for contrarian) while the right element is the *function designation* (eg which role the member is *functioning as*).
+Through use of `instance.compile()` you can convert a string into its **normal form**. A normal form consists of an underscore `_` followed by pairs of associations. The left element of a pair is the *role designation* (eg 0 for colloquialist, 4 for contrarian) while the right element is the *function designation* (eg which role the member is *functioning as*).
 
 ```python
 from cxr import Clq  # Can optionally
 
 a = Clq("103254d")
-print(a.compile("L+"))  # L+100132235445
+print(a.compile())  # _100132235445
 ```
 
 Normal forms can be decompiled back into strings using `Clq.decompile(st)`.
