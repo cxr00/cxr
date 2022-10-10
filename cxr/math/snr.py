@@ -427,6 +427,41 @@ class Seq(Sequence):
         out = [-k for k in self]
         return Seq(out)
 
+    def polynomial(self, var="x", fps=False, use_ss=False):
+        """
+        Represent the sequence as a polynomial
+
+        :param var: The variable name to use
+        :param fps: Whether the polynomial is a formal power series
+        :param use_ss: Whether or not to use superscripts
+        """
+        def is_lt_zero(n):
+            if isinstance(n, Td):
+                return n < Td.zero(n.base)
+            return n < 0
+
+        output = ""
+        if use_ss:
+            ss = "⁰¹²³⁴⁵⁶⁷⁸⁹"
+        for i in range(len(self)) if fps else range(len(self) - 1, -1, -1):
+            if self[i] != 0:
+                if use_ss:
+                    t = var if i == 1 else (var + "".join([ss[int(j)] for j in str(i)])) if i != 0 else ""
+                else:
+                    t = var if i == 1 else f"{var}^{i}" if i != 0 else ""
+                si = self[i] if fps else self[len(self) - i - 1]
+                if fps and i == 0:
+                    output = str(si)
+                elif not fps and i == len(self) - 1:
+                    output = f"{si}{t}" if si != 1 else t
+                else:
+                    is_td = isinstance(si, Td)
+                    if ((is_td and si.abs() == Td.one(si.base)) or (not is_td and abs(si) == 1)) and t:
+                        output += f" - {t}" if is_lt_zero(si) else f" + {t}"
+                    else:
+                        output += f" - {si.abs() if is_td else abs(si)}{t}" if is_lt_zero(si) else f" + {si}{t}"
+        return output
+
     def pop(self, index=0):
         return self.elements.pop(index)
 

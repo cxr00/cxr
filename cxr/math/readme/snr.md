@@ -1,8 +1,6 @@
 # cxr.snr
 
-SNR is the Signature Near-Ring, a construction based on the INVERT transform. You can read an in-depth explanation of
-the signature function and SNR 
-[here](https://complexor.files.wordpress.com/2020/10/recursive-signatures-and-the-signature-left-near-ring.pdf).
+SNR is the Signature Near-Ring, a construction based on the INVERT transform. You can read an in-depth explanation of the signature function and SNR [here](https://complexor.files.wordpress.com/2020/10/recursive-signatures-and-the-signature-left-near-ring.pdf).
 
 ## Seq
 
@@ -113,6 +111,16 @@ print(a.i())
 ```
 ```
 1, 1
+```
+
+### Polynomial representation
+
+Seq objects may be converted to polynomial format. You can specify the variable name, whether the polynomial is actually a formal power series, and whether or not to use superscripts in the output.
+
+```python
+print(Seq(2, -1, 1, -1).polynomial("y"))  # 2y^3 - y^2 + y - 1
+
+print(Seq(1, 1).f(l=9).polynomial("k", fps=True, use_ss=True))  # 1 + k + 2k² + 3k³ + 5k⁴ + 8k⁵ + 13k⁶ + 21k⁷ + 34k⁸
 ```
 
 ## Sig
