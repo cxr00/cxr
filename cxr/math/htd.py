@@ -842,6 +842,10 @@ class Htd:
         :param log: Whether the log messages will be printed
         :param perfect: Whether to iterate until the mantissa is fully computed (can be slow!)
         """
+        if hyperbase <= 36:
+            tdexp = Td.exp(hyperbase, power, iterations, place, log, perfect)
+            return Htd(hyperbase, implicit_base, Td(tdexp.integer, base=implicit_base), [Td(p, base=implicit_base) for p in tdexp.mantissa])
+
         if place == -1:
             place = round_to
 
@@ -887,6 +891,10 @@ class Htd:
         :param log: Whether the log messages will be printed
         :param perfect: Whether to iterate until the mantissa is fully computed (can be slow!)
         """
+        if hyperbase <= 36:
+            tdpi = Td.pi(hyperbase, iterations, place, log, perfect)
+            return Htd(hyperbase, implicit_base, Td(tdpi.integer, base=implicit_base), [Td(p, base=implicit_base) for p in tdpi.mantissa])
+
         if place == -1:
             place = round_to
 
