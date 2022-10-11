@@ -307,7 +307,7 @@ Logarithms
 """
 
 # Default value to round to when place is not set (-1)
-round_to = 10
+round_to = 18
 
 # Determines whether the log shows during __pow__ when power is Htd
 log_power = True
