@@ -9,12 +9,22 @@ from cxr.sociomathematics.clq import Clq, UndefinedError, InvalidStringError
 
 def show_help():
     print()
+    print("COMMANDS")
     print("Type in equations (eg 10d + 4p, __2013 - -01d)")
     print("h/help: view this message")
     print("d: descriptive mode")
     print("p: permutative mode")
     print("v: view mode: see full report of a particular string")
     print("c: complation mode: see compilation of a particular string")
+    print()
+
+def show_ops():
+    print()
+    print("OPERATIONS")
+    print("inclusion: if E (f = r'): { f = f' } else { +rf }")
+    print("rejection: if E (f = f'): { if r = r' { -rf } else { f = r' } }")
+    print("isolation: if E (f = r'): { f = f'; *rf }")
+    print("reduction: if E (f = f'): { -r'f''; f = r' }")
     print()
 
 
@@ -110,6 +120,8 @@ def run():
             mode = inp
         elif inp in ("h", "help"):
             show_help()
+        elif inp == "o":
+            show_ops()
         else:
             try:
                 if mode == "v":
