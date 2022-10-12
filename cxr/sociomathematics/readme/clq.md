@@ -32,7 +32,9 @@ A **magmoid** is a magma without the property of closure under the given operati
 
 ## Inclusion <a name="inclusion"></a>
 
-Inclusion is sociomathematical addition. It is an associative unital magmoid with identity `Z = -d = -p` and in code is described by `Clq.__arith__(a, b, True)`. It is called *inclusion* because, in the event that a particular role maps to a function not within a string, it is *included* in the output. It behaves as follows: For each role-function pair RF in the left operand, find the pair RF' in the right operand such that F = R' and set F = F'; if no such pair RF' exists, then *include* RF in the result.
+Inclusion is sociomathematical addition. It is an associative unital magmoid with identity `Z = -d = -p` and in code is described by `Clq.__arith__(a, b, True)`. It is called *inclusion* because, in the event that a particular role maps to a function not within a string, that pair is *included* in the output.
+
+For each role-function pair RF in the left operand, find the pair R'F' in the right operand such that F = R' and set F = F'; if no such pair R'F' exists, then add R'F' to the result.
 
 ```python
 a = Clq("02143d")
@@ -68,7 +70,9 @@ When restricted to the set of length-n involutions, inclusion loses undefinitude
 
 ## Rejection <a name="rejection"></a>
 
-Rejection is sociomathematical subtraction. It is a left-unital magmoid whose identity is the sociomathematical zero. In code it is described by `Clq.__arith__(a, b, False)`. While it serves to "undo" the process of inclusion in some regards, it also eliminates members which are "in place" relative to the subtrahend. It behaves as follows: For each role-function pair RF in the left operand, find the pair RF' in the right operand such that F = F'. If R = R', then remove RF from the output; otherwise set F = R'.
+Rejection is sociomathematical subtraction. It is a left-unital magmoid whose identity is the sociomathematical zero `Z`. In code it is described by `Clq.__arith__(a, b, False)`. It is called rejection because in the event a subtracted role-function pair is present in the original string, that pair is *rejected* from the result.
+
+For each role-function pair RF in the left operand, find the pair R'F' in the right operand such that F = F'. If R = R', then remove RF (*reject*) from the output; otherwise set F = R'.
 
 ```python
 a = Clq("013254d")
@@ -88,7 +92,9 @@ Over the set of length-n involutions, rejection loses undefinitude but remains a
 
 ## Isolation <a name="isolation"></a>
 
-Isolation is sociomathematical convolution. It is a monoid with identities E_n depending on length. In code it is described by `Clq.__metic__(a, b, True)`. The multiplicand is used in the following way: For each role-function pair RF in the left operand, if there is a pair RF' in the right operand such that F = R', set F = F'; otherwise remove RF.
+Isolation is sociomathematical convolution. It is a monoid with identities `E_n` depending on length. In code it is described by `Clq.__metic__(a, b, True)`. It is called isolation because it removes all role-function pairs whose function is not in the right operand, *isolating* what remains.
+
+For each role-function pair RF in the left operand, if there is a pair R'F' in the right operand such that F = R', set F = F'; otherwise remove RF.
 
 ```python
 
@@ -103,7 +109,9 @@ print(a * b)  # ------2d
 
 ## Reduction <a name="reduction"></a>
 
-Reduction is sociomathematical deconvolution. It is a left-unital magmoid whose identity is `Z`. In code it is described by `Clq.__metic__(a, b, False)`. The divisor is used in the following way: For each role-function pair RF in the left operand, find the pair RF' in the right operand such that F = F'; remove RF' and set F = R'.
+Reduction is sociomathematical deconvolution. It is a left-unital magmoid whose identity is `Z`. In code it is described by `Clq.__metic__(a, b, False)`. It is called reduction because it removes functions
+
+For each role-function pair RF in the left operand, find the pair R''F' in the right operand such that F = F'; remove R'F'' if present and set F = R'.
 
 ```python
 a = Clq("0231d")     # __00311223
@@ -116,10 +124,30 @@ a = Clq("-1-3-56d")  # __11335566
 print(a / "-5-6d")   # -----13d: __5163
 ```
 
-## All together
+## Long-form explanations
 
-* Inclusion: For each role-function pair RF in the left operand, find the pair RF' in the right operand such that F = R' and set F = F'; if no such pair RF' exists, then *include* RF in the result.
-* Rejection: For each role-function pair RF in the left operand, find the pair RF' in the right operand such that F = F'. If R = R', then remove RF from the output; otherwise set F = R'.
-* Isolation: For each role-function pair RF in the left operand, if there is a pair RF' in the right operand such that F = R', set F = F'; otherwise remove RF.
-* Reduction: For each role-function pair RF in the left operand, find the pair RF' in the right operand such that F = F'; remove RF' and set F = R'.
-* 
+* `Inclusion`: For each role-function pair RF in the left operand, find the pair RF' in the right operand such that F = R' and set F = F'; if no such pair R'F' exists, then *include* RF in the result.
+
+
+* `Rejection`: For each role-function pair RF in the left operand, find the pair R'F' in the right operand such that F = F'. If R = R', then *reject* RF from the output; otherwise set F = R'.
+
+
+* `Isolation`: For each role-function pair RF in the left operand, if there is a pair R'F' in the right operand such that F = R', set F = F'; otherwise remove RF.
+
+
+* `Reduction`: For each role-function pair RF in the left operand, find the pair R''F' in the right operand such that F = F'; remove R'F'' if present and set F = R'.
+
+## Mnemonics for addition & removal
+
+Because these related operations are highly permutative, it can be difficult to grasp what a specific one is doing. Hopefully this minimized format 
+
+```
+R   /   F - left operand role / function
+R'  /  F' - right operand role / function
+R'' / F'' - incidental role / function
+
+_RF + _FF' = _RF'  # add _R'F' if no F = R'
+_RF - _F'F = _RF'  # rem _R'F' if _RF = _R'F'
+_RF * _FF' = _RF'  # rem _RF if no F = R'
+_RF / _F'F = _RF'  # rem _R'F'' if F = F'
+```
