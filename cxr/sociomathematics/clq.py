@@ -124,11 +124,9 @@ class Clq:
                 if convo:
                     output[i+1] = bc[output[i+1]]  # set - iso: f = f'
                 else:
-                    try:
+                    if bc[ac[i+1]] in funcs:
                         k = 1 + funcs.index(bc[ac[i+1]]) * 2  # find r'
-                    except ValueError as exc:
-                        raise UndefinedError(f"The solution to {a} / {b} is undefined; {bc[output[i+1]]} does not exist to remove so {output[i+1]} can reduce")
-                    output[k], output[k+1] = "-", "-" # red - remove: r'f''
+                        output[k], output[k + 1] = "-", "-"  # red - remove: r'f''
                     if output[i] != "-":  # Only assign to roles that haven't been removed
                         output[i+1] = bc[ac[i+1]]  # red - set: f = r'
             else:
