@@ -73,10 +73,10 @@ def non_linear_process(f):
 
 
 # WEAKNESS: NOT arg must be substituted by (1 - arg); it is also more verbose due to accessing the integer sequence
-R1 = non_linear_process(lambda x, y, z: Td([(x.integer[i] & y.integer[i]) | ((1-x.integer[i]) & z.integer[i]) for i in range(32)], base=2))
-R2 = non_linear_process(lambda x, y, z: Td([(x.integer[i] & z.integer[i]) | (y.integer[i] & (1-z.integer[i])) for i in range(32)], base=2))
-R3 = non_linear_process(lambda x, y, z: Td([x.integer[i] ^ y.integer[i] ^ z.integer[i] for i in range(32)], base=2))
-R4 = non_linear_process(lambda x, y, z: Td([y.integer[i] ^ (x.integer[i] | (1-z.integer[i])) for i in range(32)], base=2))
+R1 = non_linear_process(lambda x, y, z: Td([(x[i] & y[i]) | ((1-x[i]) & z[i]) for i in range(32)], base=2))
+R2 = non_linear_process(lambda x, y, z: Td([(x[i] & z[i]) | (y[i] & (1-z[i])) for i in range(32)], base=2))
+R3 = non_linear_process(lambda x, y, z: Td([x[i] ^ y[i] ^ z[i] for i in range(32)], base=2))
+R4 = non_linear_process(lambda x, y, z: Td([y[i] ^ (x[i] | (1-z[i])) for i in range(32)], base=2))
 
 
 def buffer_process(f):

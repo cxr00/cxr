@@ -460,6 +460,25 @@ class Htd:
         else:
             return NotImplemented
 
+    def __getitem__(self, item):
+        if isinstance(item, int):
+            if item >= 0:
+                return self.integer[item]
+            else:
+                return self.mantissa[-item - 1]
+        elif isinstance(item, slice):
+            start = item.start if item.start is not None else -len(self.mantissa)
+            stop = item.stop if item.stop is not None else len(self.integer)
+            if item.step is not None:
+                raise ValueError(f"Can only slice through Htd with step of 1.")
+            if start < 0:
+                if stop < 0:
+                    return Htd(self.base, self.implicit_base, mantissa=self.mantissa[-start-1:-stop-1])
+                else:
+                    return Htd(self.base, self.implicit_base, self.integer.seq[:stop][::-1], self.mantissa[:-start])
+            else:
+                return Htd(self.base, self.implicit_base, self.integer[start:stop])
+
     def __ge__(self, other):
         if not isinstance(other, Htd):
             raise ValueError(f"Cannot compare with {type(other).__name__}, only Tridozenals")

@@ -359,6 +359,26 @@ class Tridozenal:
         else:
             raise TypeError(f"Invalid type {type(other).__name__}, must be int or Tridozenal")
 
+    def __getitem__(self, item):
+        if isinstance(item, int):
+            if item >= 0:
+                return self.integer[item]
+            else:
+                return self.mantissa[-item - 1]
+        elif isinstance(item, slice):
+            start = item.start if item.start is not None else -len(self.mantissa)
+            stop = item.stop if item.stop is not None else len(self.integer)
+            if item.step is not None:
+                raise ValueError(f"Can only slice through Tridozenals with step of 1.")
+            if start < 0:
+                if stop < 0:
+                    return Tridozenal(0, self.mantissa[-start-1:-stop-1], base=self.base)
+                else:
+                    return Tridozenal(self.integer.seq[:stop][::-1], self.mantissa[:-start], base=self.base)
+            else:
+                return Tridozenal(self.integer[start:stop], 0, base=self.base)
+
+
     def __ge__(self, other):
         if not isinstance(other, Tridozenal):
             raise ValueError(f"Cannot compare with {type(other).__name__}, only Tridozenals")
