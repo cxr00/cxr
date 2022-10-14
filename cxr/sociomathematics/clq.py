@@ -273,6 +273,9 @@ class Clq:
 
         return Clq("".join([*output_str, "d" if self.mode == "p" else "p"]))
 
+    def rebase(self):
+        return Clq("".join([*self.string, "d" if self.mode == "p" else "p"]))
+
     def is_involution(self):
         """
         Determine if a string has the same representation regardless of mode
