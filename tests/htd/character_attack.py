@@ -48,8 +48,9 @@ def minimum_hyperbase(s, implicit_base):
 
     for e in s.split(default_sep):
         td = Td.get_from_string(e, implicit_base)
-        if td.primitive() >= h:
-            h = td.primitive() + 1
+        int_td = int(td)
+        if int_td >= h:
+            h = int_td + 1
 
     return h
 

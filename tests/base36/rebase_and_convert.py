@@ -32,7 +32,7 @@ def rebase_and_convert(c: int, r: int, k: int, count_steps=False):
             val = val.rebase(r)
             val = val.convert(c)
             steps += 1
-        return steps if count_steps else val.primitive()
+        return steps if count_steps else int(val)
 
 
 def compute_convergence_sequence(d, n, save=False):

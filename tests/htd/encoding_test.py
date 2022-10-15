@@ -21,7 +21,7 @@ def random_data():
     print()
 
     for each in d:
-        print(chr(each.primitive()), end="")
+        print(chr(int(each)), end="")
     print()
 
 
@@ -43,9 +43,9 @@ def get_from_string_test():
 
     print(Htd.get_from_string(str(s)))
 
-    print(s.mantissa[0].primitive())
+    print(int(s[-1]))
 
-    print(s.primitive())
+    print(int(s))
 
 
 def encode_decode_test():
@@ -150,7 +150,7 @@ def htd_encode_test():
 
 
 def tests():
-    # random_data()
+    random_data()
     # get_from_string_test()
     # encode_decode_test()
     htd_encryption_test()
