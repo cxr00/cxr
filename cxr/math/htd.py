@@ -535,6 +535,9 @@ class Htd:
     def __hash__(self):
         return hash((str(self), self.base))
 
+    def __int__(self):
+        return self.__primitive()
+
     def __le__(self, other):
         return not self > other
 
@@ -771,7 +774,7 @@ class Htd:
 
         out = [Htd.get_from_string(e, hyperbase, implicit_base) for e in out]
 
-        out = "".join([chr(e.primitive()) for e in out])
+        out = "".join([chr(int(e)) for e in out])
 
         return out
 
@@ -838,7 +841,7 @@ class Htd:
 
         out = [Htd.get_from_string(out[i], hyperbases[i % l1], implicit_bases[i % l0]) for i in range(len(out))]
 
-        out = "".join([chr(e.primitive()) for e in out])
+        out = "".join([chr(int(e)) for e in out])
 
         return out
 
@@ -1137,6 +1140,14 @@ class Htd:
         return Htd(self.base, self.implicit_base, [e.convert(implicit_base) for e in self.integer],
                    [e.convert(implicit_base) for e in self.mantissa])
 
+    def __primitive(self):
+        """
+        Convert an Htd to its primitive int representation
+        """
+        output = sum([int(self.integer[k]) * self.base ** k for k in range(len(self.integer))])
+        output += sum([int(self.mantissa[k]) * self.base ** (-k - 1) for k in range(len(self.mantissa))])
+        return output
+
     def __resolve(self):
         """
         Performs all carries on the Htd
@@ -1270,8 +1281,3 @@ class Htd:
         # remove trailing zeroes for cleaner looking numbers
         self.integer = self.integer.trim()
         self.mantissa = self.mantissa.trim()
-
-    def primitive(self):
-        output = sum([self.integer[k].primitive() * self.base ** k for k in range(len(self.integer))])
-        output += sum([self.mantissa[k].primitive() * self.base ** (-k - 1) for k in range(len(self.mantissa))])
-        return output

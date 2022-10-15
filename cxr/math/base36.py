@@ -435,6 +435,9 @@ class Tridozenal:
     def __hash__(self):
         return hash((str(self), self.base))
 
+    def __int__(self):
+        return self.__primitive()
+
     def __le__(self, other):
         return not self > other
 
@@ -680,7 +683,7 @@ class Tridozenal:
 
         out = [s[size*k:size*(k+1)] for k in range(len(s) // size)]
         out = [Tridozenal.get_from_string(e, base) for e in out]
-        out = [str(e.convert(2)) if as_binary_strings else chr(e.primitive()) for e in out]
+        out = [str(e.convert(2)) if as_binary_strings else chr(int(e)) for e in out]
 
         return out if as_binary_strings else "".join(out)
 
@@ -983,6 +986,14 @@ class Tridozenal:
 
         return Tridozenal(self.integer, self.mantissa, base, self.is_negative)
 
+    def __primitive(self):
+        """
+        Convert a Tridozenal to its primitive int representation
+        """
+        output = sum([self.integer[k] * self.base ** k for k in range(len(self.integer))])
+        output += sum([self.mantissa[k] * self.base ** (-k - 1) for k in range(len(self.mantissa))])
+        return output
+
     def __resolve(self):
         """
         Performs all carries on the Tridozenal
@@ -1125,8 +1136,3 @@ class Tridozenal:
         # remove trailing zeroes for cleaner looking numbers
         self.integer = self.integer.trim()
         self.mantissa = self.mantissa.trim(True)
-
-    def primitive(self):
-        output = sum([self.integer[k] * self.base ** k for k in range(len(self.integer))])
-        output += sum([self.mantissa[k] * self.base ** (-k - 1) for k in range(len(self.mantissa))])
-        return output
