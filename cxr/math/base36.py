@@ -435,6 +435,9 @@ class Tridozenal:
     def __hash__(self):
         return hash((str(self), self.base))
 
+    def __float__(self):
+        return self.__primitive(is_float=True)
+
     def __int__(self):
         return self.__primitive()
 
@@ -986,12 +989,13 @@ class Tridozenal:
 
         return Tridozenal(self.integer, self.mantissa, base, self.is_negative)
 
-    def __primitive(self):
+    def __primitive(self, is_float=False):
         """
         Convert a Tridozenal to its primitive int representation
         """
         output = sum([self.integer[k] * self.base ** k for k in range(len(self.integer))])
-        output += sum([self.mantissa[k] * self.base ** (-k - 1) for k in range(len(self.mantissa))])
+        if is_float:
+            output += sum([self.mantissa[k] * self.base ** (-k - 1) for k in range(len(self.mantissa))])
         return output
 
     def __resolve(self):

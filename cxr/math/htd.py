@@ -535,6 +535,9 @@ class Htd:
     def __hash__(self):
         return hash((str(self), self.base))
 
+    def __float__(self):
+        return self.__primitive(is_float=True)
+
     def __int__(self):
         return self.__primitive()
 
@@ -1140,12 +1143,13 @@ class Htd:
         return Htd(self.base, self.implicit_base, [e.convert(implicit_base) for e in self.integer],
                    [e.convert(implicit_base) for e in self.mantissa])
 
-    def __primitive(self):
+    def __primitive(self, is_float=False):
         """
         Convert an Htd to its primitive int representation
         """
         output = sum([int(self.integer[k]) * self.base ** k for k in range(len(self.integer))])
-        output += sum([int(self.mantissa[k]) * self.base ** (-k - 1) for k in range(len(self.mantissa))])
+        if is_float:
+            output += sum([int(self.mantissa[k]) * self.base ** (-k - 1) for k in range(len(self.mantissa))])
         return output
 
     def __resolve(self):
