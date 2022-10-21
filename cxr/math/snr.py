@@ -1184,13 +1184,13 @@ class Prism:
 
     def __init__(self, structure, l=10):
         if isinstance(structure, Matrix):
-            self.val = [structure]
+            self.val = structure
         elif isinstance(structure, list):
             self.val = structure
         elif isinstance(structure, Prism):
             self.val = structure.val
         elif isinstance(structure, Seq):
-            self.val = [Matrix.power(structure, l)]
+            self.val = Matrix.power(structure, l)
         else:
             raise TypeError(f"Prism must be constructed via Matrix, list, or Prism, not {type(structure).__name__}")
 
