@@ -109,7 +109,8 @@ class Seq:
             Seq.__validate(elements)
             for v in elements:
                 if isinstance(v, float):
-                    self.elements.append(int(v) if int(v) == v else v)
+                    int_v = int(v)
+                    self.elements.append(int_v if int_v == v else v)
                 else:
                     self.elements.append(v)
 
