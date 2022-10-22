@@ -2,8 +2,6 @@ from cxr.math.base36 import Tridozenal as Td
 import itertools
 import random
 
-from collections.abc import Sequence
-
 std_l = 30
 NumTypes = (int, float, Td)
 
@@ -68,7 +66,7 @@ def check_sig(f):
     return wrapper
 
 
-class Seq(Sequence):
+class Seq:
     """
     The Seq class consists of the ring of sequences, with
     addition and convolution as operations.
