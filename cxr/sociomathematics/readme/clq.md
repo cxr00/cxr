@@ -139,7 +139,7 @@ print(a / "-5-6d")   # -----13d: __5163
 
 ## Mnemonics for addition & removal
 
-Because these related operations are highly permutative, it can be difficult to grasp what a specific one is doing. Hopefully this minimized format 
+Because these related operations are highly permutative, it can be difficult to grasp what a specific one is doing. Hopefully this minimized format serves to express the fundamental properties of each operation.
 
 ```
 R   /   F - left operand role / function
