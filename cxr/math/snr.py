@@ -1279,9 +1279,14 @@ class Prism:
 
             elif num_dims(structure) == 2:
                 _sum = 0
+                sum_coords = sum(coordinates)
                 for y in range(len(structure)):
+                    if sum_coords + y > n:
+                        break
                     for t in range(len(structure[y])):
-                        if sum(coordinates) + y + t == n:
+                        if sum_coords + y + t > n:
+                            break
+                        elif sum_coords + y + t == n:
                             multiplicand = 1
                             for i in range(len(g) - 1):
                                 multiplicand *= g[i][coordinates[i]]
@@ -1291,7 +1296,10 @@ class Prism:
 
             elif isinstance(structure, (Prism, list)):
                 _sum = 0
+                sum_coords = sum(coordinates)
                 for i, each in enumerate(structure):
+                    if sum_coords + i > n:
+                        break
                     _sum += generate_next(each, g, n, coordinates + [i])
 
                 return _sum
