@@ -365,7 +365,7 @@ class Seq:
     def concat(self, other):
         return Seq(self.elements + other.elements)
 
-    def f(self, l=-1, seed: "Seq" = None):
+    def f(self, l=-1, seed = None, as_generator=False):
         """
         The recursive signature function
 
@@ -394,6 +394,8 @@ class Seq:
                 else:
                     n += self[k] * r[x-k-1]
             r.append(n)
+            if as_generator:
+                yield n
         return r
 
     def i(self):
@@ -664,14 +666,14 @@ class Sig:
     def base(self):
         return self.seq.base()
 
-    def f(self, l=-1, seed=None):
+    def f(self, l=-1, seed=None, as_generator=False):
         """
         The recursive signature function
 
         :param l: the length of the sequence
         :return: the signature F_d
         """
-        return self.seq.f(l=l if l != -1 else std_l, seed=seed).sig()
+        return self.seq.f(l=l if l != -1 else std_l, seed=seed, as_generator=as_generator).sig()
 
     def first_nonzero(self):
         """
