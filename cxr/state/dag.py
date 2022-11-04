@@ -31,6 +31,9 @@ class Node:
             else:
                 raise ValueError(f"Parent must be Node, not {type(parent)}")
 
+    def __bool__(self):
+        return True
+
     def __getitem__(self, item):
         if isinstance(item, self.node_type):
             for node in self:
