@@ -365,7 +365,7 @@ class Seq:
     def concat(self, other):
         return Seq(self.elements + other.elements)
 
-    def f(self, l=-1, seed = None, as_generator=False):
+    def f(self, l=-1, seed = None):
         """
         The recursive signature function
 
@@ -394,8 +394,38 @@ class Seq:
                 else:
                     n += self[k] * r[x-k-1]
             r.append(n)
-            if as_generator:
-                yield n
+        return r
+
+    def f_generator(self, l=-1, seed = None):
+        """
+        The recursive signature function
+
+        :param l: the length of the sequence
+        :param seed: an alternate beginning to the sequence
+        :return: the sequence F_d
+        """
+        if l == -1:
+            l = std_l
+        if seed:
+            r = Seq(seed)
+        else:
+            if self.is_td():
+                r = Seq(Td.one(self.base()))
+            else:
+                r = Seq(1)
+        l_r = len(r)
+        for x in range(l_r, l):
+            if self.is_td():
+                n = Td.zero(self.base())
+            else:
+                n = 0
+            for k in range(len(self)):
+                if x-k-1 < 0:
+                    break
+                else:
+                    n += self[k] * r[x-k-1]
+            r.append(n)
+            yield n
         return r
 
     def i(self):
@@ -1246,10 +1276,8 @@ class Prism:
 
         new_dim = dim_d + dim_g - 1
 
-        for args in itertools.product(range(l), repeat=new_dim):
-            _sum = get(self, args[:dim_d - 1])
-            _sum = _sum * get(other, args[dim_d - 1:new_dim - 1])
-            get(output, args[:new_dim - 2])[args[new_dim - 2]] = _sum
+        for args in itertools.product(range(l), repeat=new_dim-1):
+            get(output, args[:new_dim - 2])[args[new_dim - 2]] = get(self, args[:dim_d-1]) * get(other, args[dim_d - 1: new_dim - 1])
 
         return Prism(output)
 
