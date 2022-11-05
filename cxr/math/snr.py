@@ -365,6 +365,13 @@ class Seq:
     def concat(self, other):
         return Seq(self.elements + other.elements)
 
+    def dot_product(self, other):
+        l = min(len(self), len(other))
+        out = Td.zero(self.base()) if self.is_td() else 0
+        for i in range(l):
+            out += self[i] * other[i]
+        return out
+
     def f(self, l=-1, seed = None):
         """
         The recursive signature function
@@ -696,14 +703,14 @@ class Sig:
     def base(self):
         return self.seq.base()
 
-    def f(self, l=-1, seed=None, as_generator=False):
+    def f(self, l=-1, seed=None):
         """
         The recursive signature function
 
         :param l: the length of the sequence
         :return: the signature F_d
         """
-        return self.seq.f(l=l if l != -1 else std_l, seed=seed, as_generator=as_generator).sig()
+        return self.seq.f(l=l if l != -1 else std_l, seed=seed).sig()
 
     def first_nonzero(self):
         """
@@ -812,7 +819,7 @@ class Matrix:
             zero = Td.zero(base)
         else:
             zero = 0
-        return Matrix([Seq([zero for k in range(l)]) for n in range(l)])
+        return Matrix([Seq([zero for k in range(w)]) for n in range(l)])
 
     @staticmethod
     def g_matrix(s, g, l=-1, w=-1):
@@ -1014,10 +1021,11 @@ class Matrix:
         elif isinstance(other, Matrix):
             width = max(self.width(), other.width())
             length = max(len(self), len(other))
-            out = Matrix([Seq([0 for k in range(width)]) for n in range(length)])
+            out = Matrix.blank(length, width, self[0].base())
+            other_t = other.transpose()
             for n in range(length):
                 for y in range(width):
-                    out[n][y] = sum([self[n][k] * other[k][y] for k in range(len(self[n]))])
+                    out[n][y] = self[n].dot_product(other_t[y])
             return out.trim()
         else:
             raise ValueError("Incompatible type; must be int, float, Seq, or Matrix")
