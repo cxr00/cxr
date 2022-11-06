@@ -32,7 +32,7 @@ class ClqManager(SM):
     def _initialise(self):
         self.toggle_ser_priority(False)
 
-        self["start_clq"] = Clq("0123456789d")
+        self["start_clq"] = generate_operand("0123456789")
         self["full_dataset"] = set()
         self.full_dataset.add(str(self.start_clq))
         self["current_dataset"] = set()
@@ -96,6 +96,8 @@ class ClqManager(SM):
             # print(f"added {added}...")
             self["current_dataset"] = set(self.full_dataset)
             self["new_dataset"] = set()
+            if event["target"] <= len(self.full_dataset):
+                self.change_state("terminating")
 
         @self.add_state("terminating")
         def terminating(event):
@@ -106,12 +108,15 @@ def main():
     SMR.initialize("clqscape")
     clq_factory = SMF("clq", ClqManager)
 
+    rand_sequences = []
+    rand_clqs = []
+
     for j in range(10):
         clq = clq_factory.make()
-        event = {}
+        event = {"target": 1000}
         s_ = []
 
-        for i in range(300):
+        for i in range(1000):
             try:
                 clq(event)
                 if clq.current_state() == "compiling":
@@ -124,8 +129,16 @@ def main():
         buckets = [[] for _ in range(10)]
         for e in clq.full_dataset:
             buckets[len(e)-2] += [e]
-        print(Seq(s_).i().f())
-        print(clq.random())
+        rand_sequences.append(Seq(s_).i().f(l=10))
+        rand_clqs.append(clq.random())
+
+    for seq in rand_sequences:
+        print(seq)
+    print()
+
+    for clq in rand_clqs:
+        print(clq)
+    print()
 
 
 if __name__ == "__main__":
