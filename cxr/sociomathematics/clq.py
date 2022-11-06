@@ -221,6 +221,9 @@ class Clq:
             return True
         return False
 
+    def __len__(self):
+        return len(self.string)
+
     def __repr__(self):
         # Yes, this isn't how it's typically used but it's otherwise useless
         output = "".join([self.string, self.mode])
