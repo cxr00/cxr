@@ -401,12 +401,6 @@ class CXRNode(Node):
         """
         Create a CXRNode at the given root
         """
-        if not os.path.isdir(root):
-            if not os.path.isfile(root):
-                os.makedirs(root)
-            else:
-                raise FileExistsError(f"Cannot initialize to {root}, as it already exists as a file.")
-
         node = CXRNode(root)
         node.build()
         return node
@@ -440,7 +434,8 @@ class CXRNode(Node):
         if os.path.isfile(self.path()):
             return
 
-        for f in os.listdir(self.path()):
+        dir_files = [] if not os.path.isdir(self.path()) else os.listdir(self.path())
+        for f in dir_files:
             if f.endswith(".cxr"):
                 f = f.replace(".cxr", "")
                 self.add(CXRNode(f))
@@ -619,6 +614,12 @@ class StateManagerReference:
         """
         Save the reference at the given path
         """
+        if not os.path.isdir(StateManagerReference.root):
+            if not os.path.isfile(StateManagerReference.root):
+                os.makedirs(StateManagerReference.root)
+            else:
+                raise FileExistsError(
+                    f"Cannot initialize to {StateManagerReference.root}, as it already exists as a file.")
         StateManagerReference.get_node(path).build_filepath()
         for reference in StateManagerReference.get(path):
             reference.save(*params)
