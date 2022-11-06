@@ -241,10 +241,17 @@ class Clq:
         self.analysis = [":"]
         self.to_compile = []
         draw = abbrevs if abbrev else roles
-        st = list(self.string)
-        n = 0
-        while st:
-            s = st.pop(0)
+        if self.mode == "d":
+            st = list(self.string)
+            sorted_st = sorted(st)
+        else:
+            st = [str(n) for n in range(len(self))]
+            sorted_st = st
+        iterations = 0
+        while iterations < len(st):
+            n = st.index(sorted_st[iterations])
+            s = st[n] if self.mode == "d" else self.string[n]
+            iterations += 1
             if s != "-":
                 n = str(n)
                 if s == n:
