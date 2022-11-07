@@ -844,7 +844,7 @@ class Matrix:
 
             zero = Td.zero(f_g_p.base()) if f_g_p.is_td() else 0
             for n in range(l):
-                for y in range(n + 1):
+                for y in range(w):
                     _sum = zero
                     for k in range(n + 1):
                         _sum += s_prev[k][y] * f_g_p[n - k]
