@@ -1028,7 +1028,7 @@ class Matrix:
                     out[n][y] = self[n].dot_product(other_t[y])
             return out.trim()
         else:
-            raise ValueError("Incompatible type; must be int, float, Seq, or Matrix")
+            raise ValueError(f"Incompatible type {type(other)}; must be int, float, Seq, or Matrix")
 
     def __pow__(self, power, modulo=None):
         if power == 0:
