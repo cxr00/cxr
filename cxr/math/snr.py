@@ -146,8 +146,10 @@ class Seq:
 
     def __getitem__(self, i):
         if isinstance(i, int):
+            if len(self) == 0:
+                return 0
             if i < 0:
-                return self.elements[len(self) + i]
+                return self[i % len(self)]
             else:
                 if self.elements:
                     if len(self) > i:
