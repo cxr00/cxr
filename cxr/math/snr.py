@@ -1106,6 +1106,9 @@ class Matrix:
         """
         return self.f(a, g).i()
 
+    def sieve(self, sieve_factor):
+        return Matrix([self[i][::sieve_factor] for i in range(len(self))])
+
     def transpose(self):
         l = max([len(self)] + [len(row) for row in self])
         return Matrix([Seq([self[k][n] for k in range(len(self))]) for n in range(l)])
