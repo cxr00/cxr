@@ -5,6 +5,12 @@ import random
 std_l = 30
 NumTypes = (int, float, Td)
 
+def set_std_l(n):
+    global std_l
+    if n > 0:
+        std_l = n
+    return std_l
+
 
 def check_seq(f):
     """
