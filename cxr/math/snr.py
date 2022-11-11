@@ -945,6 +945,43 @@ class Matrix:
             b[n] = d[:n:-1][:w]
         return b
 
+    @staticmethod
+    def riordan(s: Seq, d, l=-1, left=False):
+        """
+        Construct a Riordan array
+
+        :param s: the sequence which fills the first column
+        :param d: the recurrence relation for each row
+        :param l: the length of the matrix
+        """
+        if l == -1:
+            l = std_l
+
+        if l == 1:
+            if s.is_td():
+                return Matrix(Seq(Td.one(s.base())))
+            else:
+                return Matrix(Seq(1))
+
+        if s.is_td():
+            b = Matrix.blank(l, base=s.base())
+        else:
+            b = Matrix.blank(l)
+
+
+        if s.is_td():
+            b = [Seq(Td.one(s.base())), Td([1, 1], base=s.base())]
+        else:
+            b = [Seq(1), Seq(s[1], s[0]*d[0])]
+
+        for i in range(2, l):
+            to_add = Seq(s[i])
+            for k in range(1, i+1):
+                to_add.append(b[-1][k-1:k+len(d)-1].dot_product((d)[::-1]))
+            b.append(to_add)
+
+        return Matrix(b)
+
     def __init__(self, *rows):
         if len(rows) == 1:
             rows = rows[0]
