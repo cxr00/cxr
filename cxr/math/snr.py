@@ -1118,6 +1118,28 @@ class Matrix:
         """
         self.rows.append(line)
 
+    def base_sequence(self, b):
+        """
+        Interprets each row as a base-b number, and returns a sequence
+        where a(n) = M(n)_b
+
+        This only works for non-Td matrices at present. I'll add it eventually.
+        """
+        if self.rows and self.rows[0].is_td():
+            raise TypeError(f"Cannot construct base sequence from Td matrix at present.")
+        if b == 0:
+            return Seq([row.trim()[-1] for row in self])
+        elif b == 1:
+            output = Seq()
+            for row in self:
+                output.append(sum(row))
+            return output
+        else:
+            output = Seq()
+            for row in self:
+                output.append(int(Td(row.trim().elements, base=b)))
+            return output
+
     def f(self, a=1, g=Seq(1)):
         """
         Enables aerated signature convolution
