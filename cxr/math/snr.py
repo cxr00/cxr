@@ -380,6 +380,16 @@ class Seq:
             out += self[i] * other[i]
         return out
 
+    def partial_dot_product(self, other):
+        """
+        The results of Matrix.dot_product without being summed at the end
+        """
+        l = min(len(self), len(other))
+        out = Seq()
+        for i in range(l):
+            out.append(self[i]*other[i])
+        return out
+
     def f(self, l=-1, seed = None):
         """
         The recursive signature function
@@ -1140,6 +1150,21 @@ class Matrix:
                 output.append(int(Td(row.trim().elements, base=b)))
             return output
 
+    def diagonalise(self, direction=True):
+        """
+        Construct a matrix using the diagonals of the given matrix
+
+        :param direction: whether to go from top-right to bottom-left (True) or the other way
+        """
+        output = Matrix.blank(len(self), len(self))
+        for n in range(len(self)):
+            for k in range(n + 1):
+                if direction:
+                    output[n][k] = self[n - k][k]
+                else:
+                    output[n][k] = self[k][n - k]
+        return output
+
     def f(self, a=1, g=Seq(1)):
         """
         Enables aerated signature convolution
@@ -1177,6 +1202,9 @@ class Matrix:
     def transpose(self):
         l = max([len(self)] + [len(row) for row in self])
         return Matrix([Seq([self[k][n] for k in range(len(self))]) for n in range(l)])
+
+    def transposition_product(self, other):
+        return self * other.transpose()
 
     def trim(self):
         out = self
