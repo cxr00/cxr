@@ -1150,6 +1150,12 @@ class Matrix:
                 output.append(int(Td(row.trim().elements, base=b)))
             return output
 
+    def column(self, c):
+        return Seq([self[n][c] for n in range(len(self))])
+
+    def column_slice(self, start, stop, step):
+        return Matrix([self[n][start:stop:step] for n in range(len(self))])
+
     def diagonalise(self, direction=True):
         """
         Construct a matrix using the diagonals of the given matrix
