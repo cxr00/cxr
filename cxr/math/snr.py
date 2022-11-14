@@ -1202,6 +1202,9 @@ class Matrix:
         """
         return self.f(a, g).i()
 
+    def reverse(self):
+        return Matrix([self[n].trim()[::-1] for n in range(len(self))])
+
     def sieve(self, sieve_factor):
         return Matrix([self[i][::sieve_factor] for i in range(len(self))])
 
