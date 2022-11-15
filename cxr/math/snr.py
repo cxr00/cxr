@@ -1499,6 +1499,12 @@ class Prism:
     #
     #     return self
 
+    def base_prism(self, b):
+        if num_dims(self) == 2:
+            return self.val.base_sequence(b)
+        else:
+            return Prism([p.base_prism(b) for p in self])
+
     def size(self):
         output = 1
         k = self[0]
