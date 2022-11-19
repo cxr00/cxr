@@ -2,6 +2,29 @@ from cxr import Clq, UndefinedError
 from cxr import Seq
 from cxr import SMR, SM, SMF
 import random
+import requests
+import json
+
+"""
+This module demonstrates how to procedurally generate random
+Clqs, while incidentally also generating random one-beginning sequences.
+"""
+
+
+def get_best_match_oeis(f):
+    """
+    See if a sequence is present in the OEIS
+    """
+    def pad(n):
+        return "A" + "0" * (6 - len(str(n))) + str(n)
+
+    get = requests.get(f"https://oeis.org/search?fmt=json&q={f}&start=0", timeout=10).text
+    get = json.loads(get)
+    output = []
+    if get["results"] is not None:
+        for e in get["results"]:
+            output.append((pad(e["number"]), e["name"], e["data"]))
+    return output
 
 
 def generate_operand(functions):
@@ -43,6 +66,8 @@ class ClqManager(SM):
 
         @self.controller
         def controller(event):
+            if self.current_state() == "terminating":
+                return
             if self.current_dataset:
                 r = random.randint(0, 3)
                 if r == self.previous_operand:
@@ -116,15 +141,15 @@ def main():
         event = {"target": 1000}
         s_ = []
 
-        for i in range(1000):
+        for i in range(2000):
             try:
                 clq(event)
                 if clq.current_state() == "compiling":
                     s_.append(clq.recently_added)
+                if clq.current_state() == "terminating":
+                    break
             except UndefinedError as exc:
                 pass
-            if clq.current_state() == "terminating":
-                break
 
         buckets = [[] for _ in range(10)]
         for e in clq.full_dataset:
@@ -133,7 +158,7 @@ def main():
         rand_clqs.append(clq.random())
 
     for seq in rand_sequences:
-        print(seq)
+        print(seq, ":", seq.i(), [o[0] for o in get_best_match_oeis(seq)], [o[0] for o in get_best_match_oeis(seq[1:])] if seq[1] == 1 else [])
     print()
 
     for clq in rand_clqs:
