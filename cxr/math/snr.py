@@ -1400,7 +1400,10 @@ class Prism:
         self.val[key] = value
 
     def __str__(self):
-        return "\n".join([str(i) for i in self])
+        if num_dims(self) == 2:
+            return str(self.val)
+        else:
+            return "\n".join([str(i) for i in self])
 
     def f(self, g=None):
         """
@@ -1500,10 +1503,30 @@ class Prism:
     #     return self
 
     def base_prism(self, b):
-        if num_dims(self) == 2:
+        """
+        Construct a prism using base interpretations of rows
+        """
+        dims = num_dims(self)
+        if dims == 2:
             return self.val.base_sequence(b)
+        elif dims == 3:
+            return Matrix([p.base_prism(b) for p in self])
         else:
             return Prism([p.base_prism(b) for p in self])
+
+    def signary_prism(self, s, sf=None):
+        """
+        Constructs a prism using U-representations of rows
+        """
+        dims = num_dims(self)
+        if sf is None:
+            sf = s.f(l=len(self))
+        if dims == 2:
+            return Seq([n.trim()[::-1].dot_product(sf) for n in self.val])
+        elif dims == 3:
+            return Matrix([p.signary_prism(s, sf) for p in self])
+        else:
+            return Prism([p.signary_prism(s, sf) for p in self])
 
     def size(self):
         output = 1
