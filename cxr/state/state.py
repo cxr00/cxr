@@ -71,19 +71,22 @@ class StateData:
 
     def ser(self, attr, value):
         if attr in self._nonser:
-            raise TypeError(f"Cannot set serializable attribute in {self.parent.name} ({self.parent.key}): Item with key {attr} is in nonserializable")
+            raise TypeError(f"Cannot set serializable attribute in {self.parent}: Item with key {attr} is in nonserializable")
         self._ser[attr] = value
 
     def nonser(self, attr, value):
         if attr in self._ser:
-            raise TypeError(f"Cannot set nonserializable attribute in {self.parent.name} ({self.parent.key}): Item with key {attr} is in serializable")
+            raise TypeError(f"Cannot set nonserializable attribute in {self.parent}: Item with key {attr} is in serializable")
         self._nonser[attr] = value
 
-    def qoid(self):
+    def qoid(self, with_nonser=False):
         q = Qoid(self.parent.key if self.parent else "StateData")
 
         for k, v in self._ser.items():
             q += Property(k, v)
+        if with_nonser:
+            for k, v in self._nonser.items():
+                q += Property(k, v)
 
         return q
 
@@ -132,6 +135,9 @@ class StateManager:
 
     def __setitem__(self, key, value):
         self._data[key] = value
+
+    def __str__(self):
+        return f"{self.name} ({self.key})"
 
     def has_serializables(self):
         return self._data.has_serializables()
@@ -225,9 +231,9 @@ class StateManager:
         """
         self._data.nonser(key, value)
 
-    def qoid(self):
+    def qoid(self, with_nonser=False):
         b = Bill(self.name)
-        b += self._data.qoid()
+        b += self._data.qoid(with_nonser)
         return b
 
     def load(self, *params):
