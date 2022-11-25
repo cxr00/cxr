@@ -79,14 +79,11 @@ class StateData:
             raise TypeError(f"Cannot set nonserializable attribute in {self.parent}: Item with key {attr} is in serializable")
         self._nonser[attr] = value
 
-    def qoid(self, with_nonser=False):
+    def qoid(self):
         q = Qoid(self.parent.key if self.parent else "StateData")
 
         for k, v in self._ser.items():
             q += Property(k, v)
-        if with_nonser:
-            for k, v in self._nonser.items():
-                q += Property(k, v)
 
         return q
 

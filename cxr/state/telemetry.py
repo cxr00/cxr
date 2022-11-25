@@ -36,6 +36,12 @@ class StateTelemeter(StateManager):
         def crashed(event):
             pass
 
+    def device(self):
+        if self._device is not None:
+            return self._device
+        else:
+            raise StateTelemetryError(f"No device mounted to {self}")
+
     def mount(self, sm):
         """
         Attach a StateManager to the telemeter
@@ -91,7 +97,7 @@ class StateTelemeter(StateManager):
         Submit an event to the mounted StateManager and possibly record the results
         """
         try:
-            q = self._device.qoid(with_nonser=self.record_nonser)[0]
+            q = self._device.qoid()[0]
             q.tag = datetime.now().strftime("%Y-%m-%d %H%M%S")
             q += Property("event", event)
             self.telemetry.append(q)
@@ -104,7 +110,7 @@ class StateTelemeter(StateManager):
 
         except Exception as exc:
             error_time = datetime.now().strftime("%Y-%m-%d %H%M%S")
-            q = self._device.qoid(with_nonser=self.record_nonser)[0]
+            q = self._device.qoid()[0]
             q.tag = f"ERROR - {error_time} - {exc}"
             q += Property("event", event)
             self.telemetry.append(q)
@@ -116,3 +122,14 @@ class StateTelemeter(StateManager):
                         f.write(str(self.telemetry[i]) + "\n")
                     f.write(str(q) + "\n")
             self.change_state("crashed")
+
+    def reverse(self, steps):
+        """
+        Note: reassigns all variables as serialisable
+        If you are not using parameterised saves, this could be an issue
+        """
+        q = self.telemetry[len(self.telemetry)-steps]
+        self["telemetry"] = self.telemetry[:len(self.telemetry)-steps]
+
+        for property in q:
+            self._device[property.tag] = property.val
