@@ -228,9 +228,9 @@ class StateManager:
         """
         self._data.nonser(key, value)
 
-    def qoid(self, with_nonser=False):
+    def qoid(self):
         b = Bill(self.name)
-        b += self._data.qoid(with_nonser)
+        b += self._data.qoid()
         return b
 
     def load(self, *params):
