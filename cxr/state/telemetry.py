@@ -115,3 +115,4 @@ class StateTelemeter(StateManager):
                     for i in range(-(self.error_stream_range + 1), -1, -1):
                         f.write(str(self.telemetry[i]) + "\n")
                     f.write(str(q) + "\n")
+            self.change_state("crashed")
