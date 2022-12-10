@@ -286,10 +286,10 @@ class Tridozenal:
         else:
             raise ValueError(f"Invalid mantissa type {type(mantissa).__name__}; must be int, float, list or Seq")
 
-        if 2 <= base <= 36:
+        if 2 <= base <= 64:
             self.base = base
         else:
-            raise ValueError("Base must be between 2 and 36")
+            raise ValueError("Base must be between 2 and 64")
 
         # No unresolved numbers
         self.__resolve()
@@ -554,12 +554,13 @@ class Tridozenal:
             if 0 <= num < 10:
                 return str(num)
             elif 10 <= num < 36:
-                if num == 24:
-                    return "o"
-                elif num == 18:
-                    return "i"
-                else:
-                    return chr(num + 55)
+                return chr(num + 55)
+            elif 36 <= num < 62:
+                return chr(num + 61)
+            elif num == 62:
+                return "+"
+            elif num == 63:
+                return "/"
 
         if len(self.integer):
             out_integer = "".join([get_char(self.integer[n]) for n in range(len(self.integer))])
