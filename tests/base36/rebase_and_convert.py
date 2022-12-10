@@ -1,7 +1,7 @@
 
 # This module enables the construction and manipulation of numbers in bases 2 through 36
 # The only methods we will be using are rebase and convert
-from cxr.math.base36 import Tridozenal as Td
+from cxr.math.base64 import Tridozenal as Td
 
 import datetime
 import time

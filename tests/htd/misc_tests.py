@@ -1,14 +1,14 @@
-from cxr.math.base36 import Tridozenal as Td
+from cxr.math.base64 import Tridozenal as Td
 from cxr.math.htd import Htd
 
-from cxr.math import htd, base36
+from cxr.math import htd, base64
 
 import time
 
 implicit_base = 3
 htd.default_hyperbase = 10
-base36.default_base = implicit_base
-base36.round_to = 13
+base64.default_base = implicit_base
+base64.round_to = 13
 htd.round_to = 13
 
 

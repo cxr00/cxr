@@ -13,7 +13,7 @@ Tridozenals were originally implemented using the Seq class from `snr.py`. But t
 Start by importing the Tridozenal class. I like to import it as `Td`.
 
 ```python
-from cxr.math.base36 import Tridozenal as Td
+from cxr.math.base64 import Tridozenal as Td
 ```
 
 Tridozenals are constructed with three primary arguments: the `integer`, the `mantissa`, and the `base`.

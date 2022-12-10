@@ -1,4 +1,4 @@
-from cxr.math.base36 import Tridozenal as Td
+from cxr.math.base64 import Tridozenal as Td
 from cxr.math.htd import Htd, default_sep, default_encryption_sep
 
 import time

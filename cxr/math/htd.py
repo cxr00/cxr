@@ -1,6 +1,6 @@
-from cxr.math.base36 import Tridozenal as Td
+from cxr.math.base64 import Tridozenal as Td
 
-from cxr.math import base36
+from cxr.math import base64
 import copy
 
 
@@ -802,7 +802,7 @@ class Htd:
         if not hyperbases:
             hyperbases = [default_hyperbase]
         if not implicit_bases:
-            implicit_bases = [base36.default_base]
+            implicit_bases = [base64.default_base]
         if not sep:
             sep = default_encryption_sep
 
@@ -833,7 +833,7 @@ class Htd:
         if not hyperbases:
             hyperbases = [default_hyperbase]
         if not implicit_bases:
-            implicit_bases = [base36.default_base]
+            implicit_bases = [base64.default_base]
         if not sep:
             sep = default_encryption_sep
 

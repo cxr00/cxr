@@ -1,7 +1,7 @@
-from cxr.math.base36 import Tridozenal as Td
+from cxr.math.base64 import Tridozenal as Td
 from cxr.math.htd import Htd
 
-from cxr.math import htd, base36
+from cxr.math import htd, base64
 
 import random
 import time
@@ -29,11 +29,11 @@ def get_from_string_test():
 
     htd.round_to = 10
     htd.default_hyperbase = 7
-    base36.default_base = 2
+    base64.default_base = 2
 
     s = "1,11,10"
 
-    s = Htd.get_from_string(s, 4, base36.default_base)
+    s = Htd.get_from_string(s, 4, base64.default_base)
     print(s)
 
     s = s.convert(htd.default_hyperbase) / Td(4, base=2)
@@ -49,14 +49,14 @@ def get_from_string_test():
 
 
 def encode_decode_test():
-    base36.default_base = 22
+    base64.default_base = 22
     s = Td.encode("Just checking to make sure\nthat everything works")
     print(s)
 
     s = Td.decode(s)
     print(s)
 
-    base36.default_base = 9
+    base64.default_base = 9
     htd.default_hyperbase = 25
 
     s = Htd.encode("Hello world")
