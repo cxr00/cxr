@@ -1,5 +1,5 @@
 """
-An implementation of arbitrary base arithmetic up to base 36.
+An implementation of arbitrary base arithmetic up to base 64.
 
 Tridozenal numbers include:
 
@@ -32,9 +32,9 @@ def set_chars64(new_chars):
     for i in range(62):
         char = str(Tridozenal([i], base=64))
         if char == new_chars[0]:
-            raise ValueError(f"Cannot use {new_chars}: {new_chars[0]} contains character used for 0-61")
+            raise ValueError(f"Cannot use {new_chars}: {new_chars[0]} is character used for 0-61")
         if char == new_chars[1]:
-            raise ValueError(f"Cannot use {new_chars}: {new_chars[1]} contains character used for 0-61")
+            raise ValueError(f"Cannot use {new_chars}: {new_chars[1]} is character used for 0-61")
 
     global chars64
     chars64 = new_chars
