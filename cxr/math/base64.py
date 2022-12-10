@@ -21,6 +21,23 @@ log_power = True
 # Decides the default base for a Tridozenal.
 default_base = 3
 
+# The base-64 characters used for 62 and 63
+chars64 = "+/"
+
+def set_chars64(new_chars):
+    if len(new_chars) != 2:
+        raise ValueError(f"Can only submit two characters for chars64")
+    if new_chars[0] == new_chars[1]:
+        raise ValueError(f"Characters cannot be equal")
+    for i in range(62):
+        char = str(Tridozenal([i], base=64))
+        if char == new_chars[0]:
+            raise ValueError(f"Cannot use {new_chars}: {new_chars[0]} contains character used for 0-61")
+        if char == new_chars[1]:
+            raise ValueError(f"Cannot use {new_chars}: {new_chars[1]} contains character used for 0-61")
+
+    global chars64
+    chars64 = new_chars
 
 """
 The Seq class implements basic sequence arithmetic that
@@ -558,9 +575,9 @@ class Tridozenal:
             elif 36 <= num < 62:
                 return chr(num + 61)
             elif num == 62:
-                return "+"
+                return chars64[0]
             elif num == 63:
-                return "/"
+                return chars64[1]
 
         if len(self.integer):
             out_integer = "".join([get_char(self.integer[n]) for n in range(len(self.integer))])
@@ -628,12 +645,27 @@ class Tridozenal:
             base = default_base
 
         def get_num(char):
-            if char.isnumeric():
+
+            ord_char = ord(char)
+            if 48 <= ord_char < 58:
                 return int(char)
-            elif char.isalpha():
-                return ord(char.upper()) - 55
+            elif 65 <= ord_char < 91:
+                return ord_char - 55
+            elif 97 <= ord_char < 123:
+                return ord_char - 61
+            elif char == chars64[0]:
+                return 62
+            elif char == chars64[1]:
+                return 63
             else:
-                raise ValueError(f"Invalid character {char}; must be 0-9, A-Z")
+                raise ValueError(f"Invalid character {char}; must be 0-9, A-Z, a-z, or {chars64}")
+
+            # if char.isnumeric():
+            #     return int(char)
+            # elif char.isalpha():
+            #     return ord(char.upper()) - 55
+            # else:
+            #     raise ValueError(f"Invalid character {char}; must be 0-9, A-Z")
 
         if not s:
             return Tridozenal(0, 0, base)
