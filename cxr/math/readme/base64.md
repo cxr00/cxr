@@ -1,6 +1,6 @@
-## cxr.base36
+## cxr.base64
 
-This is an implementation of arbitrary-base arithmetic up to base 36. I chose to limit it to 36 because that includes all base systems which use 0-9 and A-Z.
+This is an implementation of arbitrary-base arithmetic up to base 64. Though I originally chose to limit it to 36 because that includes all base systems which use 0-9 and A-Z, I saw it necessary to extend the digits with a-z and +/.
 
 Typically, computations in other bases are performed by converting the numbers to decimal, performing the operation, then converting the result back to the desired base. However, Tridozenals are __fluent__, meaning they perform all operations in their given base. There are certainly disadvantages to this way of computing, but I think it is a more pure approach.
 
@@ -42,7 +42,7 @@ td0 = Td.get_from_string("1.A078315B12B", base=12)
 print(td0)  # Displays 1.A078315B12B
 ```
 
-Note that you must specify a base, or else it will default to base 7. In general, not specifying a base will produce a base 7 construction. You can alter this behavior by setting `cxr.base36.default_base`.
+Note that you must specify a base, or else it will default to base 7. In general, not specifying a base will produce a base 7 construction. You can alter this behavior by setting `cxr.base64.default_base`.
 
 #### Arithmetic
 
@@ -119,4 +119,13 @@ Integers (that is, Tridozenals without a mantissa) may be converted from one bas
 td0 = Td([2, 3], 0, base=7)
 
 print(Td.convert(td0, 10))  # Displays 17
+```
+
+#### Changing final base64 characters
+
+By default, 62 and 63 in base 64 uses `+` and `/`. You can alter this by calling `set_chars64`, submitting a two-character string containing two valid characters to uses.
+
+```python
+from cxr import set_chars64
+set_chars64("/;")
 ```
