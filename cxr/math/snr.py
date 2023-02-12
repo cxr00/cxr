@@ -1403,7 +1403,16 @@ class Prism:
         if num_dims(self) == 2:
             return str(self.val)
         else:
-            return "\n".join([str(i) for i in self])
+            output = []
+            for i in self:
+                if isinstance(i, list):
+                    output.append(str(Prism(i)))
+                    output.append("---\n")
+                else:
+                    output.append(str(i))
+            while output[-1] == "---\n":
+                output.pop(-1)
+            return "\n".join(output)
 
     def f(self, g=None):
         """
