@@ -128,6 +128,8 @@ class StateTelemeter(StateManager):
         Note: reassigns all variables as serialisable
         If you are not using parameterised saves, this could be an issue
         """
+        if self.current_state() == "crashed":
+            steps += 1
         q = self.telemetry[len(self.telemetry)-steps]
         self["telemetry"] = self.telemetry[:len(self.telemetry)-steps]
 
