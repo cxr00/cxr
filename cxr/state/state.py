@@ -83,7 +83,7 @@ class StateData:
         q = Qoid(self.parent.key if self.parent else "StateData")
 
         for k, v in self._ser.items():
-            q += Property(k, v)
+            q += Property(k, str(v))
 
         return q
 
