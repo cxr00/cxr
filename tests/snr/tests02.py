@@ -1,6 +1,7 @@
 from cxr import Seq, Matrix, Prism, x, set_std_l
 from cxr import Td
 from cxr.math import base64
+from cxr.math.snr import random_seq
 
 """
 Verification of identities found during procedural
@@ -195,25 +196,37 @@ def b_5():
     * divide the base-b number by b**n
     * Then the result is equal to 1 / (b**n - s)
         * Note that s as a base-b number is interpreted s0*b**n + ... + s(n-1)*b + sn
+    * See section 5 for seeded identity
     """
 
-    l = 100
+    l = 25
     set_std_l(l)
     base64.round_to = l
     b = 10
 
-    seqs = Seq(0, 1, 9),
+    seqs = Seq(1, 1),
+    seeds = [random_seq(max_digits=4) for _ in range(4)]
 
     for s in seqs:
-        a = s.f(l=l)
-        output = Td(0, base=b)
-        for i in range(len(a)):
-            output += Td([a[i]], base=b) / b ** (i + len(s))
-        print(output)
-        print(float(output))
-        print(1 / (b ** (len(s)) - int(Td(s.elements, base=b))))
-        print(1 / float(output))
-        print()
+        for g in seeds:
+            print("g:", g)
+            a = s.f(l=l, seed=g)
+            output = Td(0, base=b)
+            for n in range(len(a)):
+                output += Td([a[n]], base=b) / b ** (n + len(s))
+            print("output:", float(output))
+            print("reciprocal:", 1 / float(output))
+            identity = 1 / int(Td(b ** len(s), base=b) - Td(s.elements, base=b))
+            print("identity:", identity)
+            r = min([len(s) + 1, len(g)])
+            K = g
+            for n in range(1, r):
+                for k in range(len(g) - n):
+                    K -= x ** n * s[n - 1] * g[k] * x ** k
+            K = Td([K[0]], K[1:].elements, base=b)
+            print("seed ratio:", K)
+            print("identity:", output / K)
+            print()
 
 
 if __name__ == "__main__":
