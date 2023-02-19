@@ -187,7 +187,7 @@ def md5sum(input_string):
     output = "".join(output)
     t = round(time.time() - t, 3)
     t2 = time.time()
-    trad = Td.get_from_string(hashlib.md5(input_string.encode()).hexdigest(), base=16)
+    trad = Td.get_from_string(hashlib.md5(input_string.encode()).hexdigest().upper(), base=16)
     t2 = round(time.time() - t2, 3)
     print(f"Computed md5sum in {t} seconds. (hashlib takes {t2} seconds)")
     print("cxr impl:", output.lower())
