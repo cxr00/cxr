@@ -216,7 +216,7 @@ def b_5():
                 output += Td([a[n]], base=b) / b ** (n + len(s))
             print("output:", float(output))
             print("reciprocal:", 1 / float(output))
-            identity = 1 / int(Td(b ** len(s), base=b) - Td(s.elements, base=b))
+            identity = Td(1, base=b) / (Td(b ** len(s), base=b) - Td(s.elements, base=b))
             print("identity:", identity)
             r = min([len(s) + 1, len(g)])
             K = g
