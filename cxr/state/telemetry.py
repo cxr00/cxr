@@ -16,11 +16,11 @@ class StateTelemeter(StateManager):
         self._device = None
         self.toggle_ser_priority(ser_first=False)
         self["telemetry"] = []
+        self["nonser_telemetry"] = []
         self["stream_path"] = None
         self["stream_filename"] = name
         self["streaming"] = False
         self["stream_range"] = 100
-        self["record_nonser"] = False
         self["error_stream_range"] = 35
 
         @self.controller
@@ -86,9 +86,6 @@ class StateTelemeter(StateManager):
     def set_stream_range(self, stream_range):
         self["stream_range"] = stream_range
 
-    def set_record_nonser(self, record_nonser):
-        self["record_nonser"] = record_nonser
-
     def set_error_stream_range(self, error_stream_range):
         self["error_stream_range"] = error_stream_range
 
@@ -101,8 +98,10 @@ class StateTelemeter(StateManager):
             q.tag = datetime.now().strftime("%Y-%m-%d %H%M%S")
             q += Property("event", event)
             self.telemetry.append(q)
+            self["nonser_telemetry"].append(dict(self._device._data._nonser))
             if len(self.telemetry) > self.stream_range:
                 self["telemetry"] = self.telemetry[1:]
+                self["nonser_telemetry"] = self.nonser_telemetry[1:]
             self._device(event)
             if self.streaming:
                 with open(self.stream_path + f"\\{self.key}.cxr", "a+") as f:
@@ -114,8 +113,10 @@ class StateTelemeter(StateManager):
             q.tag = f"ERROR - {error_time} - {exc}"
             q += Property("event", event)
             self.telemetry.append(q)
+            self.nonser_telemetry.append(self._device._data._nonser)
             if len(self.telemetry) > self.stream_range:
                 self["telemetry"] = self.telemetry[1:]
+                self["nonser_telemetry"] = self.nonser_telemetry[1:]
             if self.streaming:
                 with open(self.stream_path + f"\\{self.key}-errors-{error_time}.cxr", "w+") as f:
                     for i in range(-(self.error_stream_range + 1), -1, -1):
@@ -135,3 +136,11 @@ class StateTelemeter(StateManager):
 
         for property in q:
             self._device[property.tag] = property.val
+
+        q = self.nonser_telemetry[len(self.nonser_telemetry) - steps]
+        self["nonser_telemetry"] = self.nonser_telemetry[:len(self.nonser_telemetry) - steps]
+
+        for property in q:
+            self._device[property] = q[property]
+
+        self.change_state("playing")
