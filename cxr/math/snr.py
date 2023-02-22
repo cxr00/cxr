@@ -354,7 +354,7 @@ class Seq:
         out = Seq([0 for k in range(len(self) * a)])
         for k in range(0, len(self) * a, a):
             out[k] = self[k // a]
-        return out * (x ** (a - 1))
+        return out
 
     def append(self, v: (int, float)):
         """
