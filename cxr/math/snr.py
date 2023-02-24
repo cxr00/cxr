@@ -1,9 +1,10 @@
 from cxr.math.base64 import Tridozenal as Td
+from cxr.math.complex import Complex
 import itertools
 import random
 
 std_l = 30
-NumTypes = (int, float, Td)
+NumTypes = (int, float, Td, Complex)
 
 def set_std_l(n):
     global std_l
@@ -90,7 +91,7 @@ class Seq:
         if t is Td:
             the_base = lst[0].base
         else:
-            t = (int, float)
+            t = (int, float, Complex)
         for e in lst[1:]:
             if not isinstance(e, t):
                 print(lst)
@@ -338,7 +339,7 @@ class Seq:
             length = std_l
         for n in range(1, length):
             r.append((temp_self[n] - sum(r[k] * temp_o[n-k] for k in range(n))) / temp_o[0])
-        r = ([k if isinstance(k, Td) else int(k) if int(k) == k else k for k in r])
+        r = ([k if isinstance(k, (Td, Complex)) else int(k) if int(k) == k else k for k in r])
         return Seq(r).trim()
 
     def aerate(self, a=2):
@@ -505,17 +506,23 @@ class Seq:
                     t = var if i == 1 else (var + "".join([ss[int(j)] for j in str(i)])) if i != 0 else ""
                 else:
                     t = var if i == 1 else f"{var}^{i}" if i != 0 else ""
-                si = self[i] if fps else self[len(self) - i - 1]
+                si = self[i]
                 if fps and i == 0:
                     output = str(si)
                 elif not fps and i == len(self) - 1:
-                    output = f"{si}{t}" if si != 1 else t
-                else:
-                    is_td = isinstance(si, Td)
-                    if ((is_td and si.abs() == Td.one(si.base)) or (not is_td and abs(si) == 1)) and t:
-                        output += f" - {t}" if is_lt_zero(si) else f" + {t}"
+                    if isinstance(si, Complex):
+                        output = f"({si}){t}"
                     else:
-                        output += f" - {si.abs() if is_td else abs(si)}{t}" if is_lt_zero(si) else f" + {si}{t}"
+                        output = f"{si}{t}" if si != 1 else t
+                else:
+                    if isinstance(si, Complex):
+                        output += f" + ({si}){t}"
+                    else:
+                        is_td = isinstance(si, Td)
+                        if ((is_td and si.abs() == Td.one(si.base)) or (not is_td and abs(si) == 1)) and t:
+                            output += f" - {t}" if is_lt_zero(si) else f" + {t}"
+                        else:
+                            output += f" - {si.abs() if is_td else abs(si)}{t}" if is_lt_zero(si) else f" + {si}{t}"
         return output
 
     def pop(self, index=0):
@@ -541,6 +548,8 @@ class Seq:
                     out.pop(-1)
                 else:
                     break
+            elif current_val == Complex():
+                out.pop(-1)
             elif current_val == 0:
                 out.pop(-1)
             else:
