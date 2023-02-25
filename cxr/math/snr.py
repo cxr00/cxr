@@ -506,7 +506,7 @@ class Seq:
                     t = var if i == 1 else (var + "".join([ss[int(j)] for j in str(i)])) if i != 0 else ""
                 else:
                     t = var if i == 1 else f"{var}^{i}" if i != 0 else ""
-                si = self[i]
+                si = self[i] if fps else self[len(self) - i - 1]
                 if fps and i == 0:
                     output = str(si)
                 elif not fps and i == len(self) - 1:
