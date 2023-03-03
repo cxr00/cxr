@@ -447,4 +447,4 @@ This is shortened by the `signature_dot_product(T: list, S: list)` function. It 
 
 ![The Signature Dot Product](./signature%20dot%20product.png)
 
-If you only care about the resultant signature, you can avoid use of Prism entirely with SDP; however, if you find yourself curious about a specific type of self-constructed Prism for example, then the class is there for you to experiment with! You can read about higher-dimensional canonical objects in [SNR part 2](https://complexor.files.wordpress.com/2022/08/the-signature-function-and-higher-dimensional-objects.pdf).
+If you only care about the resultant signature, you can avoid use of Prism entirely with SDP; however, if you find yourself curious about a specific type of self-constructed Prism for example, then the class is there for you to experiment with! You can read about higher-dimensional canonical objects in [SNR part 2](https://complexor.files.wordpress.com/2022/10/the-signature-function-and-higher-dimensional-objects-2.pdf).
