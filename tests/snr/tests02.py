@@ -176,14 +176,17 @@ def b_4():
     s = Seq(1, 1, 1)
     m = Matrix.power(s).sieve(len(s) - 1)
 
-    b = 2
+    b = 13
     bs = m.base_sequence(b)
 
-    # This currently does not generalise past b=2 and s={1,1,1}
-    struct = (m.base_sequence(b-1) * Seq(1, -1))[:l - 1] * b + 1
+    # This currently does not generalise beyond s={1,1,1}
+    subseq = [-(b-2) * (b+1)**n for n in range(25)]
+    print(subseq)
+    struct = (m.base_sequence(b - 1) * Seq(1, -(b-1), *subseq))[:l - 1] * b + 1
     print(bs)
     print(struct)
     print(bs.i())
+    print(bs.i() == struct)
 
 
 def b_5():
@@ -237,5 +240,5 @@ if __name__ == "__main__":
     # b_1_5()
     # b_2_stirling()
     # b_3()
-    # b_4()
-    b_5()
+    b_4()
+    # b_5()
