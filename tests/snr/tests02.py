@@ -77,7 +77,7 @@ def b_1_4():
 
     r1 = construct_matrix(s, g)
     print(r1.base_sequence(b))
-    print((dot(Seq(b).f() + b, S()) + b + 1).f())
+    print((dot(Seq(b).f(), S()) + b + 1).f())
     print()
 
     r2 = construct_matrix(g, s)
@@ -236,9 +236,9 @@ if __name__ == "__main__":
     # b_1_1()
     # b_1_2()
     # b_1_3()
-    # b_1_4()
+    b_1_4()
     # b_1_5()
     # b_2_stirling()
     # b_3()
-    b_4()
+    # b_4()
     # b_5()
