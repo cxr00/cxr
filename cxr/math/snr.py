@@ -1262,6 +1262,22 @@ def num_dims(d):
 class Prism:
 
     @staticmethod
+    def blank(dim=4, l=-1, w=-1):
+        if l == -1:
+            l = std_l
+        if w == -1:
+            w = std_l
+        if dim == 1:
+            return Seq([0] * l)
+        if dim == 2:
+            return Prism(Matrix.blank(l=l, w=w))
+
+        output = []
+        for i in range(l):
+            output.append(Prism.blank(dim=dim-1, l=l, w=w))
+        return Prism(output)
+
+    @staticmethod
     def canonical(ds: list[Seq], l=5, coordinates=None, current=None):
         """
         Produces a canonical one-beginning object whose dimensions express the given list of signatures
@@ -1336,6 +1352,49 @@ class Prism:
             for n in range(l):
                 out.append(Prism.power(d, dim=dim - 1, l=l, coordinates=coordinates + [n], block=block))
         return Prism(out)
+
+    @staticmethod
+    def g_prism(d, g, l=10):
+        def get(obj, coordinates):
+            output = obj
+            for coord in coordinates:
+                output = output[coord]
+            return output
+
+        g = [g_n.f() for g_n in g]
+        d = [Matrix.power(d_n, l=l) for d_n in d]
+
+        output = Prism.blank(dim=len(d) + len(g) + 1, l=l)
+        prev = None
+        prev_prod = None
+        l_g = len(g)
+        for coordinates in itertools.product(range(l), repeat=len(d)+len(g)):
+            skip_g_multiplication = True
+            if prev is not None and prev_prod is not None:
+                if prev == coordinates[:l_g]:
+                    g_prod = prev_prod
+                else:
+                    skip_g_multiplication = False
+            else:
+                skip_g_multiplication = False
+
+            if not skip_g_multiplication:
+                tmp = [g[i][:coord + 1] for i, coord in enumerate(coordinates[:l_g])]
+                g_prod = 1
+                for t in tmp:
+                    g_prod *= t
+                prev_prod = g_prod
+
+            obj = output
+            for c in coordinates[:-1]:
+                obj = obj[c]
+
+            d_prod = 1
+            for i, coord in enumerate(coordinates[l_g:]):
+                d_prod *= d[i][coord]
+            obj[coordinates[-1]] = g_prod * d_prod
+            prev = coordinates[:l_g]
+        return output
 
     def __init__(self, structure, l=10):
         if isinstance(structure, Matrix):
