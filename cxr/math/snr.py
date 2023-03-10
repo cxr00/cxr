@@ -1396,6 +1396,38 @@ class Prism:
             prev = coordinates[:l_g]
         return output
 
+    @staticmethod
+    def simplex(d, l=10):
+        m = [Matrix.power(d_n, l) for d_n in d]
+        p = Prism.blank(dim=len(m) + 1, l=l, w=l)
+
+        def get(coords):
+            output = p
+            for coord in coords:
+                output = output[coord]
+            return output
+
+        prev = None
+        prev_prod = None
+        for r_n in itertools.product(range(l), repeat=len(m) + 1):
+            prod = 1
+            obj = get(r_n[:-1])
+            skip_multiplication = False
+            if prev is not None and prev_prod is not None:
+                if prev == r_n[:-1]:
+                    skip_multiplication = True
+                    prod = prev_prod
+
+            if not skip_multiplication:
+                for i, r_s in enumerate(zip(r_n, r_n[1:-1])):
+                    prod *= m[i][r_s[0]][r_s[1]]
+            prev_prod = prod
+            prod *= m[-1][r_n[-3] - r_n[-2]][r_n[-1]]
+            obj[r_n[-1]] = prod
+            prev = r_n[:-1]
+
+        return p
+
     def __init__(self, structure, l=10):
         if isinstance(structure, Matrix):
             self.val = structure
