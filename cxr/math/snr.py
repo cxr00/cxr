@@ -1398,6 +1398,10 @@ class Prism:
 
     @staticmethod
     def simplex(d, l=10):
+        if len(d) < 2:
+            raise ValueError(f"Can only construct simplex with 2 or more signatures.")
+        if any([len(d_n) != 2 for d_n in d]):
+            raise ValueError(f"Can only construct simplex with signatures of length 2.")
         m = [Matrix.power(d_n, l) for d_n in d]
         p = Prism.blank(dim=len(m) + 1, l=l, w=l)
 
@@ -1422,7 +1426,7 @@ class Prism:
                 for i, r_s in enumerate(zip(r_n, r_n[1:-1])):
                     prod *= m[i][r_s[0]][r_s[1]]
             prev_prod = prod
-            prod *= m[-1][r_n[-3] - r_n[-2]][r_n[-1]]
+            prod *= m[-1][r_n[-3] - r_n[-2]][r_n[-1]] if r_n[-3] >= r_n[-2] else 0
             obj[r_n[-1]] = prod
             prev = r_n[:-1]
 
