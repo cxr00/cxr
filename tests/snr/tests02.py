@@ -3,6 +3,8 @@ from cxr import Td
 from cxr.math import base64
 from cxr.math.snr import random_seq
 
+import cxr
+
 """
 Verification of identities found during procedural
 exploration of base interpretation sequences of
@@ -169,24 +171,49 @@ def b_3():
 
 def b_4():
     """
-    Showcases an identity for sieved {1,1,1}
+    Showcases identities for sieved:
+    {1,1,1}
+    {1,1,2}
+    {1,2,1}
+    {1,2,2}
+    {2,1,1}
     """
     print("4 Sieved matrices")
-    l = set_std_l(25)
-    s = Seq(1, 1, 1)
-    m = Matrix.power(s).sieve(len(s) - 1)
+    l = set_std_l(31)
 
-    b = 13
-    bs = m.base_sequence(b)
+    for s in [Seq(1, 1, 1), Seq(1, 1, 2), Seq(1, 2, 1), Seq(1, 2, 2), Seq(2, 1, 1)]:
+        print(s)
+        m = Matrix.power(s).sieve(len(s) - 1)
 
-    # This currently does not generalise beyond s={1,1,1}
-    subseq = [-(b-2) * (b+1)**n for n in range(25)]
-    print(subseq)
-    struct = (m.base_sequence(b - 1) * Seq(1, -(b-1), *subseq))[:l - 1] * b + 1
-    print(bs)
-    print(struct)
-    print(bs.i())
-    print(bs.i() == struct)
+        b = 2
+        bs = m.base_sequence(b)
+        print(bs)
+
+        cxr.math.base64.round_to = 35
+
+        if s == Seq(1, 1, 1):
+            subseq = [-(b-2) * (b+1)**n for n in range(25)]
+            struct = (m.base_sequence(b - 1) * Seq(1, -(b-1), *subseq))[:l - 1] * b + 1
+            print(struct.f())
+
+        if s == Seq(1, 1, 2):
+            b = Td(b, base=10)
+            b_root = b.root(2)
+            print(Seq([(((b+2+b_root)**k + (b+2-b_root)**k)/2).rounded(0) for k in range(l)]))
+
+        if s == Seq(1, 2, 1):
+            print(Seq(1, -(b+1)) * Seq(2*(b+1), -(b-1)**2).f())
+
+        if s == Seq(1, 2, 2):
+            b = Td(b, base=10)
+            two_b_root = 2*b.root(2)
+            print(Seq([(((b + 2 + two_b_root) ** k + (b + 2 - two_b_root) ** k) / 2).rounded(0) for k in range(l)]))
+
+        if s == Seq(2, 1, 1):
+            b = Td(b, base=10)
+            b_root = b.root(2)
+            print(Seq([(((2*b + 1 + b_root)**k + (2*b + 1 - b_root)**k)/2).rounded(0) for k in range(l)]))
+        print()
 
 
 def b_5():
@@ -236,9 +263,9 @@ if __name__ == "__main__":
     # b_1_1()
     # b_1_2()
     # b_1_3()
-    b_1_4()
+    # b_1_4()
     # b_1_5()
     # b_2_stirling()
     # b_3()
-    # b_4()
+    b_4()
     # b_5()
