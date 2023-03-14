@@ -1,3 +1,4 @@
+from cxr.math import Complex
 from cxr.math import Td
 from cxr.math import Htd
 from cxr.math import Seq, Sig, Matrix, Prism, x, std_l, set_std_l, SDP
