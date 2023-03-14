@@ -33,12 +33,12 @@ class Complex:
     def __neg__(self):
         return Complex(-self.r, -self.i)
 
-
     def __add__(self, other):
         if isinstance(other, Complex):
             return Complex(self.r + other.r, self.i + other.i)
         if isinstance(other, (int, float)):
             return Complex(self.r + other, self.i)
+        return other + self
 
     def __sub__(self, other):
         if isinstance(other, Complex):
@@ -51,6 +51,7 @@ class Complex:
             return Complex(self.r * other.r - self.i * other.i, self.r * other.i + self.i * other.r)
         if isinstance(other, (int, float)):
             return Complex(self.r * other, self.i * other)
+        return other * self
 
     def __truediv__(self, other):
         if isinstance(other, Complex):
