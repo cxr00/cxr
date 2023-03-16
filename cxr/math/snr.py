@@ -221,8 +221,8 @@ class Seq:
             return o * self
         elif isinstance(o, NumTypes):
             return Seq([a * o for a in self])
-        elif self == Seq(0) or o == Seq(0):
-            return Seq(0)
+        elif self == Seq(0) or o == Seq(0) or (self.is_td() and self == Seq(Td.zero(self.base()))) or (o.is_td() and self == Seq(Td.zero(o.base()))):
+            return Seq(Td.zero(self.base()) if self.is_td() else 0)
         elif len(self) < 25 and len(o) < 25:
             return self.__school_mul__(o)
         m = min(len(self), len(o))
@@ -248,10 +248,10 @@ class Seq:
             z1 = func((x1 + x0), (y1 + y0)) - z2 - z0
 
 
-            pt0 = [0] * m * 2
+            pt0 = [Td.zero(self.base()) if self.is_td() else 0] * m * 2
             pt0.extend(z2)
             pt0 = Seq(pt0)
-            pt1 = [0] * m
+            pt1 = [Td.zero(self.base()) if self.is_td() else 0] * m
             pt1.extend(z1)
             pt1 = Seq(pt1)
             return pt0 + pt1 + z0
@@ -533,6 +533,18 @@ class Seq:
 
     def sig(self):
         return Sig(self)
+
+    def sqrt(self, l=-1):
+        if l == -1:
+            l = std_l
+        output = Seq(self[0].root(2) if self.is_td() else float(Td(self[0], base=10).root(2)))
+        for n in range(1, l):
+            _diff = self[n]
+            for k in range(1, n):
+                _diff -= output[n-k] * output[k]
+            _diff /= 2 * output[0]
+            output.append(_diff)
+        return output
 
     def trim(self, to_zero=False):
         """
