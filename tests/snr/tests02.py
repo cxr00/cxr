@@ -63,7 +63,7 @@ def b_1_3():
 
 
 def b_1_4():
-    print("1.4")
+    print("1.4 (two parts)")
     n = [1, 2, 1]
     s = Seq(1, 1)
     g = Seq(1, 1, *n)
@@ -89,7 +89,7 @@ def b_1_4():
 
 
 def b_1_5():
-    print("1.5")
+    print("1.5 (two parts)")
     n = 2
     s = Seq(1, 1, n)
     g = Seq(1, 1, 1)
@@ -202,7 +202,7 @@ def b_4():
             print(Seq([(((b+2+b_root)**k + (b+2-b_root)**k)/2).rounded(0) for k in range(l)]))
 
         if s == Seq(1, 2, 1):
-            print(Seq(1, -(b+1)) * Seq(2*(b+1), -(b-1)**2).f())
+            print((Seq(1, -(b+1)) * Seq(2*(b+1), -(b-1)**2).f(l=l+1))[:l])
 
         if s == Seq(1, 2, 2):
             b = Td(b, base=10)
@@ -265,7 +265,7 @@ if __name__ == "__main__":
     # b_1_3()
     # b_1_4()
     # b_1_5()
-    # b_2_stirling()
+    b_2_stirling()
     # b_3()
-    b_4()
+    # b_4()
     # b_5()
