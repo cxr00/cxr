@@ -8,16 +8,19 @@ import cxr
 """
 Verification of identities found during procedural
 exploration of base interpretation sequences of
-transposition products
+transposition products.
 
-Identities and information are currently being compiled
+Identities and information are currently being compiled into SNR 3.
+
+Functions of the form b_#_# are legacy numbering during
+initial compilation of identities.
 """
 
 b = 3
 set_std_l(15)
 
 
-def construct_matrix(s, g):
+def diagonalised_transposition_product(s, g):
     m_s = Matrix.power(s)
     m_g = Matrix.power(g)
     return m_s.transposition_product(m_g).diagonalise()
@@ -32,7 +35,7 @@ def b_1_1():
     s = Seq(n0, n1)
     g = Seq(n2, n3)
 
-    r = construct_matrix(s, g)
+    r = diagonalised_transposition_product(s, g)
     print(r.base_sequence(b))
     print(Seq(n0*b + n2, b*(n1*n3 - n0*n2)).f())
     print()
@@ -44,7 +47,7 @@ def b_1_2():
     s = Seq(1, 1, n)
     g = Seq(1, 1)
 
-    r = construct_matrix(s, g)
+    r = diagonalised_transposition_product(s, g)
     print(r.base_sequence(b))
     print((b + 1 + b * n*x**2 * Seq(1).f()).f())
     print()
@@ -56,7 +59,7 @@ def b_1_3():
     s = Seq(1, 1)
     g = Seq(1, 1, n)
 
-    r = construct_matrix(s, g)
+    r = diagonalised_transposition_product(s, g)
     print(r.base_sequence(b))
     print((n*(Seq(b).f() - b*x - 1) + b + 1).f())
     print()
@@ -77,12 +80,12 @@ def b_1_4():
     def dot(a, b):
         return Seq([a[n] * b[n] for n in range(max(len(a), len(b)))])
 
-    r1 = construct_matrix(s, g)
+    r1 = diagonalised_transposition_product(s, g)
     print(r1.base_sequence(b))
     print((dot(Seq(b).f(), S()) + b + 1).f())
     print()
 
-    r2 = construct_matrix(g, s)
+    r2 = diagonalised_transposition_product(g, s)
     print(r2.base_sequence(b))
     print((dot(b*Seq(1).f(), S()) + b + 1).f())
     print()
@@ -94,7 +97,7 @@ def b_1_5():
     s = Seq(1, 1, n)
     g = Seq(1, 1, 1)
 
-    r1 = construct_matrix(s, g)
+    r1 = diagonalised_transposition_product(s, g)
     print(r1.base_sequence(b))
     alt = Seq(b, (n-1) * b).f()
     alt = alt.f(seed=Seq(b, n*b)) + 1
@@ -104,7 +107,7 @@ def b_1_5():
 
     s = Seq(1, 1, 1)
     g = Seq(1, 1, 2)
-    r2 = construct_matrix(s, g)
+    r2 = diagonalised_transposition_product(s, g)
     print(r2.base_sequence(b))
     alt = Seq(b, b).f().f(seed=Seq(b, b**2 + b))
     alt = alt + 1 - b*x*(b-1)
@@ -248,7 +251,7 @@ def b_5():
             print("reciprocal:", 1 / float(output))
             identity = Td(1, base=b) / (Td(b ** len(s), base=b) - Td(s.elements, base=b))
             print("identity:", identity)
-            r = min([len(s) + 1, len(g)])
+            r = len(s) + 1
             K = g
             for n in range(1, r):
                 for k in range(len(g) - n):
@@ -265,7 +268,7 @@ if __name__ == "__main__":
     # b_1_3()
     # b_1_4()
     # b_1_5()
-    b_2_stirling()
+    # b_2_stirling()
     # b_3()
     # b_4()
-    # b_5()
+    b_5()
