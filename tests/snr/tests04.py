@@ -95,6 +95,15 @@ def convolution_identity():
             _sum += f_ab[n-k] * b[k-1]
         f_ab.append(_sum)
     print(f_ab)
+
+    f_b = b.f()
+    f_ab = Seq(1)
+    for n in range(1, l):
+        _sum = f_b[n]
+        for k in range(1, n+1):
+            _sum += f_ab[n-k] * a[k-1]
+        f_ab.append(_sum)
+    print(f_ab)
     print()
 
 
@@ -127,7 +136,7 @@ def create_self_similar(t, g, r, p):
 
 
 def self_similar_signature_test():
-    print("Self-similar sequence")
+    print("Self-similar signature")
     t, g, r, p = 0, 2, 1, 1
     q = create_self_similar(t, g, r, p)
 
@@ -144,11 +153,11 @@ def N(S, a, b, c, l=20):
     for n in range(1, l):
         _sum = a*S[0] + b*S[n]
         _sum2 = 0
+        binoms = Seq(1)
         for x in range(1, n):
-            binoms = Seq(1, 1) ** (x-1)
             for k in range(x):
-                # print(k+1, n-k-1)
                 _sum2 += binoms[k] * (S[k+1] + S[n-x+k])
+            binoms *= Seq(1, 1)
         _sum += c * _sum2
         out.append(_sum)
     return Seq(out)
