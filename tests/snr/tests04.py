@@ -168,22 +168,21 @@ def seeded_sequence_convolution():
     Demonstrates seeded sequence convolution.
     """
     print("Seeded sequence convolution")
-    l = 10
-    show = 35
+    l = set_std_l(35)
     s0 = random_seq()
     s1 = random_seq()
     seed0 = random_seq()
     seed1 = random_seq()
-    print("s0:", s0.f(l=l, seed=seed0)[:show])
-    print("s1:", s1.f(l=l, seed=seed1)[:show])
+    print("s0:", s0.f(l=l, seed=seed0)[:l])
+    print("s1:", s1.f(l=l, seed=seed1)[:l])
     print()
     print("product:")
-    print((s0.f(seed=seed0) * s1.f(seed=seed1))[:show])
+    print((s0.f(seed=seed0) * s1.f(seed=seed1))[:l])
 
     # Identity
     m = len(seed0) + len(seed1) - 1
     K = (s0.f(seed=seed0) * s1.f(seed=seed1))[:m]
-    print((s0.sig() + s1).f(l=show, seed=K))
+    print((s0.sig() + s1).f(l=l, seed=K))
     print()
 
 
