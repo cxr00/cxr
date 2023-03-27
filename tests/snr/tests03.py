@@ -10,10 +10,9 @@ from cxr import Seq, Matrix, Prism, set_std_l, x
 def g_prism_test():
 
     l = set_std_l(13)
-    d = [Seq(1, 1)]
+    d = [Seq(1, 1), Seq(1, 1)]
     g = [Seq(2), Seq(3, 1)]
     g_p = Prism.g_prism(d, g, l=l)
-    print(g_p)
     print(g_p.f())
     sig = g_p.i().sig()
     print(sig)
@@ -27,14 +26,12 @@ def g_prism_test():
 
 
 def simplex_test():
-    # d = Seq(2, 3), Seq(5, 7), Seq(11, 13), Seq(17, 19), Seq(23, 29), Seq(31, 37), Seq(41, 43)
     d = Seq(1, 1), Seq(1, 1), Seq(1, 1), Seq(1, 1), Seq(1, 1), Seq(1, 1)
     N = len(d)
 
     p = Prism.simplex(d, l=N+1)
     pf = p.f()
     pi = pf.i()
-    print(p)
     print(pf)
     print(pi)
 
