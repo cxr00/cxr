@@ -220,7 +220,7 @@ def b_4():
 
 
 def b_5():
-    print("5 Sequence as float")
+    print("5 Rational forms of the signature function")
     """
     Every result of the signature function corresponds to a rational number in base b.
 
@@ -238,7 +238,7 @@ def b_5():
     b = 10
 
     seqs = Seq(1, 1),
-    seeds = [random_seq(max_digits=4) for _ in range(4)]
+    seeds = Seq(1), *[random_seq(max_digits=4) for _ in range(4)]
 
     for s in seqs:
         for g in seeds:
