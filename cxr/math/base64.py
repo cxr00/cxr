@@ -564,7 +564,7 @@ class Tridozenal:
         return self * other
 
     def __rsub__(self, other):
-        return self - other
+        return other + self.negative()
 
     def __str__(self):
         def get_char(num):
