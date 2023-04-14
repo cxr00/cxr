@@ -4,7 +4,7 @@ Command line arithmetic performed with left-associativity
 This process eliminates the need to use Jupyter Notebooks for lengthier arithmetic
 """
 
-from cxr.sociomathematics.clq import Clq, UndefinedError, InvalidStringError
+from cxr.colloquiality.clq import Clq, UndefinedError, InvalidStringError
 
 
 def show_help():
