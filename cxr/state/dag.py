@@ -84,9 +84,10 @@ class Node:
         while not is_sorted:
             is_sorted = True
             for i in range(len(output) - 1):
-                if output[i+1].leads_to(output[i]):
-                    output[i+1], output[i] = output[i], output[i+1]
-                    is_sorted = False
+                for j in range(i+1, len(output)):
+                    if output[j].leads_to(output[i]):
+                        output[j], output[i] = output[i], output[j]
+                        is_sorted = False
 
         return output
 
