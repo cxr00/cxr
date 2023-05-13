@@ -1579,11 +1579,7 @@ class Prism:
 
                 return _sum
 
-        if a < 1:
-            raise ValueError(f"Aeration coefficient must be 1 or greater, not {a}")
-
-        if a != 1:
-            aerated_prism = self.aerate(a)
+        aerated_prism = self.aerate(a)
 
         out = []
 
@@ -1622,6 +1618,11 @@ class Prism:
         :param a: the aeration coefficient
         :return: the aerated Prism
         """
+        if a < 1:
+            raise ValueError(f"Aeration coefficient must be 1 or greater, not {a}")
+
+        if a == 1:
+            return self
 
         dims = num_dims(self)
         output = []
