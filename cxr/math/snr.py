@@ -1042,6 +1042,8 @@ class Matrix:
             self.rows.append(rows)
         elif isinstance(rows, Sig):
             self.rows.append(rows.seq)
+        elif isinstance(rows, Matrix):
+            self.rows = rows.rows
         else:
             raise ValueError(f"Unsupported type {type(rows)}")
 
