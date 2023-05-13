@@ -1532,7 +1532,7 @@ class Prism:
                 output.pop(-1)
             return "\n".join(output)
 
-    def f(self, g=None):
+    def f(self, g=None, a=1):
         """
         Performs the general signature function on an N-dimensional structure
         """
@@ -1579,6 +1579,12 @@ class Prism:
 
                 return _sum
 
+        if a < 1:
+            raise ValueError(f"Aeration coefficient must be 1 or greater, not {a}")
+
+        if a != 1:
+            aerated_prism = self.aerate(a)
+
         out = []
 
         dims = num_dims(self)
@@ -1588,46 +1594,44 @@ class Prism:
             g = [g]
 
         if not g:
-            g = [Seq(1).f(l) for _ in range(dims - 1)]
+            g = [Seq([1 for __ in range(l)]) for _ in range(dims - 1)]
         elif len(g) < dims - 1:
             if g[0].is_td():
                 g = [sig.f(l) for sig in g] + [Seq(Td.one(g[0].base())).f(l) for _ in range(dims - 1 - len(g))]
             else:
                 g = [sig.f(l) for sig in g] + [Seq(1).f(l) for _ in range(dims - 1 - len(g))]
+        elif len(g) > dims - 1:
+            raise ValueError(f"Number of signatures in g set must be equal to {dims - 1}, not {len(g)}")
         else:
             g = [sig.f(l) for sig in g]
 
         for n in range(l):
-            out.append(generate_next(self, g, n))
+            out.append(generate_next(aerated_prism, g, n))
 
         return Seq(out)
 
     def i(self, g=None):
         return self.f(g=g).i()
 
-    # def aerate(self, a):
-    #     """
-    #     The aeration function of a prism
-    #
-    #     Note that this only behaves consistently for power objects
-    #
-    #     :param a: the list of aeration coefficients
-    #     """
-    #     dims = num_dims(self)
-    #     if not isinstance(a, list):
-    #         raise TypeError(f"Can only sieve with list")
-    #     elif len(a) < dims - 1:
-    #         a = a + [1 for _ in range(dims - 2)]
-    #
-    #     self.val = self[::a[0]]
-    #
-    #     for i, each in enumerate(self):
-    #         if isinstance(each, Matrix):
-    #             self[i] = each[::a[1]]
-    #         else:
-    #             self[i] = each.aerate(a[1:])
-    #
-    #     return self
+    def aerate(self, a=2):
+        """
+        The aeration function of a prism
+
+        Note that a prism can only accept a single aeration coefficient
+
+        :param a: the aeration coefficient
+        :return: the aerated Prism
+        """
+
+        dims = num_dims(self)
+        output = []
+        for item in self:
+            if isinstance(item, Matrix):
+                output.append(Matrix([s.aerate(a) for s in item]))
+            else:
+                output.append(Prism(item).aerate(a))
+
+        return Prism(output)
 
     def base_prism(self, b):
         """
