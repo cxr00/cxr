@@ -294,7 +294,7 @@ class Seq:
     def __rsub__(self, o):
         return self.neg() + o
 
-    def __setitem__(self, key: int, value: (int, float)):
+    def __setitem__(self, key: int, value: NumTypes):
         self.elements[key] = value
 
     @check_seq
@@ -363,6 +363,8 @@ class Seq:
 
         :param v: the value to be added
         """
+        if self.elements and not isinstance(v, type(self.elements[0])):
+            raise ValueError(f"Seq contains {type(self.elements[0]).__name__}, not {type(v).__name__}")
         self.elements.append(v)
 
     def base(self) -> int:
@@ -475,6 +477,8 @@ class Seq:
         return r.trim()
 
     def is_td(self) -> bool:
+        if len(self) == 0:
+            return False
         return isinstance(self[0], Td)
 
     def neg(self) -> "Seq":
@@ -507,22 +511,23 @@ class Seq:
                 else:
                     t = var if i == 1 else f"{var}^{i}" if i != 0 else ""
                 si = self[i] if fps else self[len(self) - i - 1]
-                if fps and i == 0:
-                    output = str(si)
-                elif not fps and i == len(self) - 1:
-                    if isinstance(si, Complex):
-                        output = f"({si}){t}"
-                    else:
-                        output = f"{si}{t}" if si != 1 else t
-                else:
-                    if isinstance(si, Complex):
-                        output += f" + ({si}){t}"
-                    else:
-                        is_td = isinstance(si, Td)
-                        if ((is_td and si.abs() == Td.one(si.base)) or (not is_td and abs(si) == 1)) and t:
-                            output += f" - {t}" if is_lt_zero(si) else f" + {t}"
+                if si != 0:
+                    if fps and i == 0:
+                        output = str(si)
+                    elif not fps and i == len(self) - 1:
+                        if isinstance(si, Complex):
+                            output = f"({si}){t}"
                         else:
-                            output += f" - {si.abs() if is_td else abs(si)}{t}" if is_lt_zero(si) else f" + {si}{t}"
+                            output = f"{si}{t}" if si != 1 else t
+                    else:
+                        if isinstance(si, Complex):
+                            output += f" + ({si}){t}"
+                        else:
+                            is_td = isinstance(si, Td)
+                            if ((is_td and si.abs() == Td.one(si.base)) or (not is_td and abs(si) == 1)) and t:
+                                output += f" - {t}" if is_lt_zero(si) else f" + {t}"
+                            else:
+                                output += f" - {si.abs() if is_td else abs(si)}{t}" if is_lt_zero(si) else f" + {si}{t}"
         return output
 
     def pop(self, index: int=0):
