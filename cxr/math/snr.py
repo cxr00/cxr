@@ -6,7 +6,7 @@ import random
 std_l = 30
 NumTypes = (int, float, Td, Complex)
 
-def set_std_l(n):
+def set_std_l(n: int):
     global std_l
     if n > 0:
         std_l = n
@@ -80,7 +80,7 @@ class Seq:
     """
 
     @staticmethod
-    def __validate(lst: list[NumTypes]):
+    def __validate(lst: list[NumTypes]) -> bool:
         """
         Ensures a list contains a valid set of values before setting it in __init__
         """
@@ -129,7 +129,7 @@ class Seq:
             raise ValueError(f"Unsupported type {type(elements).__name__}")
 
     @check_seq
-    def __add__(self, o):
+    def __add__(self, o) -> "Seq":
         if isinstance(o, NumTypes):
             return self + Seq(o)
         elif isinstance(o, Seq):
@@ -342,7 +342,7 @@ class Seq:
         r = ([k if isinstance(k, (Td, Complex)) else int(k) if int(k) == k else k for k in r])
         return Seq(r).trim()
 
-    def aerate(self, a=2):
+    def aerate(self, a: int=2) -> "Seq":
         """
         Transform a sequence into its aerated version
         Eg [1, 1] to [0, 1, 0, 1] or [1, 1, 1] to [0, 0, 1, 0, 0, 1, 0, 0, 1]
@@ -357,7 +357,7 @@ class Seq:
             out[k] = self[k // a]
         return out
 
-    def append(self, v: (int, float)):
+    def append(self, v: NumTypes):
         """
         Add a value to the end of the sequence
 
@@ -365,23 +365,23 @@ class Seq:
         """
         self.elements.append(v)
 
-    def base(self):
+    def base(self) -> int:
         if self.is_td():
             return self[0].base
         else:
             return 10
 
-    def concat(self, other):
+    def concat(self, other) -> "Seq":
         return Seq(self.elements + other.elements)
 
-    def dot_product(self, other):
+    def dot_product(self, other: "Seq") -> int:
         l = min(len(self), len(other))
         out = Td.zero(self.base()) if self.is_td() else 0
         for i in range(l):
             out += self[i] * other[i]
         return out
 
-    def partial_dot_product(self, other):
+    def partial_dot_product(self, other: "Seq") -> "Seq":
         """
         The results of Matrix.dot_product without being summed at the end
         """
@@ -391,7 +391,7 @@ class Seq:
             out.append(self[i]*other[i])
         return out
 
-    def f(self, l=-1, seed = None):
+    def f(self, l: int=-1, seed = None) -> "Seq":
         """
         The recursive signature function
 
@@ -422,7 +422,7 @@ class Seq:
             r.append(n)
         return r
 
-    def f_generator(self, l=-1, seed = None):
+    def f_generator(self, l: int=-1, seed = None):
         """
         The recursive signature function
 
@@ -454,7 +454,7 @@ class Seq:
             yield n
         return r
 
-    def i(self):
+    def i(self) -> "Seq":
         """
         The inverse signature function
         Only works for sequences which begin with 1
@@ -474,17 +474,17 @@ class Seq:
             r.append(n)
         return r.trim()
 
-    def is_td(self):
+    def is_td(self) -> bool:
         return isinstance(self[0], Td)
 
-    def neg(self):
+    def neg(self) -> "Seq":
         """
         Converts the given sequence to its additive inverse
         """
         out = [-k for k in self]
         return Seq(out)
 
-    def polynomial(self, var="x", fps=False, use_ss=False):
+    def polynomial(self, var: str="x", fps: bool=False, use_ss: bool=False) -> str:
         """
         Represent the sequence as a polynomial
 
@@ -525,16 +525,21 @@ class Seq:
                             output += f" - {si.abs() if is_td else abs(si)}{t}" if is_lt_zero(si) else f" + {si}{t}"
         return output
 
-    def pop(self, index=0):
+    def pop(self, index: int=0):
         return self.elements.pop(index)
 
-    def reverse(self):
+    def reverse(self) -> "Seq":
         return Seq(self.elements[::-1])
 
-    def sig(self):
+    def sig(self) -> "Sig":
         return Sig(self)
 
-    def sqrt(self, l=-1):
+    def sqrt(self, l: int=-1) -> "Seq":
+        """
+        Computes the square root of the sequence
+        :param l: the length of the output
+        :return: the square root
+        """
         if l == -1:
             l = std_l
         output = Seq(self[0].root(2) if self.is_td() else float(Td(self[0], base=10).root(2)))
@@ -546,7 +551,7 @@ class Seq:
             output.append(_diff)
         return output
 
-    def trim(self, to_zero=False):
+    def trim(self, to_zero: bool=False) -> "Seq":
         """
         Removes trailing zeroes from a sequence
 
@@ -568,7 +573,12 @@ class Seq:
                 break
         return Seq(out)
 
-    def td(self, base=-1):
+    def td(self, base: int=-1) -> "Seq":
+        """
+        Converts the sequence into a sequence of base64 numbers
+        :param base: the new base of the sequence
+        :return: the updated sequence
+        """
         if self.is_td():
             return self
         else:
@@ -605,7 +615,6 @@ class Sig:
 
     @check_sig
     def __add__(self, o):
-        # Commutative signature addition
         return Sig(self.seq + o.seq - x * self.seq * o.seq)
 
     @check_sig
@@ -614,7 +623,7 @@ class Sig:
 
     @check_sig
     def __floordiv__(self, b):
-        """ The non-distributive left-inverse of multiplication"""
+        """Computes the non-distributive left-inverse of multiplication"""
         l = max(len(self), len(b))
         s = Seq(self[0] / b[0])
         block = ([Seq(s**(x+1)) for x in range(l)])
@@ -670,7 +679,6 @@ class Sig:
 
     @check_sig
     def __mul__(self, o):
-        # Signature convolution
         is_td = self.is_td()
         if is_td:
             base = self.base()
@@ -687,8 +695,7 @@ class Sig:
         out *= a
         return Sig(out)
 
-    def __pow__(self, power, modulo=None):
-        # Signature convolution powers
+    def __pow__(self, power: int, modulo=None):
         out = Sig(Td.one(self.base()) if self.is_td() else 1)
         a = Sig(self)
         for k in range(power):
@@ -719,7 +726,7 @@ class Sig:
 
     @check_sig
     def __truediv__(self, a):
-        """ The distributive right-inverse of multiplication"""
+        """Computes the distributive right-inverse of multiplication"""
         out = []
         ap = Seq(self)
         bp = Seq(a)
@@ -730,19 +737,22 @@ class Sig:
             bp *= x * a
         return Sig(out).trim()
 
-    def aerate(self, a):
+    def aerate(self, a: int) -> "Sig":
         return Sig(self.seq.aerate(a))
 
-    def append(self, i: (int, float)):
+    def append(self, i: NumTypes):
         """
         Add a value to the end of the sequence
         """
         self.seq.append(i)
 
-    def base(self):
+    def base(self) -> int:
+        """
+        Gets the base of the signature
+        """
         return self.seq.base()
 
-    def f(self, l=-1, seed=None):
+    def f(self, l: int=-1, seed=None) -> "Sig":
         """
         The recursive signature function
 
@@ -751,7 +761,7 @@ class Sig:
         """
         return self.seq.f(l=l if l != -1 else std_l, seed=seed).sig()
 
-    def first_nonzero(self):
+    def first_nonzero(self) -> int:
         """
         Get the position of the first non-zero digit of the signature
         """
@@ -760,7 +770,7 @@ class Sig:
                 return e
         return -1
 
-    def i(self):
+    def i(self) -> "Sig":
         """
         The inverse signature function
         Only works for sequences which begin with 1
@@ -769,10 +779,17 @@ class Sig:
         """
         return Sig(self.seq.i())
 
-    def is_td(self):
+    def is_td(self) -> bool:
+        """
+        :return: whether or not the sequence contains arbitrary-base numbers from base64
+        """
         return self.seq.is_td()
 
-    def iter_add(self, n):
+    def iter_add(self, n: int) -> "Sig":
+        """
+        Perform iterated signature addition of the signature
+        :param n: the number of times to add the signature
+        """
         out = Sig(Td.zero(self.base()) if self.is_td() else 0)
         if n == 0:
             return out
@@ -784,7 +801,7 @@ class Sig:
                     out += Sig(self.seq)
             return out
 
-    def multiplicative_inverse(self, l=-1):
+    def multiplicative_inverse(self, l: int=-1) -> "Sig":
         """
         Computes the inverse of d
         This is technically computing a left inverse,
@@ -797,6 +814,7 @@ class Sig:
         is to make d one-beginning
 
         :param l: The length of the output
+        :return: the multiplicative inverse of the signature
         """
         # This is the fast one, see below comment
         inverse = Seq(1 / self[0])
@@ -816,23 +834,20 @@ class Sig:
 
         return Sig(inverse)[:length_of_current_inverse]
 
-    def neg(self):
+    def neg(self) -> "Sig":
         """
         Converts the given sequence to its additive inverse
         """
         out = [-k for k in self]
         return Sig(out)
 
-    def reverse(self):
+    def reverse(self) -> "Sig":
         return Sig(self.seq.reverse())
 
-    def trim(self):
+    def trim(self) -> "Sig":
         """
         Removes trailing zeroes from a sequence
-
-        :return: the sequence without trailing zeroes
         """
-
         return Sig(self.seq.trim())
 
 
@@ -843,7 +858,7 @@ class Matrix:
     """
 
     @staticmethod
-    def blank(l=-1, w=-1, base=-1):
+    def blank(l: int=-1, w: int=-1, base: int=-1) -> "Matrix":
         """
         Generates a matrix consisting entirely of zeroes
 
@@ -861,7 +876,7 @@ class Matrix:
         return Matrix([Seq([zero for k in range(w)]) for n in range(l)])
 
     @staticmethod
-    def g_matrix(s, g, l=-1, w=-1):
+    def g_matrix(s: "Matrix", g: list[Seq], l: int=-1, w: int=-1) -> "Matrix":
         """
         The matrix S_d^p is defined in section 4.5 of SNR
 
@@ -870,7 +885,7 @@ class Matrix:
         :return: the transformed matrix S_d^p
         """
 
-        def generate_next_matrix(s_prev, g_p):
+        def generate_next_matrix(s_prev: "Matrix", g_p: Seq) -> "Matrix":
             """
             Generate the next matrix S_d^p
 
@@ -904,7 +919,7 @@ class Matrix:
         return s_next
 
     @staticmethod
-    def identity(l=-1, base=-1):
+    def identity(l: int=-1, base: int=-1) -> "Matrix":
         """
         The identity matrix. Also M^0 for a matrix M
 
@@ -920,7 +935,7 @@ class Matrix:
         return out
 
     @staticmethod
-    def power(d, l=-1, w=-1, taper=False):
+    def power(d: Seq, l: int=-1, w: int=-1, taper: bool=False) -> "Matrix":
         """
         The power triangle d^n_y
 
@@ -948,7 +963,7 @@ class Matrix:
         return Matrix(out)
 
     @staticmethod
-    def sen(d: Seq, l=-1, w=-1):
+    def sen(d: Seq, l: int=-1, w: int=-1) -> "Matrix":
         """
         The initial triangular matrix in 4.5
 
@@ -983,13 +998,14 @@ class Matrix:
         return b
 
     @staticmethod
-    def riordan(s: Seq, d, l=-1, left=False):
+    def riordan(s: Seq, d: Seq, l: int=-1, left: bool=False) -> "Matrix":
         """
         Construct a Riordan array
 
         :param s: the sequence which fills the first column
         :param d: the recurrence relation for each row
         :param l: the length of the matrix
+        :return: the riordan matrix
         """
         if l == -1:
             l = std_l
@@ -1047,7 +1063,7 @@ class Matrix:
         else:
             raise ValueError(f"Unsupported type {type(rows)}")
 
-    def __add__(self, other):
+    def __add__(self, other: "Matrix"):
         length = max(len(self), len(other))
         width = max(self.width(), other.width())
         out = Matrix([Seq([0 for k in range(width)]) for x in range(width)])
@@ -1066,7 +1082,7 @@ class Matrix:
                 return False
         return True
 
-    def __getitem__(self, i):
+    def __getitem__(self, i: [int, slice]):
         if isinstance(i, int):
             if i < 0:
                 return self[len(self) + i]
@@ -1108,7 +1124,7 @@ class Matrix:
         else:
             raise ValueError(f"Incompatible type {type(other)}; must be int, float, Seq, or Matrix")
 
-    def __pow__(self, power, modulo=None):
+    def __pow__(self, power: int, modulo=None):
         if power == 0:
             return Matrix.identity(len(self))
         out = self[:]
@@ -1131,7 +1147,7 @@ class Matrix:
         else:
             self.rows[key] = Seq(*value)
 
-    def __sub__(self, other):
+    def __sub__(self, other: "Matrix"):
         return (self + other.neg()).trim()
 
     def __truediv__(self, num):
@@ -1141,7 +1157,7 @@ class Matrix:
                 out.append(self[n] / num)
             return Matrix(out)
         else:
-            raise ValueError("Incompatible type; must be int or Seq")
+            raise ValueError(f"Incompatible type {type(num).__name__}; must be int or Seq")
 
     def append(self, line: Seq):
         """
@@ -1151,12 +1167,14 @@ class Matrix:
         """
         self.rows.append(line)
 
-    def base_sequence(self, b):
+    def base_sequence(self, b: int) -> Seq:
         """
         Interprets each row as a base-b number, and returns a sequence
         where a(n) = M(n)_b
 
         This only works for non-Td matrices at present. I'll add it eventually.
+        :param b: the base to interpret the matrix in
+        :return: the matrix's base sequence
         """
         if self.rows and self.rows[0].is_td():
             raise TypeError(f"Cannot construct base sequence from Td matrix at present.")
@@ -1173,17 +1191,18 @@ class Matrix:
                 output.append(int(Td(row.trim().elements, base=b)))
             return output
 
-    def column(self, c):
+    def column(self, c: int) -> Seq:
         return Seq([self[n][c] for n in range(len(self))])
 
-    def column_slice(self, start, stop, step):
+    def column_slice(self, start: int, stop: int, step: int) -> "Matrix":
         return Matrix([self[n][start:stop:step] for n in range(len(self))])
 
-    def diagonalise(self, direction=True):
+    def diagonalise(self, direction: bool=True) -> "Matrix":
         """
         Construct a matrix using the diagonals of the given matrix
 
         :param direction: whether to go from top-right to bottom-left (True) or the other way
+        :return: the diagonalised matrix
         """
         output = Matrix.blank(len(self), len(self))
         for n in range(len(self)):
@@ -1194,7 +1213,7 @@ class Matrix:
                     output[n][k] = self[k][n - k]
         return output
 
-    def f(self, a=1, g=Seq(1)):
+    def f(self, a: int=1, g: Seq=Seq(1)) -> Seq:
         """
         Enables aerated signature convolution
         Defaults to plain signature function
@@ -1215,7 +1234,7 @@ class Matrix:
             out[n] = _sum
         return out
 
-    def i(self, a=1, g=Seq(1)):
+    def i(self, a: int=1, g: Seq=Seq(1)) -> Seq:
         """
         Performs signature function then inverse signature function
 
@@ -1225,20 +1244,24 @@ class Matrix:
         """
         return self.f(a, g).i()
 
-    def reverse(self):
+    def reverse(self) -> "Matrix":
         return Matrix([self[n].trim()[::-1] for n in range(len(self))])
 
-    def sieve(self, sieve_factor):
+    def sieve(self, sieve_factor: int) -> "Matrix":
         return Matrix([self[i][::sieve_factor] for i in range(len(self))])
 
-    def transpose(self):
+    def transpose(self) -> "Matrix":
         l = max([len(self)] + [len(row) for row in self])
         return Matrix([Seq([self[k][n] for k in range(len(self))]) for n in range(l)])
 
-    def transposition_product(self, other):
+    def transposition_product(self, other: "Matrix") -> "Matrix":
         return self * other.transpose()
 
-    def trim(self):
+    def trim(self) -> "Matrix":
+        """
+        Remove trailing zero sequences from the matrix
+        :return: the trimmed matrix
+        """
         out = self
         while len(out) > 0:
             if len(out[-1].trim(to_zero=True)) == 0:
@@ -1247,19 +1270,24 @@ class Matrix:
                 return out
         return out
 
-    def neg(self):
+    def neg(self) -> "Matrix":
         out = [v.neg() for v in self]
         return Matrix(out)
 
-    def truncate(self, l):
+    def truncate(self, l: int) -> "Matrix":
         out = Matrix([s[:l] for s in self.rows[:l]])
         return out
 
-    def width(self):
+    def width(self) -> int:
         return max([len(k) for k in self.rows])
 
 
-def num_dims(d):
+def num_dims(d) -> int:
+    """
+    Count the number of dimensions in a matrix or prism
+    :param d: the multi-dimensional object
+    :return: the number of dimensions
+    """
     if isinstance(d, NumTypes):
         return 1
     output = 1
@@ -1276,7 +1304,14 @@ def num_dims(d):
 class Prism:
 
     @staticmethod
-    def blank(dim=4, l=-1, w=-1):
+    def blank(dim: int=4, l: int=-1, w: int=-1) -> "Prism":
+        """
+        Create a blank prism
+        :param dim: the number of dimensions of the prism
+        :param l: the length of each matrix in the prism
+        :param w: the width of each matrix in the prism
+        :return:
+        """
         if l == -1:
             l = std_l
         if w == -1:
@@ -1292,7 +1327,7 @@ class Prism:
         return Prism(output)
 
     @staticmethod
-    def canonical(ds: list[Seq], l=5, coordinates=None, current=None):
+    def canonical(ds: list[Seq], l: int=5, coordinates=None, current=None) -> "Prism":
         """
         Produces a canonical one-beginning object whose dimensions express the given list of signatures
 
@@ -1300,14 +1335,13 @@ class Prism:
         :param l: The length of each dimension
         :param coordinates: current location within the structure; do not set manually
         :param current: the current sub-Prism being used in recursive calculations; do not set manually
-        :return:
+        :return: the canonical prism
         """
 
         if len(ds) == 1:
             return Prism(Matrix.power(ds[0], l))
 
         output = []
-        # output2 = 0
 
         if current is None:
             current = Matrix.power(ds[0], l=l)
@@ -1320,25 +1354,16 @@ class Prism:
         if len(coordinates) == len(ds) - 1:
             output = Seq(1)
             for i, d in enumerate(ds[1:]):
-                # tmp_len = 1
-                # for j in range(coordinates[i]+1):
-                #     output2 += (2*tmp_len + 1)
-                #     tmp_len += len(d) - 1
                 output *= d ** coordinates[i]
-            # output2 += (2*len(output) + 1) * len(current)
             return Prism(output * current)
-            # return Prism(output * current), output2
         else:
             for n in range(l):
                 get = Prism.canonical(ds, l, coordinates + [n], current[n])
                 output.append(get)
-                # output.append(get[0])
-                # output2 += get[1]
         return Prism(output)
-        # return Prism(output), output2
 
     @staticmethod
-    def power(d: Seq, dim=4, l=10, coordinates=None, block=None):
+    def power(d: Seq, dim: int=4, l: int=10, coordinates=None, block=None) -> "Prism":
         """
         The canonical one-beginning object in higher dimensions
 
@@ -1368,12 +1393,14 @@ class Prism:
         return Prism(out)
 
     @staticmethod
-    def g_prism(d, g, l=10):
-        def get(obj, coordinates):
-            output = obj
-            for coord in coordinates:
-                output = output[coord]
-            return output
+    def g_prism(d: list[Seq], g: list[Seq], l: int=10) -> "Prism":
+        """
+        Construct a G-prism, as outlined in SNR 2.2.4
+        :param d: The signatures used to construct right operands
+        :param g: The signatures which are used to construct left operands
+        :param l: the length of the G-prism
+        :return: the constructed G-prism
+        """
 
         g = [g_n.f() for g_n in g]
         d = [Matrix.power(d_n, l=l) for d_n in d]
@@ -1411,7 +1438,13 @@ class Prism:
         return output
 
     @staticmethod
-    def simplex(d, l=10):
+    def simplex(d: list[Seq], l: int=10) -> "Prism":
+        """
+        Construct an arbitrary-dimensional simplex prism
+        :param d: the 2-digit sequences to construct the simplex with
+        :param l: the length of the simplex
+        :return: the constructed simplex
+        """
         if len(d) < 2:
             raise ValueError(f"Can only construct simplex with 2 or more signatures.")
         if any([len(d_n) != 2 for d_n in d]):
@@ -1446,7 +1479,7 @@ class Prism:
 
         return p
 
-    def __init__(self, structure, l=10):
+    def __init__(self, structure, l: int=10):
         if isinstance(structure, Matrix):
             self.val = structure
         elif isinstance(structure, list):
@@ -1458,7 +1491,7 @@ class Prism:
         else:
             raise TypeError(f"Prism must be constructed via Matrix, list, or Prism, not {type(structure).__name__}")
 
-    def __getitem__(self, i):
+    def __getitem__(self, i: [int, slice]):
         if isinstance(i, int):
             return self.val[i]
         elif isinstance(i, slice):
@@ -1485,13 +1518,13 @@ class Prism:
         Takes two Prisms and constructs their prismatic product
         """
 
-        def get(d, coordinates):
+        def get(d, coordinates: list[int]):
             output = d
             for k in range(len(coordinates)):
                 output = output[coordinates[k]]
             return output
 
-        def nested_array(dims, length):
+        def nested_array(dims: int, length: int):
             if dims == 2:
                 return Matrix.blank(length)
             else:
@@ -1514,7 +1547,7 @@ class Prism:
 
         return Prism(output)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: int, value):
         self.val[key] = value
 
     def __str__(self):
@@ -1532,12 +1565,15 @@ class Prism:
                 output.pop(-1)
             return "\n".join(output)
 
-    def f(self, g=None, a=1):
+    def f(self, g: list[Seq]=None, a: int=1) -> Seq:
         """
         Performs the general signature function on an N-dimensional structure
+
+        :param g: the signatures to convolve along the antidiagonals
+        :param a: the aeration coefficient
         """
 
-        def generate_next(structure, g=None, n=0, coordinates=None):
+        def generate_next(structure, g=None, n: int=0, coordinates: list[int]=None) -> int:
             """
             Generate the next value of the signature function at n
 
@@ -1606,10 +1642,15 @@ class Prism:
 
         return Seq(out)
 
-    def i(self, g=None):
+    def i(self, g: list[Seq]=None) -> Seq:
+        """
+        Compute the inverse signature function of the prism
+        :param g: the signatures to convolve along the antidiagonals
+        :return: the signature of the prism
+        """
         return self.f(g=g).i()
 
-    def aerate(self, a=2):
+    def aerate(self, a: int=2) -> "Prism":
         """
         The aeration function of a prism
 
@@ -1634,9 +1675,11 @@ class Prism:
 
         return Prism(output)
 
-    def base_prism(self, b):
+    def base_prism(self, b: int):
         """
         Construct a prism using base interpretations of rows
+
+        :param b: the base to use in constructing the prism
         """
         dims = num_dims(self)
         if dims == 2:
@@ -1646,9 +1689,11 @@ class Prism:
         else:
             return Prism([p.base_prism(b) for p in self])
 
-    def signary_prism(self, s, sf=None):
+    def signary_prism(self, s: int, sf=None):
         """
         Constructs a prism using U-representations of rows
+
+        :param s: the signature to use in constructing the prism
         """
         dims = num_dims(self)
         if sf is None:
@@ -1660,7 +1705,7 @@ class Prism:
         else:
             return Prism([p.signary_prism(s, sf) for p in self])
 
-    def size(self):
+    def size(self) -> int:
         output = 1
         k = self[0]
         while not isinstance(k, Matrix):
@@ -1670,7 +1715,7 @@ class Prism:
         return output
 
 
-def signature_dot_product(g, S):
+def signature_dot_product(g: list[Seq], S: list[Seq]) -> Seq:
     if isinstance(g, Seq):
         g = [g]
     if isinstance(S, Seq):
@@ -1685,11 +1730,11 @@ def signature_dot_product(g, S):
     return sum([(g[k].sig() * S[k].sig()) for k in range(len(g))]).seq
 
 
-def random_seq(min=1, max=7, min_digits=2, max_digits=5):
+def random_seq(min: int=1, max: int=7, min_digits: int=2, max_digits: int=5) -> Seq:
     if min_digits > max_digits:
         max_digits = min_digits
     return Seq([random.randint(min, max) for _ in range(random.randint(min_digits, max_digits))])
 
 
-def random_block(l=10):
+def random_matrix(l: int=10) -> Matrix:
     return Matrix(Seq(1), *[random_seq() for _ in range(l)])
