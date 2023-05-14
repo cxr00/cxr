@@ -49,7 +49,7 @@ See `tests.htd.character_attack` for a more in-depth explanation.
 
 ### Echo attack
 
-Another way to attack an Htd ciphertext is to try and figure out the cycle which the keys create and decrypt multiple characters at a time. The cycle itself is `math.lcm(len(h), len(b)` for keys `h` and `b`. The smaller the cycle, the easier it is to crack.
+Another way to attack an Htd ciphertext is to try and figure out the cycle which the keys create and decrypt multiple characters at a time. The cycle itself is `math.lcm(len(h), len(b))` for keys `h` and `b`. The smaller the cycle, the easier it is to crack.
 
 It is not usually feasible to perform this type of attack unless you know that the cycle is very short (like 2 or 3). Frequency analysis also fails, because one representation of an Htd such as "1,0,0" cannot be distinguished from another, so one cannot reliably assume that two instances of the same number represent the same characters, **even if the cycle seems coherent**.
 
