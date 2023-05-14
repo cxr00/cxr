@@ -453,7 +453,7 @@ class Tridozenal:
         return hash((str(self), self.base))
 
     def __float__(self):
-        return self.__primitive(is_float=True)
+        return float(self.__primitive(is_float=True))
 
     def __int__(self):
         return self.__primitive()
