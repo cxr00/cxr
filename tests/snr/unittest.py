@@ -17,9 +17,12 @@ class SeqTestCase(unittest.TestCase):
 
         self.assertGreater(Seq(0, 1), Seq(-1, 2))
 
-    def test_getitem(self):
+    def test_get_setitem(self):
         self.assertEqual(Seq(1, 2, 3, 4, 5, 6, 7)[3], 4)
         self.assertEqual(Seq(1, 2, 3, 4, 5, 6, 7, 8)[1:-2:2], Seq(2, 4, 6))
+        s = Seq(1, 2, 3, 4, 5)
+        s[1] = 0
+        self.assertEqual(s, Seq(1, 0, 3, 4, 5))
 
     def test_mod(self):
         self.assertEqual(Seq(1, 2, 4, 7, 11, 16, 22) % 3, Seq(1, 2, 1, 1, 2, 1, 1))
@@ -45,6 +48,8 @@ class SeqTestCase(unittest.TestCase):
         s.append(-3)
         self.assertEqual(s, Seq(1, 1, 2, 0, -3))
 
+        self.assertEqual(s.aerate(3), Seq(1, 0, 0, 1, 0, 0, 2, 0, 0, 0, 0, 0, -3))
+
         self.assertEqual(s.base(), 10)
 
         self.assertEqual(s.concat(s), Seq(1, 1, 2, 0, -3, 1, 1, 2, 0, -3))
@@ -66,19 +71,126 @@ class SeqTestCase(unittest.TestCase):
         l = set_std_l(15)
         self.assertEqual(Seq(1, 1).f(), Seq(1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610))
         self.assertEqual(Seq(1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610).i(), Seq(1, 1))
+        self.assertEqual(Seq(1, 1).f(seed=Seq(2, 1)), Seq(2, 1, 3, 4, 7, 11, 18, 29, 47, 76, 123, 199, 322, 521, 843))
 
 
 
 class SigTestCase(unittest.TestCase):
-    pass
+    def test_arithmetic(self):
+        self.assertEqual(Sig(1, 1) + Sig(2, 1), Sig(3, 0, -3, -1))
+
+        s = Sig(3, 0, -3, -1) - Sig(2, 1)
+        self.assertEqual(s[:len(s)-3], Sig(1, 1))
+
+        self.assertEqual(Sig(1, 1) * Seq(1, 2, -1), Sig(1, 3, 3, -1, -3, -1))
+
+        self.assertEqual(Sig(1, 3, 3, -1, -3, -1) / Sig(1, 1), Sig(1, 2, -1))
+        self.assertEqual(Sig(1, 3, 3, -1, -3, -1) // Sig(1, 2, -1), Sig(1, 1))
+
+        self.assertEqual(Sig(1, 1, 1) ** 2, Sig(1, 2, 4, 6, 8, 8, 6, 3, 1))
+
+        self.assertEqual(Sig(1, 1).iter_add(3), Sig(3, 0, -5, 0, 3, 1))
+
+        self.assertEqual(Sig(1, 1).multiplicative_inverse(l=15), Sig(1, -1, 2, -5, 14, -42, 132, -429, 1430, -4862, 16796, -58786, 208012, -742900, 2674440))
+
+    def test_utilities(self):
+        self.assertEqual(Sig(0, 0, 1, 1, 1).first_nonzero(), 2)
+
 
 
 class MatrixTestCase(unittest.TestCase):
-    pass
+    def test_arithmetic(self):
+        l = set_std_l(15)
+        s1 = Seq(1, 1)
+        s2 = Seq(2, 0, 1)
+        m1 = Matrix.power(s1)
+        m2 = Matrix.power(s2)
+        mf = (m1 + m2).f()[:l]
+        self.assertEqual(mf, m1.f() + m2.f())
+
+        mf = (m1 * m2).f()
+        self.assertEqual(mf, sum([s1[k] * s2**k for k in range(len(s1))]).f())
+
+        bs = m1.base_sequence(2)
+        self.assertEqual(bs, Seq(3).f())
+
+        self.assertEqual(m1.i(), Seq(1, 1))
+
+
+    def test_utilities(self):
+        l = set_std_l(15)
+        m = Matrix.power(Seq(1, 1))
+        self.assertEqual(m[5][3], 10)
+        m[5][3] = 9
+        self.assertEqual(m[5][3], 9)
+        m[5][3] = 10
+
+        ml = len(m)
+        m.append(Seq(1, 1, 1, 1))
+        self.assertEqual(ml+1, len(m))
+        m = m[:-1]
+
+        col = m.column(2)
+        self.assertEqual(col, Seq(0, 0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91))
+        diag = m.diagonalise()
+        self.assertEqual(diag.f(), Seq(1, 1, 1, 2, 3, 4, 6, 9, 13, 19, 28, 41, 60, 88, 129))
+
+        self.assertEqual(m.transpose().transpose().trim(), m)
 
 
 class PrismTestCase(unittest.TestCase):
-    pass
+    def test_prism_signatures(self):
+        l = set_std_l(10)
+        s1 = Seq(1, 1)
+        s2 = Seq(3, 0, 1)
+        p = Prism.canonical([s1, s2], l=l)
+
+        self.assertEqual(p.f(), (s1.sig() + s2).f())
+
+        ppow = Prism.power(s1, l=l)
+        self.assertEqual(ppow.f(), (s1.sig().iter_add(3)).f())
+
+        # G-prism identity
+        l = set_std_l(8)
+        pg = Prism.g_prism([s1, s2], [s2, s1], l=l)
+        d = [s1, s2]
+        g = [s2, s1]
+        alt = Seq(0).sig()
+        for d_n in d:
+            alt += d_n.sig()
+        for g_n in g:
+            alt += (x * g_n.aerate(2)).sig() + Seq(1)
+
+        self.assertEqual(pg.f(), alt.f())
+
+        # Simplex identity
+        d = [s1, s1+1, s1-1]
+        ps = Prism.simplex(d, l=l)
+        N = 3
+        output = Seq(0)
+        for k in range(N - 2):
+            prod = x ** k
+            for t in range(k):
+                prod *= d[t][1]
+            prod *= d[k][0]
+            output += prod
+
+        prod = x ** (N - 2)
+        for k in range(N - 2):
+            prod *= d[k][1]
+        for k in range(N - 2, N):
+            prod *= d[k][0]
+        output += prod
+
+        prod = x ** (N - 1)
+        for k in range(N - 2):
+            prod *= d[k][1]
+        output += prod * (d[N - 2][0] * d[N - 1][1] + d[N - 2][1])
+        self.assertEqual(ps.f(), output.f())
+
+        pm = Prism.power(d[0], dim=2, l=l)
+        pm = pm * pm
+        self.assertEqual(pm.f(), (d[0].sig() + d[0]).f())
 
 
 
