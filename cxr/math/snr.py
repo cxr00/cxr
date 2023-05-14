@@ -345,7 +345,7 @@ class Seq:
     def aerate(self, a: int=2) -> "Seq":
         """
         Transform a sequence into its aerated version
-        Eg [1, 1] to [0, 1, 0, 1] or [1, 1, 1] to [0, 0, 1, 0, 0, 1, 0, 0, 1]
+        Eg [1, 1] to [1, 0, 1] or [1, 1, 1] to [1, 0, 0, 1, 0, 0, 1]
 
         :param a: the aeration coefficient
         :return: the aerated sequence
@@ -363,9 +363,10 @@ class Seq:
 
         :param v: the value to be added
         """
-        if self.elements and not isinstance(v, type(self.elements[0])):
-            raise ValueError(f"Seq contains {type(self.elements[0]).__name__}, not {type(v).__name__}")
-        self.elements.append(v)
+        if self.elements:
+            if isinstance(self.elements[0], (int, float)) and not isinstance(v, (int, float)):
+                raise ValueError(f"Seq contains {type(self.elements[0]).__name__}, not {type(v).__name__}")
+        self.elements.append(int(v) if int(v) == v else v)
 
     def base(self) -> int:
         if self.is_td():
@@ -700,6 +701,9 @@ class Sig:
         out *= a
         return Sig(out)
 
+    def __neg__(self):
+        return Sig(-self.seq)
+
     def __pow__(self, power: int, modulo=None):
         out = Sig(Td.one(self.base()) if self.is_td() else 1)
         a = Sig(self)
@@ -843,8 +847,7 @@ class Sig:
         """
         Converts the given sequence to its additive inverse
         """
-        out = [-k for k in self]
-        return Sig(out)
+        return -self
 
     def reverse(self) -> "Sig":
         return Sig(self.seq.reverse())
@@ -1279,7 +1282,7 @@ class Matrix:
         return out
 
     def neg(self) -> "Matrix":
-        out = [v.neg() for v in self]
+        out = [-v for v in self]
         return Matrix(out)
 
     def truncate(self, l: int) -> "Matrix":
