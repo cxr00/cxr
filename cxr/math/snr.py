@@ -1751,6 +1751,44 @@ def signature_dot_product(g: list[Seq], S: list[Seq]) -> Seq:
     return sum([(g[k].sig() * S[k].sig()) for k in range(len(g))]).seq
 
 
+def g_prism_identity(d: list[Seq], g: list[Seq]):
+    alt = Seq(0).sig()
+    for d_n in d:
+        alt += d_n.sig()
+    for g_n in g:
+        alt += (x * g_n.aerate(2)).sig() + Seq(1)
+    return alt
+
+
+def simplex_identity(d: list[Seq]):
+    if len(d) < 2:
+        raise ValueError(f"Can only construct simplex with 2 or more signatures.")
+    if any([len(d_n) != 2 for d_n in d]):
+        raise ValueError(f"Can only construct simplex with signatures of length 2.")
+
+    N = len(d)
+    output = Seq(0)
+    for k in range(N-2):
+        prod = x**k
+        for t in range(k):
+            prod *= d[t][1]
+        prod *= d[k][0]
+        output += prod
+
+    prod = x**(N-2)
+    for k in range(N-2):
+        prod *= d[k][1]
+    for k in range(N-2, N):
+        prod *= d[k][0]
+    output += prod
+
+    prod = x**(N-1)
+    for k in range(N-2):
+        prod *= d[k][1]
+    output += prod * (d[N-2][0] * d[N-1][1] + d[N-2][1])
+    return output
+
+
 def random_seq(min: int=1, max: int=7, min_digits: int=2, max_digits: int=5) -> Seq:
     if min_digits > max_digits:
         max_digits = min_digits

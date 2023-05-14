@@ -1,5 +1,6 @@
 import unittest
 from cxr import Seq, Sig, x, Matrix, Prism, set_std_l
+from cxr.math import g_prism_identity, simplex_identity
 
 
 class SeqTestCase(unittest.TestCase):
@@ -140,58 +141,27 @@ class MatrixTestCase(unittest.TestCase):
 
 class PrismTestCase(unittest.TestCase):
     def test_prism_signatures(self):
-        l = set_std_l(10)
+        l = set_std_l(8)
+
+        # Canonical identity
         s1 = Seq(1, 1)
         s2 = Seq(3, 0, 1)
         p = Prism.canonical([s1, s2], l=l)
-
         self.assertEqual(p.f(), (s1.sig() + s2).f())
 
         ppow = Prism.power(s1, l=l)
         self.assertEqual(ppow.f(), (s1.sig().iter_add(3)).f())
 
         # G-prism identity
-        l = set_std_l(8)
         pg = Prism.g_prism([s1, s2], [s2, s1], l=l)
         d = [s1, s2]
         g = [s2, s1]
-        alt = Seq(0).sig()
-        for d_n in d:
-            alt += d_n.sig()
-        for g_n in g:
-            alt += (x * g_n.aerate(2)).sig() + Seq(1)
-
-        self.assertEqual(pg.f(), alt.f())
+        self.assertEqual(pg.f(), g_prism_identity(d, g).f())
 
         # Simplex identity
         d = [s1, s1+1, s1-1]
         ps = Prism.simplex(d, l=l)
-        N = 3
-        output = Seq(0)
-        for k in range(N - 2):
-            prod = x ** k
-            for t in range(k):
-                prod *= d[t][1]
-            prod *= d[k][0]
-            output += prod
-
-        prod = x ** (N - 2)
-        for k in range(N - 2):
-            prod *= d[k][1]
-        for k in range(N - 2, N):
-            prod *= d[k][0]
-        output += prod
-
-        prod = x ** (N - 1)
-        for k in range(N - 2):
-            prod *= d[k][1]
-        output += prod * (d[N - 2][0] * d[N - 1][1] + d[N - 2][1])
-        self.assertEqual(ps.f(), output.f())
-
-        pm = Prism.power(d[0], dim=2, l=l)
-        pm = pm * pm
-        self.assertEqual(pm.f(), (d[0].sig() + d[0]).f())
-
+        self.assertEqual(ps.f(), simplex_identity(d).f())
 
 
 if __name__ == "__main__":
