@@ -1112,6 +1112,9 @@ class Matrix:
     def __len__(self):
         return len(self.rows)
 
+    def __mod__(self, modulo):
+        return Matrix([s % modulo for s in self])
+
     def __mul__(self, other):
         if isinstance(other, (Seq, int, float)):
             return Matrix([other * g for g in self])
@@ -1517,6 +1520,16 @@ class Prism:
 
     def __iter__(self):
         return iter(self.val)
+
+    def __mod__(self, modulo):
+        dims = num_dims(self)
+        if dims == 2:
+            return Prism(self.val % modulo)
+        else:
+            output = Prism.blank(dims, len(self), len(self[0]))
+            for i in range(len(self)):
+                output[i] = self.val[i] % modulo
+            return output
 
     def __mul__(self, other):
         """
