@@ -24,7 +24,7 @@ default_base = 3
 # The base-64 characters used for 62 and 63
 chars64 = "+/"
 
-def set_chars64(new_chars):
+def set_chars64(new_chars: str):
     if len(new_chars) != 2:
         raise ValueError(f"Can only submit two characters for chars64")
     if new_chars[0] == new_chars[1]:
@@ -227,7 +227,7 @@ class Seq:
     def __str__(self):
         return ", ".join([str(n) for n in self.trim().seq])
 
-    def concat(self, other):
+    def concat(self, other: "Seq"):
         return Seq(self.seq + other.seq)
 
     def neg(self):
@@ -240,7 +240,7 @@ class Seq:
     def reverse(self):
         return Seq(self.seq[::-1])
 
-    def trim(self, to_zero=False):
+    def trim(self, to_zero: bool=False):
         """
         Removes trailing zeroes from a sequence
         """
@@ -250,7 +250,7 @@ class Seq:
         return Seq(out)
 
 
-def convert_int(num, base):
+def convert_int(num: int, base: int):
     """
     Converts primitive ints to the given base
 
@@ -269,7 +269,7 @@ def convert_int(num, base):
 
 
 class Tridozenal:
-    def __init__(self, integer=None, mantissa=None, base=-1, is_negative=False):
+    def __init__(self, integer: Seq=None, mantissa: Seq=None, base: int=-1, is_negative: bool=False):
         if not integer:
             integer = Seq(0)
         if not mantissa:
@@ -625,26 +625,26 @@ class Tridozenal:
             raise ValueError("Can only divide Tridozenal by int, float or Tridozenal")
 
     @staticmethod
-    def zero(base=-1):
+    def zero(base: int=-1):
         if base == -1:
             base = default_base
         return Tridozenal(0, 0, base)
 
     @staticmethod
-    def one(base=-1):
+    def one(base: int=-1):
         if base == -1:
             base = default_base
         return Tridozenal(1, 0, base)
 
     @staticmethod
-    def get_from_string(s: str, base=-1):
+    def get_from_string(s: str, base: int=-1):
         """
         Translate a string into a Tridozenal of a given base.
         """
         if base == -1:
             base = default_base
 
-        def get_num(char):
+        def get_num(char: str):
 
             ord_char = ord(char)
             if 48 <= ord_char < 58:
@@ -659,13 +659,6 @@ class Tridozenal:
                 return 63
             else:
                 raise ValueError(f"Invalid character {char}; must be 0-9, A-Z, a-z, or {chars64}")
-
-            # if char.isnumeric():
-            #     return int(char)
-            # elif char.isalpha():
-            #     return ord(char.upper()) - 55
-            # else:
-            #     raise ValueError(f"Invalid character {char}; must be 0-9, A-Z")
 
         if not s:
             return Tridozenal(0, 0, base)
@@ -691,7 +684,7 @@ class Tridozenal:
             return Tridozenal(integer_part, 0, base, is_negative)
 
     @staticmethod
-    def encode(s, base=-1, bits=8):
+    def encode(s: str, base: int=-1, bits: int=8):
         if base == -1:
             base = default_base
 
@@ -707,7 +700,7 @@ class Tridozenal:
         return "".join(out)
 
     @staticmethod
-    def decode(s, base=-1, bits=8, as_binary_strings=False):
+    def decode(s: str, base: int=-1, bits: int=8, as_binary_strings: bool=False):
         if base == -1:
             base = default_base
 
@@ -724,7 +717,7 @@ class Tridozenal:
         return out if as_binary_strings else "".join(out)
 
     @staticmethod
-    def exp(base=-1, power=1, iterations=100, place=-1, log=False, perfect=False):
+    def exp(base: int=-1, power: int=1, iterations: int=100, place: int=-1, log: bool=False, perfect: bool=False):
         """
         Get the result of the exponential function e^x
         :param base: The base of the number
@@ -770,7 +763,7 @@ class Tridozenal:
         return out
 
     @staticmethod
-    def pi(base=-1, iterations=25, place=-1, log=False, perfect=False):
+    def pi(base: int=-1, iterations: int=25, place: int=-1, log: bool=False, perfect: bool=False):
         """
         Compute pi in the base of your choice
         :param base: The base of the number
@@ -837,7 +830,7 @@ class Tridozenal:
     def as_int(self):
         return Tridozenal(self.integer, Seq(), self.base, self.is_negative)
 
-    def convert(self, base=-1):
+    def convert(self, base: int=-1):
         """
         Convert a number without a mantissa to another base
         """
@@ -886,7 +879,7 @@ class Tridozenal:
 
         return Tridozenal(output[::-1], output_mantissa, base, self.is_negative)
 
-    def divide_by(self, other, place=-1):
+    def divide_by(self, other, place: int=-1):
         if place == -1:
             place = round_to
 
@@ -902,7 +895,7 @@ class Tridozenal:
         else:
             raise ValueError(f"Cannot divide with {type(other).__name__}, only int, float or Tridozenal")
 
-    def ln(self, num_iterations=100, place=-1, log=False, perfect=True):
+    def ln(self, num_iterations: int=100, place: int=-1, log: bool=False, perfect: bool=True):
         """
         Compute the natural logarithm of the number
         :param num_iterations: the maximum number of iterations of the computation
@@ -954,7 +947,7 @@ class Tridozenal:
         out.round(place)
         return out
 
-    def logarithm(self, base, num_iterations=100, place=-1, log=True, perfect=False):
+    def logarithm(self, base: int, num_iterations: int=100, place: int=-1, log: bool=True, perfect: bool=False):
         # Setting log to True helps it show that the program isn't hanging, just slow since it computes TWO natural logs
         if isinstance(base, int):
             return self.ln(num_iterations, place, log, perfect).divide_by(Tridozenal(base, 0, self.base).ln(num_iterations, place, log, perfect), place=place)
@@ -963,7 +956,7 @@ class Tridozenal:
         else:
             raise ValueError(f"Cannot perform logarithm on {type(base).__name__}, only int or Tridozenal")
 
-    def multiplicative_inverse(self, place=-1):
+    def multiplicative_inverse(self, place: int=-1):
 
         def is_greater(a, b):
             if len(a) > len(b):
@@ -1016,13 +1009,13 @@ class Tridozenal:
     def negative(self):
         return Tridozenal(self.integer, self.mantissa, self.base, not self.is_negative)
 
-    def rebase(self, base=-1):
+    def rebase(self, base: int=-1):
         if base == -1:
             base = default_base
 
         return Tridozenal(self.integer, self.mantissa, base, self.is_negative)
 
-    def __primitive(self, is_float=False):
+    def __primitive(self, is_float: bool=False):
         """
         Convert a Tridozenal to its primitive int representation
         """
@@ -1093,7 +1086,7 @@ class Tridozenal:
             self.is_negative = not self.is_negative
             self.__resolve()
 
-    def root(self, power=2, num_iterations=15, place=-1, log=False, perfect=False):
+    def root(self, power: int=2, num_iterations: int=15, place: int=-1, log: bool=False, perfect: bool=False):
         """
         Get the n-th root of the number, where n is a positive integer
 
@@ -1141,7 +1134,7 @@ class Tridozenal:
 
         return out
 
-    def round(self, place=-1):
+    def round(self, place: int=-1):
         if place < -1:
             raise ValueError(f"Place must be greater than or equal to -1, not {place}")
         elif place == -1:
@@ -1155,7 +1148,7 @@ class Tridozenal:
         self.mantissa = self.mantissa[:place].trim(True)
         self.__resolve()
 
-    def rounded(self, place):
+    def rounded(self, place: int):
         output = Tridozenal(self.integer, self.mantissa, self.base, self.is_negative)
         output.round(place)
         return output
@@ -1166,7 +1159,7 @@ class Tridozenal:
     def mantissa_part(self):
         return Tridozenal(Seq(), self.mantissa, self.base, self.is_negative)
 
-    def truncated(self, place):
+    def truncated(self, place: int):
         return Tridozenal(self.integer, self.mantissa[:place], self.base, self.is_negative)
 
     def trim(self):
