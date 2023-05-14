@@ -325,7 +325,7 @@ default_encryption_sep = ":"
 mantissa_point = "."
 
 
-def convert_td(num, base):
+def convert_td(num: Td, base: int):
     """
     Converts primitive ints to the given base
 
@@ -342,7 +342,7 @@ def convert_td(num, base):
 
 
 class Htd:
-    def __init__(self, hyperbase, implicit_base, integer=None, mantissa=None, is_negative=False):
+    def __init__(self, hyperbase: int, implicit_base: int, integer=None, mantissa=None, is_negative: bool=False):
         self.base = hyperbase
 
         self.implicit_base = implicit_base
@@ -578,10 +578,10 @@ class Htd:
 
     def __mul__(self, other):
 
-        def pad_mantissa(mantissa, desired_length):
+        def pad_mantissa(mantissa, desired_length: int):
             return Seq([self.implicit_zero for _ in range(desired_length - len(mantissa))]).concat(mantissa)
 
-        def split_into_parts(d, mantissa_point, is_negative):
+        def split_into_parts(d, mantissa_point: int, is_negative: bool):
             return Htd(self.base, self.implicit_base, d.seq[:len(d) - mantissa_point],
                        d.seq[len(d) - mantissa_point:], is_negative)
 
@@ -631,7 +631,7 @@ class Htd:
     def __neg__(self):
         return self.negative()
 
-    def __pow__(self, power, modulo=None):
+    def __pow__(self, power: int, modulo=None):
         if isinstance(power, int):
             if power == 0:
                 return Htd.one(self.base, self.implicit_base)
@@ -658,18 +658,9 @@ class Htd:
         return self - other
 
     def __str__(self):
-        def get_char(num):
+        def get_char(num: Td):
             # Temporary fix
             return str(num)
-            # if 0 <= num < 10:
-            #     return str(num)
-            # elif 10 <= num < 36:
-            #     if num == 24:
-            #         return "o"
-            #     elif num == 18:
-            #         return "i"
-            #     else:
-            #         return chr(num + 55)
 
         if len(self.integer):
             out_integer = default_sep.join([get_char(self.integer[n]) for n in range(len(self.integer) - 1, -1, -1)])
@@ -717,13 +708,13 @@ class Htd:
             return NotImplemented
 
     @staticmethod
-    def get_from_string(s, hyperbase, implicit_base, sep=None, mantissa_pt=None):
+    def get_from_string(s: str, hyperbase: int, implicit_base: int, sep: str=None, mantissa_pt: str=None):
         if not sep:
             sep = default_sep
         if not mantissa_pt:
             mantissa_pt = mantissa_point
 
-        def read(s):
+        def read(s: str):
             output = []
             for each in s.split(sep):
                 output.append(Td.get_from_string(each, implicit_base))
@@ -740,7 +731,7 @@ class Htd:
         return Htd(hyperbase=hyperbase, implicit_base=implicit_base, integer=int_output, mantissa=man_output)
 
     @staticmethod
-    def encode(s, hyperbase, implicit_base, sep=None):
+    def encode(s: str, hyperbase: int, implicit_base: int, sep: str=None):
         """
         Convert a string into a sequence of Htds
 
@@ -760,7 +751,7 @@ class Htd:
         return out
 
     @staticmethod
-    def decode(s, hyperbase, implicit_base, sep=None):
+    def decode(s: str, hyperbase: int, implicit_base: int, sep: str=None):
         """
         Decode an encoded Htd string
 
@@ -782,7 +773,7 @@ class Htd:
         return out
 
     @staticmethod
-    def encrypt(s, hyperbases=None, implicit_bases=None, sep=None):
+    def encrypt(s: str, hyperbases: list[int]=None, implicit_bases: list[int]=None, sep=None):
         """
         Htd obfuscation turns a string and two sets of bases
         into a sort of dual password.
@@ -816,7 +807,7 @@ class Htd:
         return out
 
     @staticmethod
-    def decrypt(s, hyperbases=None, implicit_bases=None, sep=None):
+    def decrypt(s: str, hyperbases: int=None, implicit_bases: int=None, sep: str=None):
         """
         Use two sets of bases to deobfuscate a string
 
@@ -849,15 +840,15 @@ class Htd:
         return out
 
     @staticmethod
-    def zero(hyperbase, implicit_base):
+    def zero(hyperbase: int, implicit_base: int):
         return Htd(hyperbase, implicit_base, Td.zero(implicit_base), 0)
 
     @staticmethod
-    def one(hyperbase, implicit_base):
+    def one(hyperbase: int, implicit_base: int):
         return Htd(hyperbase, implicit_base, Td.one(implicit_base), 0)
 
     @staticmethod
-    def exp(hyperbase, implicit_base, power=1, iterations=100, place=-1, log=False, perfect=False):
+    def exp(hyperbase: int, implicit_base: int, power: int=1, iterations: int=100, place: int=-1, log: bool=False, perfect: bool=False):
         """
         Get the result of the exponential function e^x
         :param hyperbase: The base of the number
@@ -907,7 +898,7 @@ class Htd:
         return out
 
     @staticmethod
-    def pi(hyperbase, implicit_base, iterations=25, place=-1, log=False, perfect=False):
+    def pi(hyperbase: int, implicit_base: int, iterations: int=25, place: int=-1, log: bool=False, perfect: bool=False):
         """
         Compute pi in the base of your choice
         :param hyperbase: The base of the number
@@ -975,7 +966,7 @@ class Htd:
     def abs(self):
         return Htd(self.base, self.implicit_base, self.integer, self.mantissa)
 
-    def convert(self, hyperbase):
+    def convert(self, hyperbase: int):
         """
         Convert a number without a mantissa to another base
         """
@@ -1004,7 +995,7 @@ class Htd:
 
         return Htd(hyperbase, self.implicit_base, output[::-1], 0, is_negative=self.is_negative)
 
-    def divide_by(self, other, place=-1):
+    def divide_by(self, other, place: int=-1):
         if place == -1:
             place = round_to
 
@@ -1019,7 +1010,7 @@ class Htd:
         else:
             raise ValueError(f"Cannot divide with {type(other).__name__}, only int, float or Htd")
 
-    def ln(self, num_iterations=100, place=20, log=False, perfect=False):
+    def ln(self, num_iterations: int=100, place: int=20, log: bool=False, perfect: bool=False):
         """
         Compute the natural logarithm of the number
         :param num_iterations: the maximum number of iterations of the computation
@@ -1069,7 +1060,7 @@ class Htd:
         out.round(place)
         return out
 
-    def logarithm(self, base, num_iterations=100, place=20, log=True, perfect=False):
+    def logarithm(self, base, num_iterations: int=100, place: int=20, log: bool=True, perfect: bool=False):
         # Setting log to True helps it show that the program isn't hanging, just slow since it computes TWO natural logs
         if isinstance(base, int):
             return self.ln(num_iterations, place, log, perfect).divide_by(
@@ -1082,7 +1073,7 @@ class Htd:
         else:
             return NotImplemented
 
-    def multiplicative_inverse(self, place=-1):
+    def multiplicative_inverse(self, place: int=-1):
 
         def is_greater(a, b):
             if len(a) > len(b):
@@ -1131,19 +1122,19 @@ class Htd:
     def negative(self):
         return Htd(self.base, self.implicit_base, self.integer, self.mantissa, is_negative=not self.is_negative)
 
-    def rebase(self, hyperbase):
+    def rebase(self, hyperbase: int):
 
         return Htd(hyperbase, self.implicit_base, self.integer, self.mantissa, is_negative=self.is_negative)
 
-    def implicit_rebase(self, implicit_base):
+    def implicit_rebase(self, implicit_base: int):
         return Htd(self.base, self.implicit_base, [e.rebase(implicit_base) for e in self.integer],
                    [e.rebase(implicit_base) for e in self.mantissa])
 
-    def implicit_convert(self, implicit_base):
+    def implicit_convert(self, implicit_base: int):
         return Htd(self.base, self.implicit_base, [e.convert(implicit_base) for e in self.integer],
                    [e.convert(implicit_base) for e in self.mantissa])
 
-    def __primitive(self, is_float=False):
+    def __primitive(self, is_float: bool=False):
         """
         Convert an Htd to its primitive int representation
         """
@@ -1157,7 +1148,7 @@ class Htd:
         Performs all carries on the Htd
         """
 
-        def resolve_pair(a, b):
+        def resolve_pair(a: Td, b: Td):
             """
             Convert the given pair into a resolved pair
             """
@@ -1221,7 +1212,7 @@ class Htd:
             self.is_negative = not self.is_negative
             self.__resolve()
 
-    def root(self, power=2, num_iterations=15, place=-1, log=False, perfect=False):
+    def root(self, power: int=2, num_iterations: int=15, place: int=-1, log: bool=False, perfect: bool=False):
         """
         Get the n-th root of the number, where n is a positive integer
 
@@ -1269,7 +1260,7 @@ class Htd:
 
         return out
 
-    def round(self, place):
+    def round(self, place: int):
         if place > len(self.mantissa):
             return
 

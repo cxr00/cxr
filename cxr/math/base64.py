@@ -269,7 +269,7 @@ def convert_int(num: int, base: int):
 
 
 class Tridozenal:
-    def __init__(self, integer: Seq=None, mantissa: Seq=None, base: int=-1, is_negative: bool=False):
+    def __init__(self, integer=None, mantissa=None, base: int=-1, is_negative: bool=False):
         if not integer:
             integer = Seq(0)
         if not mantissa:
