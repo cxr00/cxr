@@ -11,7 +11,7 @@ class StateTelemetryError(ValueError):
 
 
 class StateTelemeter(StateManager):
-    def __init__(self, key, name):
+    def __init__(self, key: str, name: str):
         super().__init__(key, name)
         self._device = None
         self.toggle_ser_priority(ser_first=False)
@@ -42,12 +42,13 @@ class StateTelemeter(StateManager):
         else:
             raise StateTelemetryError(f"No device mounted to {self}")
 
-    def mount(self, sm):
+    def mount(self, sm: StateManager):
         """
         Attach a StateManager to the telemeter
         """
         if self._device is None:
             self._device = sm
+            self["stream_filename"] = self._device.name
         else:
             raise StateTelemetryError(f"Cannot mount {sm} to {self}; {self._device} is already mounted")
 
@@ -57,6 +58,12 @@ class StateTelemeter(StateManager):
         """
         if self._device:
             self._device = None
+            self["telemetry"] = []
+            self["nonser_telemetry"] = []
+            self["stream_path"] = None
+            self["streaming"] = False
+            self["stream_range"] = 100
+            self["error_stream_range"] = 35
         else:
             raise StateTelemetryError(f"Nothing to unmount from {self}")
 
@@ -70,23 +77,25 @@ class StateTelemeter(StateManager):
         else:
             raise StateTelemetryError(f"Nothing to destroy in {self}")
 
-    def set_stream_path(self, stream_path):
+    def set_stream_path(self, stream_path: str):
         self["stream_path"] = stream_path
         path_split = os.path.split(stream_path)
-        # self["stream_path"] = "\\".join(path_split)
-        # self["stream_filename"] = path_split[-1]
         for i in range(len(path_split)):
             partial = "\\".join(path_split[:i+1])
             if not os.path.isdir(partial):
                 os.mkdir(partial)
 
-    def set_streaming(self, streaming):
+    def set_streaming(self, streaming: bool):
         self["streaming"] = streaming
 
-    def set_stream_range(self, stream_range):
+    def set_stream_range(self, stream_range: int):
+        if stream_range < 0:
+            raise ValueError(f"Stream range must be 0 or more, not {stream_range}")
         self["stream_range"] = stream_range
 
-    def set_error_stream_range(self, error_stream_range):
+    def set_error_stream_range(self, error_stream_range: int):
+        if error_stream_range < 0:
+            raise ValueError(f"Stream range must be 0 or more, not {error_stream_range}")
         self["error_stream_range"] = error_stream_range
 
     def step(self, event):
@@ -124,7 +133,7 @@ class StateTelemeter(StateManager):
                     f.write(str(q) + "\n")
             self.change_state("crashed")
 
-    def reverse(self, steps):
+    def reverse(self, steps: int):
         """
         Note: reassigns all variables as serialisable
         If you are not using parameterised saves, this could be an issue
@@ -134,13 +143,13 @@ class StateTelemeter(StateManager):
         q = self.telemetry[len(self.telemetry)-steps]
         self["telemetry"] = self.telemetry[:len(self.telemetry)-steps]
 
-        for property in q:
-            self._device[property.tag] = property.val
+        for p in q:
+            self._device[p.tag] = p.val
 
         q = self.nonser_telemetry[len(self.nonser_telemetry) - steps]
         self["nonser_telemetry"] = self.nonser_telemetry[:len(self.nonser_telemetry) - steps]
 
-        for property in q:
-            self._device[property] = q[property]
+        for p in q:
+            self._device[p.tag] = q[p.val]
 
         self.change_state("playing")

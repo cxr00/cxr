@@ -19,7 +19,7 @@ class StateData:
     StateData distinguishes a StateManager's serializable and nonserializable parameters.
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: "StateManager"=None):
         self._ser = {}
         self._nonser = {}
         self.parent = parent
@@ -28,7 +28,7 @@ class StateData:
     def __iter__(self):
         return iter([*self._ser.keys(), *self._nonser.keys()])
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: str):
         if item in self._ser:
             return self._ser[item]
         elif item in self._nonser:
@@ -36,7 +36,7 @@ class StateData:
         else:
             raise StateError(f"{self.parent.name}({self.parent.key}) StateData has no element {item}")
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value):
         """
         Checks whether the key exists in either _ser or _nonser, otherwise use default behavior
         """
@@ -63,18 +63,18 @@ class StateData:
     def has_serializables(self):
         return bool(self._ser)
 
-    def toggle_ser_priority(self, ser_first=None):
+    def toggle_ser_priority(self, ser_first: bool=None):
         self._ser_first = ser_first if ser_first is not None else not self._ser_first
 
     def items(self):
         return [*self._ser.items(), *self._nonser.items()]
 
-    def ser(self, attr, value):
+    def ser(self, attr: str, value):
         if attr in self._nonser:
             raise TypeError(f"Cannot set serializable attribute in {self.parent}: Item with key {attr} is in nonserializable")
         self._ser[attr] = value
 
-    def nonser(self, attr, value):
+    def nonser(self, attr: str, value):
         if attr in self._ser:
             raise TypeError(f"Cannot set nonserializable attribute in {self.parent}: Item with key {attr} is in serializable")
         self._nonser[attr] = value
@@ -87,7 +87,7 @@ class StateData:
 
         return q
 
-    def update(self, d):
+    def update(self, d: dict):
         for k, v in d.items():
             self[k] = v
 
@@ -99,7 +99,7 @@ class StateManager:
 
     _reference = {}
 
-    def __init__(self, key, name):
+    def __init__(self, key: str, name: str):
         if key in StateManager._reference:
             raise StateError(f"Init failed: StateManager with key {key} already exists in global register")
         self.key = key
@@ -124,13 +124,13 @@ class StateManager:
     def __deepcopy__(self, memodict={}):
         raise TypeError("Cannot deepcopy a StateManager instance")
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: str):
         return self._data[item]
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: str):
         return self._data[item]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value):
         self._data[key] = value
 
     def __str__(self):
@@ -139,31 +139,31 @@ class StateManager:
     def has_serializables(self):
         return self._data.has_serializables()
 
-    def toggle_ser_priority(self, ser_first=None):
+    def toggle_ser_priority(self, ser_first: bool=None):
         self._data.toggle_ser_priority(ser_first)
 
-    def set_attribute(self, attr, value):
+    def set_attribute(self, attr: str, value):
         """
         Set an arbitrary attribute
         """
         self._data[attr] = value
 
-    def set_flag(self, flag, initial=False):
+    def set_flag(self, flag: str, initial: bool=False):
         """
         Set a boolean flag
         """
         self._data[flag] = initial
 
-    def set_counter(self, flag, initial=0):
+    def set_counter(self, flag: str, initial: int=0):
         self._data[flag] = initial
 
-    def set_target(self, flag, target, initial=0):
+    def set_target(self, flag: str, target: int, initial: int=0):
         """
         Set a target tracker
         """
         self._data[flag] = {"num": initial, "target": target}
 
-    def add_state(self, key):
+    def add_state(self, key: str):
 
         def outer_wrapper(f):
 
@@ -180,13 +180,13 @@ class StateManager:
 
         return outer_wrapper
 
-    def change_state(self, key):
+    def change_state(self, key: str):
         if key not in self._states:
             raise StateError(f"State change failed: StateManager {self.key} has no state {key}")
         self._current = self._states[key]
         self._current_key = key
 
-    def get_state(self, key):
+    def get_state(self, key: str):
         if key not in self._states:
             raise StateError(f"Get state failed: StateManager {self.name} ({self.key}) has no state {key}")
         return self._states[key]
@@ -218,7 +218,7 @@ class StateManager:
 
     def ser(self, key, value=None):
         """
-        Add a nonserializable parameter to the StateData
+        Add a serializable parameter to the StateData
         """
         self._data.ser(key, value)
 
@@ -400,7 +400,7 @@ class CXRNode(Node):
             return str(self.parent) + "/" + self.key
 
     @staticmethod
-    def initialize(root):
+    def initialize(root: str):
         """
         Create a CXRNode at the given root
         """
@@ -444,7 +444,7 @@ class CXRNode(Node):
                 self.add(CXRNode(f))
                 self[f].build()
 
-    def add_path(self, path):
+    def add_path(self, path: str):
         """
         Add all necessary nodes to construct a node at the given path
 
@@ -473,7 +473,7 @@ class CXRNode(Node):
             else:
                 os.mkdir(join)
 
-    def has_path(self, path):
+    def has_path(self, path: str):
         """
         Determine if the given path is valid in the CXRNode
         """
@@ -497,7 +497,7 @@ class CXRNode(Node):
             p = self.parent
             return p.path() + "\\" + self.key + ".cxr"
 
-    def get(self, path, add_path=True):
+    def get(self, path: (list[str], str), add_path: bool=True):
         """
         Retrieve a node at the given path.
         If a particular node in the path does not exist, one is created.
@@ -532,7 +532,7 @@ class StateManagerReference:
     frame = None
 
     @staticmethod
-    def initialize(root=None):
+    def initialize(root: str=None):
         """
         Initialize the SMR frame at the given root,
         or reinitialize at the current root
@@ -542,14 +542,14 @@ class StateManagerReference:
         StateManagerReference.frame = CXRNode.initialize(root)
 
     @staticmethod
-    def get(path):
+    def get(path: str):
         """
         Retrieve a reference's values based on the given path
         """
         return StateManagerReference.frame.get(path)._reference.values()
 
     @staticmethod
-    def get_dict(path):
+    def get_dict(path: str):
         """
         Retrieve a reference dict based on the given path
         """
@@ -557,7 +557,7 @@ class StateManagerReference:
 
 
     @staticmethod
-    def get_all(path):
+    def get_all(path: str):
         """
         Get all references of the given CXRNode and its subnodes
         """
@@ -568,28 +568,28 @@ class StateManagerReference:
         return output.values()
 
     @staticmethod
-    def get_filepath(path):
+    def get_filepath(path: str):
         """
         Convert a CXRNode path into a relative filepath
         """
         return StateManagerReference.frame.get(path).path()
 
     @staticmethod
-    def has_path(path):
+    def has_path(path: str):
         """
         Determine if a path points to a valid CXRNode
         """
         return StateManagerReference.frame.has_path(path)
 
     @staticmethod
-    def get_node(path):
+    def get_node(path: str):
         """
         Get the CXRNode located at the given path
         """
         return StateManagerReference.frame.get(path)
 
     @staticmethod
-    def find_by_attribute(path, attr, value):
+    def find_by_attribute(path: str, attr: str, value):
         """
         Find all StateManagers with attributes matching the given value
         """
@@ -601,7 +601,7 @@ class StateManagerReference:
         return output
 
     @staticmethod
-    def find_by_function(path, attr, f):
+    def find_by_function(path: str, attr: str, f):
         """
         Find attributes which return True when evaluated by the given function
         """
@@ -613,7 +613,7 @@ class StateManagerReference:
         return output
 
     @staticmethod
-    def save(path, *params):
+    def save(path: str, *params):
         """
         Save the reference at the given path
         """
@@ -628,7 +628,7 @@ class StateManagerReference:
             reference.save(*params)
 
     @staticmethod
-    def load(path, *params):
+    def load(path: str, *params):
         """
         Load all references at the given path
         """
