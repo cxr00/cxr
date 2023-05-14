@@ -1540,15 +1540,15 @@ class Prism:
 
         l = min(len(self), len(other))
 
-        dim_d = num_dims(self)
-        dim_g = num_dims(other)
+        N = num_dims(self)
+        K = num_dims(other)
 
-        output = nested_array(dim_d + dim_g - 1, l)
+        output = nested_array(N + K - 1, l)
 
-        new_dim = dim_d + dim_g - 1
+        NK = N + K - 1
 
-        for args in itertools.product(range(l), repeat=new_dim-1):
-            get(output, args[:new_dim - 2])[args[new_dim - 2]] = get(self, args[:dim_d-1]) * get(other, args[dim_d - 1: new_dim - 1])
+        for args in itertools.product(range(l), repeat=NK-1):
+            get(output, args[:NK - 2])[args[NK - 2]] = get(self, args[:N-1]) * get(other, args[N - 1: NK - 1])
 
         return Prism(output)
 
