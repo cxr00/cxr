@@ -1,8 +1,70 @@
-# clq.py: Socioarithmetic over Sociomathematical Strings
+# clq.py
+
+`clq.py` is used to construct sociomathematical teams following the open-source framework of **colloquiality theory**. Teams are constructed by assigning team members, who have a default *role*, to a certain *function*. You can read about its primary motivation in [Terminal Anticolloquiality and Its Treatment](https://complexor.files.wordpress.com/2023/05/terminal-anticolloquiality-and-its-treatment.pdf).
+
+## Roles and functions
+
+It is important to distinguish, as best as can be done, between the notions of *role* and *function*. In essence, the role is what the sociomathematician *is*; and the function is what they *do*. It is difficult to define these notions without cross-reference because they are near-synonymous: the role is the *canonical function which an individual typically fills*; and the function is the *role which an individual is currently filling*.
+
+### The colloquialist
+
+The colloquialist is the root scientist within a sociomathematical team. Their core responsibility is to actively approach terminal anticolloquiality in order to assess moments and potential opportunities for recolloquialising actions. Ultimately the role of the colloquialist is to "grok vibes and deliver indicators to meet the moment". This means that they are responsible for establishing the nature of all forms and methods of communication *intuitively* rather than *analytically*, and reacting in a way which promotes the health of the experiment.
+
+The efficacy of a colloquialist relies heavily on its ability to **multithread**, ie perform multiple functions in support of itself during colloquialative processes. This can be beneficial to the experiment, as the colloquialist is usually the best choice for any sociomathematical role, at the increased risk of **noncolloquial** rather than *anticolloquial* indicators. This key difference is important: noncolloquialative processes are easier to write off in social scenarios, whereas anticolloquialative ones *run directly counter to colloquialising norms and have a colloquial impact*.
+
+Colloquialists are often considered to be the "early warning system" for a sociomathematical experiment; When they indicate that something is going wrong, then it usually has. This can, however, negatively influence the colloquiality of the team, which may not recognize symptoms of anticolloquiality until it becomes terminal.
+
+### The analyst
+
+The analyst is the primary scientist in support of the colloquialist. Analysts are responsible for crunching numbers and assigning quantitative value to indicators based on predetermined (and often self-determined) schemata. They may also highlight opportunities for qualitative assessment, and even offer potential frameworks for such analysis.
+
+Due to the centrality of an analyst's importance in setting the stage for futurising activities, it is difficult to truly get them out of that function. As such they, like the interrogator, tend to be the weakest ultary team member unless supported cross-functionally. Unfortunately, since this is not always a viable composition, it's important to consider arithmetical options for transitioning analysts into place.
+
+### The catastrophist
+
+The catastrophist is the primary scientist in support of the analyst. Catastrophists are responsible for always asking "What could go wrong?" and surmising worst-case scenarios. Additionally, unlike what the term's connotations might suggest, the catastrophist does not simply catastrophise negatively, but expounds upon and "explodes" the frameworks which the analyst presents so they might be seen from different perspectives.
+
+Assigning a function to a catastrophist is challenging, because on its own it is quite anticolloquial. But an ultary catastrophist provides a unique form of additional analysis to its function, always with the explicit caveat that it is dealing in hypotheticals.
+
+### The interventionist
+
+The interventionist is the primary scientist in support of the catastrophist. Interventionists are responsible for assessing risks and concerns to projects in terms of present indications. They are *not* solely responsible for engaging in mitigating actions, if at all. But they are in a sense the first line of defense against the unmitigated disasters provided through the catastrophist's indications.
+
+Due to their canonical function, interventionists are highly empathetic in their analysis and decision-making processes. Consequently, they often thread as catastrophists, regardless of the function in which they are currently placed. However, an interventionist's desire to see solutions to problems come to fruition may guide their actions.
+
+### The contrarian
+
+The contrarian is the primary scientist in support of an interventionist. Their core responsibility is to produce counterrogatives against the indication given by the interventionist.
+
+Contrarians typically perform well in place when supporting any of the three prior roles. However, without the full complement, it struggles to deliver useful indications to an interrogator.
+
+### The interrogator
+
+The interrogator is the primary scientist in support of the contrarian. Interrogators excel in the process of *active decolloquialisation*. Active decolloquialisation is the process through which anticolloquial data is stripped down to its noncolloquial essence. This is most effectively accomplished through survey of the colloquialist.
+
+### The therapist
+
+The therapist is the primary scientist in support of the interrogator. Therapists engage in the process of *active recolloquialisation*. Active recolloquialisation is the process through which the noncolloquial essence of anticolloquial data is reorganised and colloquialised for the team.
+
+### The dreamer
+
+The dreamer is the primary scientist in support of the therapist. Dreamers mediate the recontextualisation of the anticolloquial in artful ways which enable out-of-the-box thinking about what is being learned
+
+### The interpreter
+
+The interpreter is the primary scientist in support of the dreamer. The interpreter compares the context of the subject and the provided dreams to try and determine elements of the anticolloquial experience such as meaning, inspiration, and objectives.
+
+### The historian
+
+The historian is the primary scientist in support of the interpreter as well as the sociomathematical team as a whole. Historians are the other imperative member of a sociomathematical team besides the colloquialist. They are responsible for compiling and summarising the information which has been gathered by the team, and delivering an *indication* to the colloquialist that determines their future direction.
+
+# Socioarithmetic over Sociomathematical Strings
+
+Socioarithmetic is used to express the modification of sociomathematical teams according to a mathematical framework which can be interrogated logically. It provides a shorthand for the historian to use in studying the actions of the team and its reorganisation throughout a project.
 
 Below is a summary of known properties of socioarithmetic. It consists of four related but *nonmutual* operations, ie these operations are compatible but not through canonical notions such as inverse, distributivity, or even bijection (not even when limiting the set to involutions!).
 
-# Limitations
+## Limitations
 
 The primary limitation of socioarithmetic is that **it cannot change the role of an input, only its function**. This means you must introduce new roles via inclusion, and then sculpt them via other operations.
 
