@@ -25,7 +25,7 @@ output_dir = "cdb"  # output files are of the form {output_dir}\\cdb{base}\\{ste
 def choix_de_bruxelles(d, length, log=False):
     """
     The Brussels Choice in arbitrary base
-    Set cxr.base36.default_base to set the base this is executed in
+    Set cxr.base64.default_base to set the base this is executed in
     """
 
     def do_one_number(substring):

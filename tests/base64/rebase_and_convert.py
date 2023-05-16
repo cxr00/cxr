@@ -65,7 +65,7 @@ def compute_convergence_sequence(d, n, save=False):
     to_exit = False
 
     if 2 + d + len(convergence_sequence) > 36:
-        print("Convergence sequence is already computed to the highest possible base supported by cxr.base36")
+        print("Convergence sequence is already computed to the highest possible base supported by cxr.base64")
         to_exit = True
 
     display_convergence_sequence()

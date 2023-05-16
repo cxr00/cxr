@@ -3,7 +3,7 @@ class Complex:
     """
     A basic complex number class
     """
-    def __init__(self, r=0, i=0):
+    def __init__(self, r: (int, float)=0, i: (int, float)=0):
         self.r = r if isinstance(r, float) and int(r) != r else int(r)
         self.i = i if isinstance(i, float) and int(i) != i else int(i)
 
