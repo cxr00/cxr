@@ -87,6 +87,14 @@ class StateData:
 
         return q
 
+    def nonser_qoid(self):
+        q = Qoid(self.parent.key if self.parent else "StateData")
+
+        for k, v in self._nonser.items():
+            q += Property(k, v)
+
+        return q
+
     def update(self, d: dict):
         for k, v in d.items():
             self[k] = v

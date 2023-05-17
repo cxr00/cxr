@@ -107,7 +107,7 @@ class StateTelemeter(StateManager):
             q.tag = datetime.now().strftime("%Y-%m-%d %H%M%S")
             q += Property("event", event)
             self.telemetry.append(q)
-            self["nonser_telemetry"].append(dict(self._device._data._nonser))
+            self["nonser_telemetry"].append(self._device._data.nonser_qoid())
             if len(self.telemetry) > self.stream_range:
                 self["telemetry"] = self.telemetry[1:]
                 self["nonser_telemetry"] = self.nonser_telemetry[1:]
@@ -150,6 +150,6 @@ class StateTelemeter(StateManager):
         self["nonser_telemetry"] = self.nonser_telemetry[:len(self.nonser_telemetry) - steps]
 
         for p in q:
-            self._device[p.tag] = q[p.val]
+            self._device[p.tag] = q[p.tag]
 
         self.change_state("playing")
