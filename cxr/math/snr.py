@@ -1621,8 +1621,8 @@ class Prism:
                         elif sum_coords + y + t == n:
                             multiplicand = 1
                             for i in range(len(g) - 1):
-                                multiplicand *= g[i][coordinates[i]]
-                            multiplicand *= g[-1][y]
+                                multiplicand *= g[-i-1][coordinates[i]]
+                            multiplicand *= g[0][y]
                             _sum += multiplicand * structure[y][t]
                 return _sum
 
