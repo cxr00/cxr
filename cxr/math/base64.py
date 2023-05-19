@@ -756,7 +756,7 @@ class Tridozenal:
             if prev_out == out or prev_prev_out == out:
                 if log:
                     print(f"Limit reached at {place} places")
-                    break
+                break
             n += 1
 
         out.round(place)
