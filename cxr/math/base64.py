@@ -706,7 +706,7 @@ class Tridozenal:
 
         size = 1
         b_p = base
-        while b_p < 2**bits:
+        while b_p < base**bits:
             b_p *= base
             size += 1
 
