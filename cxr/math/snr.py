@@ -1689,7 +1689,9 @@ class Prism:
         dims = num_dims(self)
         output = []
         for item in self:
-            if isinstance(item, Matrix):
+            if num_dims(item) == 1:
+                output.append(s.aerate(a))
+            elif num_dims(item) == 2:
                 output.append(Matrix([s.aerate(a) for s in item]))
             else:
                 output.append(Prism(item).aerate(a))
