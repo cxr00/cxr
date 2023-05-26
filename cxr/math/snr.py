@@ -1708,7 +1708,7 @@ class Prism:
         if dims == 2:
             return self.val.base_sequence(b)
         elif dims == 3:
-            return Matrix([p.base_prism(b) for p in self])
+            return Matrix([p.base_sequence(b) for p in self])
         else:
             return Prism([p.base_prism(b) for p in self])
 
