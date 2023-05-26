@@ -17,8 +17,9 @@ def test_4_5_identities():
     output2 = Seq([0 for _ in range(l)])
     output = Seq(output2)
     for n in range(l):
+        p = Matrix.identity(l)
         for k in range(n + 1):
-            p = S ** (k + 1)
+            p *= S
             r = S ** (n - k)
             output[n] += p[k][0]
             output2[n] += r[k][0]
