@@ -20,7 +20,7 @@ def clq_test():
     print(Clq("1056p") == Clq("10---23d"))
     print()
 
-    print(Clq("7268d").compile("L+"))
+    print(Clq("7268d").compile())
     print()
 
     print(Clq.decompile(Clq("7268p").compile(), "p"))
