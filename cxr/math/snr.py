@@ -884,7 +884,7 @@ class Matrix:
         return Matrix([Seq([zero for k in range(w)]) for n in range(l)])
 
     @staticmethod
-    def g_matrix(s: "Matrix", g: list[Seq] | Seq | Sig, l: int=-1, w: int=-1) -> "Matrix":
+    def g_matrix(s: "Matrix", g: list[Seq], l: int=-1, w: int=-1) -> "Matrix":
         """
         The matrix S_d^p is defined in section 4.5 of SNR
 
