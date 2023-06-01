@@ -893,38 +893,21 @@ class Matrix:
         :return: the transformed matrix S_d^p
         """
 
-        def generate_next_matrix(s_prev: "Matrix", g_p: Seq) -> "Matrix":
-            """
-            Generate the next matrix S_d^p
-
-            :param s_prev: the matrix to be transformed
-            :param g_p: the transforming signature
-            :return: the transformed matrix
-            """
-            f_g_p = g_p.f(l)
-            out = Matrix.blank(l, w, base=f_g_p.base() if f_g_p.is_td() else -1)
-
-            zero = Td.zero(f_g_p.base()) if f_g_p.is_td() else 0
-            for n in range(l):
-                for y in range(w):
-                    _sum = zero
-                    for k in range(n + 1):
-                        _sum += s_prev[k][y] * f_g_p[n - k]
-                    out[n][y] = _sum
-
-            return out
-
-        s_next = s
-
         if l == -1:
             l = std_l
         if w == -1:
             w = std_l
 
-        for g_p in g:
-            s_next = generate_next_matrix(s_next, g_p)
+        g_signature = sum([g_p.sig() for g_p in g])
 
-        return s_next
+        output = Matrix.blank(l=l, w=w)
+        for n in range(l):
+            for y in range(w):
+                output[n][y] = s[n][y]
+                for k in range(1, n+1):
+                    output[n][y] += output[n-k][y] * g_signature[k-1]
+
+        return output
 
     @staticmethod
     def identity(l: int=-1, base: int=-1) -> "Matrix":
