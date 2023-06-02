@@ -886,7 +886,7 @@ class Matrix:
     @staticmethod
     def g_matrix(s: "Matrix", g: list[Seq], l: int=-1, w: int=-1) -> "Matrix":
         """
-        The matrix S_d^p is defined in section 4.5 of SNR
+        The matrix S_d^p is defined in section 1.5 of SNR4
 
         :param s: the initial matrix to be transformed
         :param g: the set of signatures to transform s
