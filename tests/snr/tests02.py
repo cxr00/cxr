@@ -10,7 +10,7 @@ Verification of identities found during procedural
 exploration of base interpretation sequences of
 transposition products.
 
-Identities and information are currently being compiled into SNR 3.
+Identities and information are compiled into SNR 3.
 
 Functions of the form b_#_# are legacy numbering during
 initial compilation of identities.
