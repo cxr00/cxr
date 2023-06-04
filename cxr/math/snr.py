@@ -1109,7 +1109,8 @@ class Matrix:
         infinite matrices can't be represented computationally, the result
         of matrix multiplication with this method will be incomplete.
 
-        It is recommended that you construct a longer matrix, then truncate it.
+        It is recommended that you construct a longer matrix, then truncate it,
+        such as (td * tg)[:l // (len(d) - 1)]
         """
         if isinstance(other, (Seq, int, float)):
             return Matrix([other * g for g in self])
