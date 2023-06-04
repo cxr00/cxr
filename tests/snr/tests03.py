@@ -3,7 +3,9 @@ import itertools
 from cxr import Seq, Matrix, Prism, set_std_l, x
 
 """
-
+g_prism_test
+simplex_test
+triangular_prism
 """
 
 

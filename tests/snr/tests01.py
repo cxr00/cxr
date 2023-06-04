@@ -1,6 +1,16 @@
 from cxr import Seq, Matrix, Prism, SDP
 import time
 
+"""
+test_4_5_identities
+mnr_identities
+prismatic_convolution_vs_sdp
+generalised_motzkin_numbers
+A356891
+einstein_test
+"""
+
+
 
 def test_4_5_identities():
     """

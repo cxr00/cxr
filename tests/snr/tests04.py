@@ -2,7 +2,7 @@ from cxr import set_std_l, Seq, x
 from cxr.math.snr import random_seq
 
 """
-Identities from SNR3 (pending)
+Identities from SNR3
 """
 
 
