@@ -1104,6 +1104,13 @@ class Matrix:
         return Matrix([s % modulo for s in self])
 
     def __mul__(self, other):
+        """
+        Note: Matrices may differ in length and width, and because
+        infinite matrices can't be represented computationally, the result
+        of matrix multiplication with this method will be incomplete.
+
+        It is recommended that you construct a longer matrix, then truncate it.
+        """
         if isinstance(other, (Seq, int, float)):
             return Matrix([other * g for g in self])
         elif isinstance(other, Sig):
