@@ -303,6 +303,9 @@ class Tridozenal:
         else:
             raise ValueError(f"Invalid mantissa type {type(mantissa).__name__}; must be int, float, list or Seq")
 
+        if any([isinstance(i, float) for i in self.integer]) or any([isinstance(m, float) for m in self.mantissa]):
+            raise ValueError(f"Tridozenal cannot accept floats: integer: ({self.integer}); mantissa: ({self.mantissa})")
+
         if 2 <= base <= 64:
             self.base = base
         else:
