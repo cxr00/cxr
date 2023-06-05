@@ -1,7 +1,8 @@
 from cxr import Seq, Matrix, x, set_std_l
 
 """
-Interesting constructed triangles compiled during SNR1 exploration
+Interesting constructed triangles compiled during SNR1 exploration.
+The triangles' formulas may be found in SNR3.6
 """
 
 
