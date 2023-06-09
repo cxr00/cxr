@@ -859,7 +859,7 @@ class Htd:
         :param perfect: Whether to iterate until the mantissa is fully computed (can be slow!)
         """
         if hyperbase <= 36:
-            tdexp = Td.exp(hyperbase, power, iterations, place, log, perfect)
+            tdexp = Td.exp(implicit_base, power, iterations, place, log, perfect)
             return Htd(hyperbase, implicit_base, Td(tdexp.integer, base=implicit_base), [Td(p, base=implicit_base) for p in tdexp.mantissa])
 
         if place == -1:
