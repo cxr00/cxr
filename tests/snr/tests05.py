@@ -1,4 +1,5 @@
-from cxr import set_std_l, Seq, x, Matrix, Prism, random_seq, SDP
+from cxr import set_std_l, Seq, x, Matrix, Prism, random_seq, SDP, Td
+from cxr.math import base64
 
 """
 sen_regularisation_test - showcases regularisation identities
@@ -7,6 +8,9 @@ prism_randomisation_test - shows that this does not work
 sen_like_test - contains a few identities when using power triangles instead of sen
 constant_addition_test - demonstrates addition of a constant or elements of a sequence at each step of the signature function
 matricial_right_near_ring_identity_test - showcases identities of MNR, the matricial right near-ring
+conv_not_sig_add_test - showcases rational expansion of signature function of convolved rather than sig-added signatures
+derivative_of_signatures - showcases derivative identity
+integral_of_signatures - showcases integration. Uses 1 instead of general C
 """
 
 
@@ -239,6 +243,101 @@ def matricial_right_near_ring_identity_test():
     print(sum([d_k * g**k for k, d_k in enumerate(d)]))
 
 
+def conv_not_sig_add_test():
+    """
+    Slightly more complex than the signature sum identity,
+    but with the same mechanism for B_P^{-1}
+    """
+    d = Seq(1, 1)
+    g = Seq(1, 1)
+    seed = Seq(2, -1, 1)
+    b = 10
+    base64.default_base = b
+
+    pt0 = Td(b ** len(d)) - Td(d.elements)
+    pt1 = pt0 * b ** (len(g) - 1)
+    pt2 = pt1 - Td((d * (g-1)).elements)
+    # print(pt2)
+
+    pt0 = Td(b ** len(g)) - Td(g.elements)
+    pt1 = pt0 * b ** (len(d) - 1)
+    pt2 = pt1 - Td((g * (d-1)).elements)
+    # print(pt2)
+
+    pt0 = b ** (len(d) + len(g) - 1)
+    pt1 = pt0 - Td(g.elements) * (b ** (len(d) - 1) + Td((d-1).elements))
+    # print(pt1)
+
+    fsg = (d*g).f(seed=seed)
+    print("seq   :", fsg)
+
+    output = Td.zero()
+    for n in range(len(fsg)):
+        output += Td(fsg[n]) / b ** (n + len((d*g)))
+
+    P = seed
+    for n in range(1, len(d) + len(g)):
+        _prod = x ** n * (d*g)[n - 1]
+        _sum = 0
+        for k in range(len(seed) - n):
+            _sum += seed[k] * x ** k
+        P -= _prod * _sum
+
+    BP = Td.zero(b)
+    for n in range(len(P)):
+        BP += Td(P[n]) / (b ** n)
+
+    print("bp", BP)
+
+    print("o:", output)
+    print("a:", BP / pt1)
+    print()
+
+
+def derivative_of_signatures():
+    """
+    What a quirky li'l identity!
+    """
+    def get_derivative(s):
+        output = []
+        for i, s_i in enumerate(s[1:]):
+            output.append(s_i * (i+1))
+        return Seq(output)
+
+    def get_genfunc(s):
+        output = s
+        for i in range(1, len(s)):
+            output += x**i * s[i] * i
+        return output * s.f()**2
+
+    l = set_std_l(30)
+    for i in range(100):
+        d = random_seq(min_digits=15)
+        deriv = get_derivative(d.f())
+        print(deriv)
+        gen_func = get_genfunc(d)[:l-1]
+        print(gen_func)
+        print(deriv == gen_func)
+        print()
+
+
+def integral_of_signatures():
+    def get_integral(s):
+        output = [1]  # Assume the result is a one-beginning sequence
+        for i, s_i in enumerate(s):
+            output.append(s_i / (i+1))
+        return Seq(output)
+
+    d = Seq(1, 4, 9, 20, 40, 78, 147, 272, 495, 890, 1584, 2796, 4901)
+    print(get_integral(d))
+    d = Seq(1, 1).f()
+    print(get_integral(d))
+    print(get_integral(d).i())
+
+
 if __name__ == "__main__":
     # sen_regularisation_test()
     constant_addition_test()
+    # conv_not_sig_add_test()
+    # derivative_of_signatures()
+    # integral_of_signatures()
