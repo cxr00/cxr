@@ -212,6 +212,7 @@ def constant_addition_test():
     alt = Seq(C) * Seq(x**(len(C) - 1) - C).f()
     alt = alt.sig() + d
     print("alt:", alt[:l-1])
+    print("yes:", alt[:l-1] == so.i())
 
 
 def matricial_right_near_ring_identity_test():
