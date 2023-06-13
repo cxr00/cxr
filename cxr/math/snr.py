@@ -1790,5 +1790,5 @@ def random_seq(min: int=1, max: int=7, min_digits: int=2, max_digits: int=5) -> 
     return Seq([random.randint(min, max) for _ in range(random.randint(min_digits, max_digits))])
 
 
-def random_matrix(l: int=10) -> Matrix:
-    return Matrix(Seq(1), *[random_seq() for _ in range(l)])
+def random_matrix(l: int=10, min: int=1, max: int=7, min_digits: int=2, max_digits: int=5) -> Matrix:
+    return Matrix(Seq(1), *[random_seq(min, max, min_digits, max_digits) for _ in range(l)])
