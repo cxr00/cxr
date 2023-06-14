@@ -557,7 +557,7 @@ class Seq:
             output.append(_diff)
         return output
 
-    def derivative(self):
+    def derivative(self) -> "Seq":
         """
         The derivative of a sequence according to the power rule
         """
