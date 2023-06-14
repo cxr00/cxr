@@ -1,5 +1,6 @@
 from cxr.math.base64 import Tridozenal as Td
 from cxr.math.complex import Complex
+from cxr.math import base64
 import itertools
 import random
 
@@ -565,6 +566,65 @@ class Seq:
         for i, s_i in enumerate(self[1:]):
             output.append(s_i * (i+1))
         return Seq(output)
+
+    def rational(self, seed=None, base=-1, round_to=-1):
+        """
+        Construct a rational number using the signature function of the signature
+
+        The seed relates the constructed number to Seq.p_ratio
+
+        :param seed: The optional seed of the signature function
+        :param base: The base of the rational number to create
+        :param round_to: The place to round the number to
+        :return: The base-b rational number
+        """
+        if seed is None:
+            seed = Seq(1)
+        if base == -1:
+            base = base64.default_base
+        prev_round_to = base64.round_to
+        if round_to != -1:
+            base64.round_to = round_to
+
+        fs = self.f(l=base64.round_to * 2, seed=seed)
+
+        output = Td.zero(base)
+        bpow = base ** len(self)
+        for n in range(len(fs)):
+            output += Td(fs[n], base=base) / bpow
+            bpow *= base
+
+        base64.round_to = prev_round_to
+        return output
+
+    def p_ratio(self, seed, base=-1):
+        """
+        Compute the P-ratio of a sequence given a seed
+
+        The existence and usage of this ratio is discussed in SNR 3.5
+        """
+        if seed is None:
+            seed = Seq(1)
+        if base == -1:
+            base = base64.default_base
+
+        P = seed
+        for n in range(1, len(self) + 1):
+            _prod = x ** n * self[n - 1]
+            _sum = 0
+            xpow = Seq(1)
+            for k in range(len(seed) - n):
+                _sum += seed[k] * xpow
+                xpow *= x
+            P -= _prod * _sum
+
+        output = Td.zero(base)
+        bpow = 1
+        for n in range(len(P)):
+            output += Td(P[n], base=base) / bpow
+            bpow *= base
+
+        return output
 
     def trim(self, to_zero: bool=False) -> "Seq":
         """
