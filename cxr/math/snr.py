@@ -557,6 +557,15 @@ class Seq:
             output.append(_diff)
         return output
 
+    def derivative(self):
+        """
+        The derivative of a sequence according to the power rule
+        """
+        output = []
+        for i, s_i in enumerate(self[1:]):
+            output.append(s_i * (i+1))
+        return Seq(output)
+
     def trim(self, to_zero: bool=False) -> "Seq":
         """
         Removes trailing zeroes from a sequence
