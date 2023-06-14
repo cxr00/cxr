@@ -1,6 +1,6 @@
 # cxr.snr
 
-SNR is the Signature Near-Ring, a construction based on the INVERT transform. You can read an in-depth explanation of the signature function and SNR [here](https://complexor.files.wordpress.com/2023/02/recursive-signatures-and-the-signature-left-near-ring.pdf).
+SNR is the Signature Near-Ring, a construction based on the INVERT transform. You can read an in-depth explanation of the signature function and SNR [here](https://complexor.files.wordpress.com/2023/06/recursive-signatures-and-the-signature-left-near-ring.pdf).
 
 ## Seq
 
